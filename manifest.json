@@ -1,0 +1,36 @@
+{
+  "name": "FL Small Mercies",
+  "description": "Set of small 'fixes' for Fallen London UI.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.fallenlondon.com/*"
+      ],
+      "js": [
+        "dist/content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "/images/fl-quality-lantern-icon-16.png",
+      "32": "/images/fl-quality-lantern-icon-32.png",
+      "48": "/images/fl-quality-lantern-icon-48.png",
+      "128": "/images/fl-quality-lantern-icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "/images/fl-quality-lantern-icon-16.png",
+    "32": "/images/fl-quality-lantern-icon-32.png",
+    "48": "/images/fl-quality-lantern-icon-48.png",
+    "128": "/images/fl-quality-lantern-icon-128.png"
+  },
+  "web_accessible_resources": [{
+    "resources": ["dist/inject.js", "dist/constants.js", "dist/logging.js", "dist/settings.js"],
+    "matches": ["https://www.fallenlondon.com/*"]
+  }]
+}
