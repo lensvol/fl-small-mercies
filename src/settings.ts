@@ -1,17 +1,43 @@
 import {debug} from "./logging.js";
+import {sendToServiceWorker} from "./comms.js";
+import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js";
+
+type SettingsSchema = Map<string, string>
+type SettingsObject = {[key: string]: boolean}
 
 class FLSettingsFrontend {
-    private name: string;
-    private schema: Map<string, string>;
-    private extensionId: string;
+    private readonly name: string;
+    private settings: SettingsObject;
+    private schema: SettingsSchema;
+    private readonly extensionId: string;
+    private createdToggles: Array<HTMLElement> = [];
 
-    constructor(extensionId: string, name: string, schema: Map<string, string>) {
+    constructor(extensionId: string, name: string, schema: SettingsSchema) {
         this.extensionId = extensionId;
         this.name = name;
         this.schema = schema;
+
+        debug("Initializing create default settings object...");
+        this.settings = this.createDefaultSettings();
+
+        window.addEventListener("message", (event) => {
+            if (event.data.action === MSG_TYPE_CURRENT_SETTINGS) {
+                debug("Update settings with the new data...");
+                this.updateState(event.data.settings);
+            }
+        });
+
+        sendToServiceWorker(MSG_TYPE_CURRENT_SETTINGS, {});
     }
 
-    attachPanelInjector(node: Node) {
+    private createDefaultSettings(): SettingsObject {
+        const defaultSettings = {};
+        // @ts-ignore
+        this.schema.forEach((description, toggleId) => { defaultSettings[toggleId] = false });
+        return defaultSettings;
+    }
+
+    private attachPanelInjector(node: Node) {
         const panelInjectorObserver = new MutationObserver((mutations) => {
             for (let m = 0; m < mutations.length; m++) {
                 const mutation = mutations[m];
@@ -20,13 +46,14 @@ class FLSettingsFrontend {
 
                 if (mutation.attributeName != "aria-labelledby") continue;
 
-                // @ts-ignore
-                if (mutation.target.getAttribute("aria-labelledby") === "tab--Extensions") {
-                    if (mutation.target.querySelector(`div[custom-settings="${this.extensionId}"]`)) {
+                const target = mutation.target as HTMLElement;
+
+                if (target.getAttribute("aria-labelledby") === "tab--Extensions") {
+                    if (target.querySelector(`div[custom-settings="${this.extensionId}"]`)) {
                         continue;
                     }
 
-                    mutation.target.appendChild(this.createLocalSettingsPanel());
+                    target.appendChild(this.createLocalSettingsPanel());
                 }
             }
         });
@@ -34,31 +61,40 @@ class FLSettingsFrontend {
         panelInjectorObserver.observe(node, {attributes: true});
     }
 
-    prepareForCustomSettings() {
-        const tabPanel = document.querySelector("div[role='tabpanel']");
-        if (!tabPanel) return;
-
-        for (const child of (tabPanel.children as HTMLCollectionOf<HTMLElement>)) {
-            child.style.cssText = "display: none;";
-        }
-        tabPanel.setAttribute("aria-labelledby", "tab--Extensions");
-    }
-
-    cleanupCustomSettings() {
+    private prepareForCustomSettings() {
         const tabPanel = document.querySelector("div[role='tabpanel']");
         if (!tabPanel) return;
 
         for (const child of (tabPanel.children as HTMLCollectionOf<HTMLElement>)) {
             if (child.hasAttribute("custom-settings")) {
-                child.remove();
+                continue;
+            }
+
+            child.style.cssText = "display: none;";
+        }
+        tabPanel.setAttribute("aria-labelledby", "tab--Extensions");
+    }
+
+    private cleanupCustomSettings() {
+        const tabPanel = document.querySelector("div[role='tabpanel']");
+        if (!tabPanel) return;
+
+        const setForRemoval: Array<HTMLElement> = [];
+
+        for (const child of (tabPanel.children as HTMLCollectionOf<HTMLElement>)) {
+            if (child.hasAttribute("custom-settings")) {
+                setForRemoval.push(child);
             } else {
                 child.style.cssText = "display: block;";
             }
         }
+
+        setForRemoval.map((child) => child.remove());
     }
 
-    createSettingsButton(): Node {
+    private createSettingsButton(): Node {
         const button = document.createElement("button");
+        button.setAttribute("id", "tab--Extensions");
         button.setAttribute("role", "tab");
         button.setAttribute("type", "button");
         button.setAttribute("aria-selected", "true");
@@ -73,7 +109,7 @@ class FLSettingsFrontend {
         return wrapper;
     }
 
-    createLocalSettingsPanel(): Node {
+    private createLocalSettingsPanel(): Node {
         const containerDiv = document.createElement("div");
         containerDiv.setAttribute("custom-settings", this.extensionId);
 
@@ -84,6 +120,7 @@ class FLSettingsFrontend {
 
         const listContainer = document.createElement("ul");
 
+        this.createdToggles = [];
         this.schema.forEach((description, toggleId) => {
             const toggle = document.createElement("li");
             toggle.classList.add("checkbox");
@@ -93,6 +130,9 @@ class FLSettingsFrontend {
             const input = document.createElement("input");
             input.setAttribute("id", toggleId);
             input.setAttribute("type", "checkbox");
+            input.checked = this.settings[toggleId];
+
+            this.createdToggles.push(input);
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(description));
@@ -101,8 +141,14 @@ class FLSettingsFrontend {
             listContainer.appendChild(toggle);
         });
 
+        const submitButton = document.createElement("button");
+        submitButton.classList.add("button", "button--primary");
+        submitButton.textContent = "UPDATE";
+        submitButton.addEventListener("click", (ev) => this.saveState());
+
         containerDiv.appendChild(heading);
         containerDiv.appendChild(listContainer);
+        containerDiv.appendChild(submitButton);
 
         return containerDiv;
     }
@@ -143,6 +189,25 @@ class FLSettingsFrontend {
         });
 
         settingsButtonObserver.observe(document, {childList: true, subtree: true});
+    }
+
+    private updateState(newState: SettingsObject) {
+        this.settings = newState || this.settings;
+        this.createdToggles.forEach((toggle) => {
+            // @ts-ignore
+            toggle.checked = this.settings[toggle.id];
+        });
+    }
+
+    private saveState() {
+        debug("Collecting settings values from the panel...");
+        this.createdToggles.forEach((toggle) => {
+            // @ts-ignore
+            this.settings[toggle.id] = toggle.checked;
+        });
+
+        debug("Sending settings to be saved...");
+        sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, {settings: this.settings});
     }
 }
 

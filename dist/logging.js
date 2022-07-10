@@ -6,3 +6,4 @@ function log(message) {
     console.log(`[${EXTENSION_NAME}] ${message}`);
 }
 export { log, debug };
+//# sourceMappingURL=logging.js.map

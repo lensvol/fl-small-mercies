@@ -5,3 +5,4 @@ debug("Hello, world!");
 const settingsSchema = new Map();
 settingsSchema.set("hello", "Hello, world!");
 new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, settingsSchema).installSettingsPage();
+//# sourceMappingURL=inject.js.map
