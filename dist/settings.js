@@ -152,6 +152,9 @@ class FLSettingsFrontend {
             // @ts-ignore
             toggle.checked = this.settings[toggle.id];
         });
+        if (this.updateHandler) {
+            this.updateHandler(this.settings);
+        }
     }
     saveState() {
         debug("Collecting settings values from the panel...");
@@ -161,6 +164,9 @@ class FLSettingsFrontend {
         });
         debug("Sending settings to be saved...");
         sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.settings });
+    }
+    registerUpdateHandler(handler) {
+        this.updateHandler = handler;
     }
 }
 export { FLSettingsFrontend };

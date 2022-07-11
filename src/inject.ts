@@ -1,10 +1,21 @@
-import { debug } from "./logging.js";
 import {FLSettingsFrontend} from "./settings.js";
 import {EXTENSION_ID, EXTENSION_NAME} from "./constants.js";
-
-debug("Hello, world!");
+import {CalendarStencilFixer} from "./fixers/index.js";
+import {debug} from "./logging.js";
 
 const settingsSchema = new Map<string, string>();
-settingsSchema.set("hello", "Hello, world!");
+settingsSchema.set("journal_stencil", "Fix the color of the calendar stencil on the Profile page.");
 
-new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, settingsSchema).installSettingsPage();
+const stencilFixer = new CalendarStencilFixer();
+
+const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, settingsSchema);
+settingsFrontend.installSettingsPage();
+settingsFrontend.registerUpdateHandler((settings) => {
+    if (settings.journal_stencil) {
+        debug("Enabling stencil fixer...");
+        stencilFixer.enable();
+    } else {
+        debug("Disabling stencil fixer...");
+        stencilFixer.disable();
+    }
+});

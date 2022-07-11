@@ -35,12 +35,8 @@
   },
   "web_accessible_resources": [{
     "resources": [
-      "dist/inject.js",
-      "dist/constants.js",
-      "dist/logging.js",
-      "dist/settings.js",
-      "dist/comms.js",
-      "dist/background.js"
+      "dist/*",
+      "src/*"
     ],
     "matches": ["https://www.fallenlondon.com/*"]
   }]

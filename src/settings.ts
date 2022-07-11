@@ -7,10 +7,13 @@ type SettingsObject = {[key: string]: boolean}
 
 class FLSettingsFrontend {
     private readonly name: string;
+    private readonly extensionId: string;
+
     private settings: SettingsObject;
     private schema: SettingsSchema;
-    private readonly extensionId: string;
+
     private createdToggles: Array<HTMLElement> = [];
+    private updateHandler?: (settings: SettingsObject) => void;
 
     constructor(extensionId: string, name: string, schema: SettingsSchema) {
         this.extensionId = extensionId;
@@ -197,6 +200,10 @@ class FLSettingsFrontend {
             // @ts-ignore
             toggle.checked = this.settings[toggle.id];
         });
+
+        if (this.updateHandler) {
+            this.updateHandler(this.settings);
+        }
     }
 
     private saveState() {
@@ -209,6 +216,10 @@ class FLSettingsFrontend {
         debug("Sending settings to be saved...");
         sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, {settings: this.settings});
     }
+
+    registerUpdateHandler(handler: (settings: SettingsObject) => void) {
+        this.updateHandler = handler;
+    }
 }
 
-export { FLSettingsFrontend };
+export { FLSettingsFrontend, SettingsObject };

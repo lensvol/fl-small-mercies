@@ -6,7 +6,7 @@
 
     /* Modules */
     "rootDir": "./src",                                  /* Specify the root folder within your source files. */
-    "sourceMap": false,                                  /* Create source map files for emitted JavaScript files. */
+    "sourceMap": true,                                  /* Create source map files for emitted JavaScript files. */
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
@@ -19,6 +19,6 @@
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
     "typeRoots": [ "node_modules/@types" ]
   },
-  "include": ["./src/*"],
+  "include": ["./src/**/*"],
   "exclude": []
 }
