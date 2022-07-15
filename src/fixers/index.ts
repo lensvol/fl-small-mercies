@@ -1,3 +1,4 @@
-import {CalendarStencilFixer} from "./calendar_stencil.js";
+import {JournalUiFixer} from "./journal_ui.js";
+import {ThousandSeparatorFixer} from "./thousands_separator.js";
 
-export { CalendarStencilFixer };
+export { JournalUiFixer, ThousandSeparatorFixer };
