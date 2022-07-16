@@ -27,7 +27,13 @@ export class AutoScrollFixer {
                     }
                     if (!isElementInViewport(mediaRoot)) {
                         console.debug("Storylet not visible, scrolling back...");
-                        mediaRoot.scrollIntoView();
+                        const tabList = document.querySelector("ul[role='tablist']");
+                        if (tabList) {
+                            tabList.scrollIntoView();
+                        }
+                        else {
+                            mediaRoot.scrollIntoView();
+                        }
                     }
                 }
             }
