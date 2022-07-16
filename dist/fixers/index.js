@@ -1,4 +1,5 @@
 import { JournalUiFixer } from "./journal_ui.js";
 import { ThousandSeparatorFixer } from "./thousands_separator.js";
-export { JournalUiFixer, ThousandSeparatorFixer };
+import { AutoScrollFixer } from "./auto_scroll.js";
+export { AutoScrollFixer, JournalUiFixer, ThousandSeparatorFixer };
 //# sourceMappingURL=index.js.map
