@@ -1,3 +1,4 @@
 *.mp3
 .idea
 node_modules
+dist/
