@@ -1,1 +1,0 @@
-{"version":3,"file":"comms.js","sourceRoot":"","sources":["../src/comms.ts"],"names":[],"mappings":"AAAA,SAAS,mBAAmB,CAAC,MAAc,EAAE,MAAc;IACvD,MAAM,KAAK,GAAG,IAAI,WAAW,CAAC,MAAM,EAAE;QAClC,MAAM,oBAAM,MAAM,CAAC;KACtB,CAAC,CAAA;IACF,MAAM,CAAC,aAAa,CAAC,KAAK,CAAC,CAAC;AAChC,CAAC;AAED,OAAO,EAAE,mBAAmB,EAAE,CAAA"}
