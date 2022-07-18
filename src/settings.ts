@@ -2,7 +2,8 @@ import {debug} from "./logging.js";
 import {sendToServiceWorker} from "./comms.js";
 import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js";
 
-type SettingsSchema = Map<string, string>
+type SettingDescriptor = { description: string, default: boolean }
+type SettingsSchema = { [key: string]: SettingDescriptor }
 type SettingsObject = {[key: string]: boolean}
 
 class FLSettingsFrontend {
@@ -34,9 +35,10 @@ class FLSettingsFrontend {
     }
 
     private createDefaultSettings(): SettingsObject {
-        const defaultSettings = {};
-        // @ts-ignore
-        this.schema.forEach((description, toggleId) => { defaultSettings[toggleId] = false });
+        const defaultSettings: {[key: string]: boolean} = {};
+        for (const [toggleId, descriptor] of Object.entries(this.schema)) {
+            defaultSettings[toggleId] = descriptor.default;
+        }
         return defaultSettings;
     }
 
@@ -124,7 +126,7 @@ class FLSettingsFrontend {
         const listContainer = document.createElement("ul");
 
         this.createdToggles = [];
-        this.schema.forEach((description, toggleId) => {
+        for (const [toggleId, descriptor] of Object.entries(this.schema)) {
             const toggle = document.createElement("li");
             toggle.classList.add("checkbox");
 
@@ -138,11 +140,11 @@ class FLSettingsFrontend {
             this.createdToggles.push(input);
 
             label.appendChild(input);
-            label.appendChild(document.createTextNode(description));
+            label.appendChild(document.createTextNode(descriptor.description));
 
             toggle.appendChild(label);
             listContainer.appendChild(toggle);
-        });
+        };
 
         const submitButton = document.createElement("button");
         submitButton.classList.add("button", "button--primary");
@@ -222,4 +224,4 @@ class FLSettingsFrontend {
     }
 }
 
-export { FLSettingsFrontend, SettingsObject };
+export { FLSettingsFrontend, SettingsObject, SettingsSchema };
