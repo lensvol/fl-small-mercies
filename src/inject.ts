@@ -1,5 +1,5 @@
 import {FLSettingsFrontend, SettingsSchema} from "./settings.js";
-import {EXTENSION_ID, EXTENSION_NAME} from "./constants.js";
+import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants.js";
 import {AutoScrollFixer, JournalUiFixer, ThousandSeparatorFixer, DiscreteScrollbarsFixer} from "./fixers/index.js";
 import {debug} from "./logging.js";
 
@@ -9,31 +9,12 @@ import {debug} from "./logging.js";
 // settingsSchema.set("auto_scroll_back", "Auto-scroll to the storylet after choosing branch.");
 // settingsSchema.set("discrete_scrollbars", "Remove scrollbars from discrete sidebar qualities.");
 
-const settingsSchema: SettingsSchema = {
-    "fix_journal_navigation": {
-        description: "Fix color and alignment of the navigation buttons in Journal.",
-        default: true
-    },
-    "add_thousands_separator": {
-        description: "Add comma after thousands in the currency indicators.",
-        default: true,
-    },
-    "auto_scroll_back": {
-        description: "Auto-scroll to the storylet after choosing branch.",
-        default: true
-    },
-    "discrete_scrollbars": {
-        description: "Remove scrollbars from discrete sidebar qualities.",
-        default: true
-    }
-}
-
 const journalUiFixer = new JournalUiFixer();
 const thousandSeparatorFixer = new ThousandSeparatorFixer();
 const autoScrollFixer = new AutoScrollFixer();
 const discreteScrollbarsFixer = new DiscreteScrollbarsFixer();
 
-const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, settingsSchema);
+const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
     if (settings.fix_journal_navigation) {

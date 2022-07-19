@@ -1,10 +1,21 @@
-import {debug} from "./logging.js";
+import {debug, log} from "./logging.js";
 import {sendToServiceWorker} from "./comms.js";
 import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js";
+
+import Tab = chrome.tabs.Tab;
 
 type SettingDescriptor = { description: string, default: boolean }
 type SettingsSchema = { [key: string]: SettingDescriptor }
 type SettingsObject = {[key: string]: boolean}
+type SettingsMessage = { action: string, settings?: SettingsObject }
+
+function createDefaultSettings(schema: SettingsSchema): SettingsObject {
+    const defaultSettings: {[key: string]: boolean} = {};
+    for (const [toggleId, descriptor] of Object.entries(schema)) {
+        defaultSettings[toggleId] = descriptor.default;
+    }
+    return defaultSettings;
+}
 
 class FLSettingsFrontend {
     private readonly name: string;
@@ -22,7 +33,7 @@ class FLSettingsFrontend {
         this.schema = schema;
 
         debug("Initializing create default settings object...");
-        this.settings = this.createDefaultSettings();
+        this.settings = createDefaultSettings(this.schema);
 
         window.addEventListener("message", (event) => {
             if (event.data.action === MSG_TYPE_CURRENT_SETTINGS) {
@@ -32,14 +43,6 @@ class FLSettingsFrontend {
         });
 
         sendToServiceWorker(MSG_TYPE_CURRENT_SETTINGS, {});
-    }
-
-    private createDefaultSettings(): SettingsObject {
-        const defaultSettings: {[key: string]: boolean} = {};
-        for (const [toggleId, descriptor] of Object.entries(this.schema)) {
-            defaultSettings[toggleId] = descriptor.default;
-        }
-        return defaultSettings;
     }
 
     private attachPanelInjector(node: Node) {
@@ -224,4 +227,58 @@ class FLSettingsFrontend {
     }
 }
 
-export { FLSettingsFrontend, SettingsObject, SettingsSchema };
+class FLSettingsBackend {
+    private readonly schema: SettingsSchema;
+
+    constructor(schema: SettingsSchema) {
+        this.schema = schema;
+    }
+
+    private getFallenLondonTabs(): Promise<Array<Tab>> {
+        return new Promise((resolve, reject) => {
+            chrome.windows.getCurrent(w => {
+                chrome.tabs.query(
+                    {windowId: w.id, url: "*://*.fallenlondon.com/*"},
+                    function (tabs) {
+                        resolve(tabs);
+                    }
+                );
+            });
+        });
+    }
+
+    private sendStateToTabs(tabs: Array<Tab>, state: SettingsObject) {
+        console.debug("Sending state to tabs", state);
+        tabs.map((t) => chrome.tabs.sendMessage(t.id!, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state}));
+    }
+
+    isMessageRelevant(message: {[key: string]: boolean | string}) {
+        return message.action == MSG_TYPE_CURRENT_SETTINGS || message.action == MSG_TYPE_SAVE_SETTINGS;
+    }
+
+    handleMessage(message: SettingsMessage) {
+        if (message.action === MSG_TYPE_SAVE_SETTINGS) {
+            chrome.storage.local.set({
+                settings: message.settings
+            }, () => {
+                // Send out new state to the FL tabs
+                this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, message.settings!!));
+
+                log("Saved settings to local storage.");
+            });
+        }
+
+        if (message.action === MSG_TYPE_CURRENT_SETTINGS) {
+            chrome.storage.local.get(['settings'], (result) => {
+                if (chrome.runtime.lastError) {
+                    debug("Could not load settings from DB, falling back to defaults.")
+                    this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, createDefaultSettings(this.schema)));
+                } else {
+                    this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, result.settings));
+                }
+            });
+        }
+    }
+}
+
+export { FLSettingsFrontend, FLSettingsBackend, SettingsObject, SettingsSchema };
