@@ -1,13 +1,7 @@
-import {FLSettingsFrontend, SettingsSchema} from "./settings.js";
+import {FLSettingsFrontend} from "./settings.js";
 import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants.js";
 import {AutoScrollFixer, JournalUiFixer, ThousandSeparatorFixer, DiscreteScrollbarsFixer} from "./fixers/index.js";
 import {debug} from "./logging.js";
-
-// const settingsSchema = new Map<string, string>();
-// settingsSchema.set("fix_journal_navigation", "Fix color and alignment of the navigation buttons in Journal.");
-// settingsSchema.set("add_thousands_separator", "Add comma after thousands in the currency indicators.");
-// settingsSchema.set("auto_scroll_back", "Auto-scroll to the storylet after choosing branch.");
-// settingsSchema.set("discrete_scrollbars", "Remove scrollbars from discrete sidebar qualities.");
 
 const journalUiFixer = new JournalUiFixer();
 const thousandSeparatorFixer = new ThousandSeparatorFixer();
