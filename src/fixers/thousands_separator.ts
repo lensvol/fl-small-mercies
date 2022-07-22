@@ -52,10 +52,21 @@ class ThousandSeparatorFixer implements IMercyFixer {
                         continue;
                     }
 
-                    const echoesIndicator = document.querySelector("div[class*='sidebar'] ul li div div[class='item__value'] div[class*='item__price']");
+                    const echoesIndicator = node.querySelector("div[class*='sidebar'] ul li div div[class='item__value'] div[class*='item__price']");
                     if (echoesIndicator) {
                         echoesIndicator.textContent = numberWithCommas(echoesIndicator.textContent!);
                         this.currencyObserver.observe(echoesIndicator, {subtree: true, characterData: true});
+                    }
+
+                    const currencyHeadings = node.querySelectorAll("span[class='item__name']");
+                    for (const heading of currencyHeadings) {
+                        if (heading.textContent == "Hinterland Scrip" && heading.parentElement) {
+                            const scripIndicator = heading.parentElement.querySelector("div[class='item__value']");
+                            if (scripIndicator) {
+                                scripIndicator.textContent = numberWithCommas(scripIndicator.textContent!);
+                                this.currencyObserver.observe(scripIndicator, {subtree: true, characterData: true});
+                            }
+                        }
                     }
 
                     const shopPanel = node.querySelector("div[class*='shop']");
