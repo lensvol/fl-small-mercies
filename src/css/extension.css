@@ -1,5 +1,5 @@
 .scrip:before {
-    background: url("chrome-extension://__MSG_@@extension_id__/dist/images/icon-scrip.svg") -4px 0 no-repeat;
+    background: url("chrome-extension://__MSG_@@extension_id__/dist/images/icon-scrip.svg") -6px 1px no-repeat;
 }
 
 .scrip:before {
