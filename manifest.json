@@ -13,6 +13,9 @@
       "matches": [
         "https://www.fallenlondon.com/*"
       ],
+      "css": [
+        "dist/css/extension.css"
+      ],
       "js": [
         "dist/content.js"
       ],

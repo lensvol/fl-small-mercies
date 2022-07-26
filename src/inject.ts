@@ -1,12 +1,19 @@
 import {FLSettingsFrontend} from "./settings.js";
 import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants.js";
-import {AutoScrollFixer, JournalUiFixer, ThousandSeparatorFixer, DiscreteScrollbarsFixer} from "./fixers/index.js";
+import {
+    AutoScrollFixer,
+    JournalUiFixer,
+    ThousandSeparatorFixer,
+    DiscreteScrollbarsFixer,
+    ScripIconFixer
+} from "./fixers/index.js";
 import {debug} from "./logging.js";
 
 const journalUiFixer = new JournalUiFixer();
 const thousandSeparatorFixer = new ThousandSeparatorFixer();
 const autoScrollFixer = new AutoScrollFixer();
 const discreteScrollbarsFixer = new DiscreteScrollbarsFixer();
+const scripIconFixer = new ScripIconFixer();
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
@@ -41,5 +48,13 @@ settingsFrontend.registerUpdateHandler((settings) => {
     } else {
         debug("Disabling discrete scrollbars...");
         discreteScrollbarsFixer.disable();
+    }
+
+    if (settings.scrip_icon) {
+        debug("Enabling scrip icon...");
+        scripIconFixer.enable();
+    } else {
+        debug("Disabling scrip icon...")
+        scripIconFixer.disable();
     }
 });

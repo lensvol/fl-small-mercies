@@ -1,0 +1,12 @@
+.scrip:before {
+    background: url("chrome-extension://__MSG_@@extension_id__/dist/images/icon-scrip.svg") -5px 0 no-repeat;
+}
+
+.scrip:before {
+    content: "";
+    display: inline-block;
+    width: 1.2em;
+    height: 1.8em;
+    margin: 0 0 -0.8em;
+    background-size: 1.75em;
+}

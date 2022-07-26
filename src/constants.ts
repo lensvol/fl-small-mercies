@@ -22,6 +22,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "discrete_scrollbars": {
         description: "Remove scrollbars from discrete sidebar qualities.",
         default: true
+    },
+    "scrip_icon": {
+        description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
+        default: true
     }
 }
 
