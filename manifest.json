@@ -24,17 +24,17 @@
   ],
   "action": {
     "default_icon": {
-      "16": "/images/fl-quality-lantern-icon-16.png",
-      "32": "/images/fl-quality-lantern-icon-32.png",
-      "48": "/images/fl-quality-lantern-icon-48.png",
-      "128": "/images/fl-quality-lantern-icon-128.png"
+      "16": "/images/fl-small-mercies-icon-16.png",
+      "32": "/images/fl-small-mercies-icon-32.png",
+      "48": "/images/fl-small-mercies-icon-48.png",
+      "128": "/images/fl-small-mercies-icon-128.png"
     }
   },
   "icons": {
-    "16": "/images/fl-quality-lantern-icon-16.png",
-    "32": "/images/fl-quality-lantern-icon-32.png",
-    "48": "/images/fl-quality-lantern-icon-48.png",
-    "128": "/images/fl-quality-lantern-icon-128.png"
+    "16": "/images/fl-small-mercies-icon-16.png",
+    "32": "/images/fl-small-mercies-icon-32.png",
+    "48": "/images/fl-small-mercies-icon-48.png",
+    "128": "/images/fl-small-mercies-icon-128.png"
   },
   "web_accessible_resources": [{
     "resources": [
