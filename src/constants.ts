@@ -26,6 +26,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "scrip_icon": {
         description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
         default: true
+    },
+    "ship_saver": {
+        description: "Disable storylet that lets you sell your Ship.",
+        default: true
     }
 }
 

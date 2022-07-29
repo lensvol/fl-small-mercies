@@ -5,7 +5,7 @@ import {
     JournalUiFixer,
     ThousandSeparatorFixer,
     DiscreteScrollbarsFixer,
-    ScripIconFixer
+    ScripIconFixer, ShipSaverFixer
 } from "./fixers/index.js";
 import {debug} from "./logging.js";
 
@@ -14,6 +14,7 @@ const thousandSeparatorFixer = new ThousandSeparatorFixer();
 const autoScrollFixer = new AutoScrollFixer();
 const discreteScrollbarsFixer = new DiscreteScrollbarsFixer();
 const scripIconFixer = new ScripIconFixer();
+const shipSaverFixer = new ShipSaverFixer();
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
@@ -56,5 +57,13 @@ settingsFrontend.registerUpdateHandler((settings) => {
     } else {
         debug("Disabling scrip icon...")
         scripIconFixer.disable();
+    }
+
+    if (settings.ship_saver) {
+        debug("Enabling ship saver...");
+        shipSaverFixer.enable();
+    } else {
+        debug("Disabling ship saver...");
+        shipSaverFixer.disable();
     }
 });
