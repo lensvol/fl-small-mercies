@@ -3,11 +3,18 @@
   "description": "Set of small 'fixes' for Fallen London UI.",
   "version": "1.0.0",
   "manifest_version": 3,
-  "permissions": [],
+  "permissions": ["storage", "tabs"],
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": [
         "https://www.fallenlondon.com/*"
+      ],
+      "css": [
+        "dist/css/extension.css"
       ],
       "js": [
         "dist/content.js"
@@ -30,7 +37,10 @@
     "128": "/images/fl-small-mercies-icon-128.png"
   },
   "web_accessible_resources": [{
-    "resources": ["dist/inject.js", "dist/constants.js"],
+    "resources": [
+      "dist/*",
+      "src/*"
+    ],
     "matches": ["https://www.fallenlondon.com/*"]
   }]
 }
