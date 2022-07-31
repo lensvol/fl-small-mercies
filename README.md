@@ -60,3 +60,10 @@ To build a release version of the extension:
 3. Open **opera:extensions** page.
 4. Enable "Developer Mode" (top right corner).
 6. Click **Load unpacked** and select the folder where you unzipped the file.
+
+## Special thanks
+
+* [rahv7](https://www.reddit.com/user/rahv7/) - for having the nerve to goad me into writing this.
+* [idyl](https://www.reddit.com/user/idyl/) - for suggesting idea with thousands separator.
+* **RagCall** - for suggesting idea with removing scrollbars on discrete qualities.
+* [Saklad5](https://github.com/Saklad5) - for finding the appropriate graphic for Hinterlands Scrip icon.
