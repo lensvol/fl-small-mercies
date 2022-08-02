@@ -3,7 +3,7 @@ import {IMercyFixer} from "./base.js";
 const DISCRETE_SIDEBAR_QUALITIES = [
     "Notability",
     "Influence",
-    "Bizzare",
+    "Bizarre",
     "Dreaded",
     "Respectable",
     "Moonlit"
