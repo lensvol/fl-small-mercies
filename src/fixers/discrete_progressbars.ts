@@ -7,6 +7,7 @@ const DISCRETE_SIDEBAR_QUALITIES = [
     "Dreaded",
     "Respectable",
     "Irrigo",
+    "A Turncoat",
     "Moonlit"
 ];
 
