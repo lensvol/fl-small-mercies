@@ -18,6 +18,7 @@ _NB: This extension is **not** (yet) whitelisted by Failbetter Games. Use at you
 
 ## Development
 
+### Basics
 _First,_ install **Node.js** and **npm** >= 8.5.1.
 
 _Second_, install necessary packages:
@@ -29,10 +30,29 @@ _Third,_ compile JS version of the plugin:
 make build_dist
 ```
 
-To build a release version of the extension:
-
-
 **Enjoy hacking!**
+
+### Changing Hinterland Scrip icon
+
+Due to the issues with accessing files within extensions from CSS on Firefox,
+we are forced to inline SVG file itself into the CSS file.
+
+How to do it:
+
+1. Run `src/images/icon_scrip.svg` through [svgo](https://github.com/svg/svgo)
+2. Encode contents of that SVG using [data URI encoder](https://yoksel.github.io/url-encoder/)
+3. Replace contents of `src/css/extension.css` with the following:
+```css
+.scrip:before {
+    content: "";
+    {{ contents of the "Ready for CSS field" }} -6px 1px no-repeat;
+    display: inline-block;
+    width: 1.2em;
+    height: 1.8em;
+    margin: 0 0 -0.8em;
+    background-size: 1.75em;
+}
+```
 
 ## Manual installation
 
