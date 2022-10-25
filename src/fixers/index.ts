@@ -4,6 +4,7 @@ import {AutoScrollFixer} from "./auto_scroll.js"
 import {DiscreteScrollbarsFixer} from "./discrete_progressbars.js";
 import {ScripIconFixer} from "./scrip_icon.js";
 import {ShipSaverFixer} from "./ship_saver.js";
+import {RightSidebarFixer} from "./right_sidebar.js";
 
 export {
     AutoScrollFixer,
@@ -11,5 +12,6 @@ export {
     ThousandSeparatorFixer,
     DiscreteScrollbarsFixer,
     ScripIconFixer,
-    ShipSaverFixer
+    ShipSaverFixer,
+    RightSidebarFixer,
 };

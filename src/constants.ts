@@ -30,6 +30,14 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "ship_saver": {
         description: "Disable storylet that lets you sell your Ship.",
         default: true
+    },
+    "remove_mask_banner": {
+        description: "Removes 'Mask of the Rose' banner.",
+        default: false,
+    },
+    "remove_sidebar_snippets": {
+        description: "Remove 'Snippets' from the right sidebar.",
+        default: true,
     }
 }
 

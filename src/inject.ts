@@ -5,9 +5,12 @@ import {
     JournalUiFixer,
     ThousandSeparatorFixer,
     DiscreteScrollbarsFixer,
-    ScripIconFixer, ShipSaverFixer
+    ScripIconFixer,
+    ShipSaverFixer,
+    RightSidebarFixer
 } from "./fixers/index.js";
 import {debug} from "./logging.js";
+import {IMutationAwareFixer} from "./fixers/base.js";
 
 const journalUiFixer = new JournalUiFixer();
 const thousandSeparatorFixer = new ThousandSeparatorFixer();
@@ -15,6 +18,11 @@ const autoScrollFixer = new AutoScrollFixer();
 const discreteScrollbarsFixer = new DiscreteScrollbarsFixer();
 const scripIconFixer = new ScripIconFixer();
 const shipSaverFixer = new ShipSaverFixer();
+
+const rightSidebarFixer = new RightSidebarFixer();
+const nodeAwareFixers: [IMutationAwareFixer] = [
+    rightSidebarFixer
+];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
@@ -66,4 +74,25 @@ settingsFrontend.registerUpdateHandler((settings) => {
         debug("Disabling ship saver...");
         shipSaverFixer.disable();
     }
+
+    nodeAwareFixers.map((fixer) => fixer.applySettings(settings))
 });
+
+const centralMutationObserver = new MutationObserver((mutations, observer) => {
+    for (let m = 0; m < mutations.length; m++) {
+        const mutation = mutations[m];
+
+        for (let n = 0; n < mutation.addedNodes.length; n++) {
+            const node = mutation.addedNodes[n] as HTMLElement;
+
+            if (node.nodeName.toLowerCase() !== "div") {
+                continue;
+            }
+
+            nodeAwareFixers
+                .filter((fixer) => fixer.checkEligibility(node))
+                .map((fixer) => fixer.onNodeAdded(node))
+        }
+    }
+});
+centralMutationObserver.observe(document, {childList: true, subtree: true});
