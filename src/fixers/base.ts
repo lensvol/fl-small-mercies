@@ -1,4 +1,4 @@
-import {SettingsObject} from "../settings";
+import {SettingsObject} from "../settings.js";
 
 interface IMercyFixer {
     enable(): void

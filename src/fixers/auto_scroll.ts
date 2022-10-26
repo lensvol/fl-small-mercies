@@ -1,4 +1,5 @@
-import {IMercyFixer} from "./base.js";
+import {IMutationAwareFixer} from "./base.js";
+import {SettingsObject} from "../settings.js";
 
 // Adapted from
 // https://stackoverflow.com/questions/123999/how-can-i-tell-if-a-dom-element-is-visible-in-the-current-viewport
@@ -13,51 +14,39 @@ function isElementInViewport (el: Element): boolean {
     );
 }
 
-export class AutoScrollFixer implements IMercyFixer {
-    private observer: MutationObserver
+export class AutoScrollFixer implements IMutationAwareFixer {
+    private enableAutoScrollBack: boolean = false;
 
-    constructor() {
-        this.observer = new MutationObserver((mutations, observer) => {
-            for (let m = 0; m < mutations.length; m++) {
-                const mutation = mutations[m];
+    applySettings(settings: SettingsObject): void {
+        this.enableAutoScrollBack = settings.auto_scroll_back;
+    }
 
-                for (let n = 0; n < mutation.addedNodes.length; n++) {
-                    const node = mutation.addedNodes[n] as HTMLElement;
+    checkEligibility(node: HTMLElement): boolean {
+        return this.enableAutoScrollBack;
+    }
 
-                    if (node.nodeName.toLowerCase() !== "div") {
-                        continue;
-                    }
+    onNodeAdded(node: HTMLElement): void {
+        let mediaRoot: Element | null
+        if (node.classList.contains("media--root")) {
+            mediaRoot = node;
+        } else {
+            mediaRoot = node.querySelector("div[class*='media--root']");
+        }
+        if (!mediaRoot) {
+            return;
+        }
 
-                    let mediaRoot: Element | null
-                    if (node.classList.contains("media--root")) {
-                        mediaRoot = node;
-                    } else {
-                        mediaRoot = node.querySelector("div[class*='media--root']");
-                    }
-                    if (!mediaRoot) {
-                        continue;
-                    }
-
-                    if (!isElementInViewport(mediaRoot)) {
-                        console.debug("Storylet not visible, scrolling back...");
-                        const tabList = document.querySelector("ul[role='tablist']");
-                        if (tabList) {
-                            tabList.scrollIntoView();
-                        } else {
-                            mediaRoot.scrollIntoView();
-                        }
-                    }
-                }
+        if (!isElementInViewport(mediaRoot)) {
+            console.debug("Storylet not visible, scrolling back...");
+            const tabList = document.querySelector("ul[role='tablist']");
+            if (tabList) {
+                tabList.scrollIntoView();
+            } else {
+                mediaRoot.scrollIntoView();
             }
-        });
+        }
     }
 
-    disable(): void {
-        this.observer.disconnect();
-    }
-
-    enable(): void {
-        this.observer.observe(document, {childList: true, subtree: true});
-    }
+    onNodeRemoved(node: HTMLElement): void {}
 
 }

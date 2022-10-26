@@ -1,55 +1,44 @@
-import {IMercyFixer} from "./base.js";
+import {IMutationAwareFixer} from "./base.js";
+import {SettingsObject} from "../settings.js";
 
-export class ShipSaverFixer implements IMercyFixer {
-    private observer: MutationObserver
+export class ShipSaverFixer implements IMutationAwareFixer {
+    private disableSaleOption: boolean = false
 
-    constructor() {
-        this.observer = new MutationObserver((mutations, observer) => {
-            for (let m = 0; m < mutations.length; m++) {
-                const mutation = mutations[m];
+    applySettings(settings: SettingsObject): void {
+        this.disableSaleOption = settings.ship_saver
+    }
 
-                for (let n = 0; n < mutation.addedNodes.length; n++) {
-                    const node = mutation.addedNodes[n] as HTMLElement;
+    checkEligibility(node: HTMLElement): boolean {
+        return this.disableSaleOption;
+    }
 
-                    if (node.nodeName.toLowerCase() !== "div") {
-                        continue;
-                    }
+    onNodeAdded(node: HTMLElement): void {
+        let shipStorylet = node.querySelector("div[data-branch-id='251811']");
+        // @ts-ignore
+        if (!shipStorylet && node.hasAttribute("data-branch-id") && node.attributes["data-branch-id"].value == 251811) {
+            shipStorylet = node;
+        }
 
-                    let shipStorylet = node.querySelector("div[data-branch-id='251811']");
-                    // @ts-ignore
-                    if (!shipStorylet && node.hasAttribute("data-branch-id") && node.attributes["data-branch-id"].value == 251811) {
-                        shipStorylet = node;
-                    }
+        if (shipStorylet) {
+            const description = shipStorylet.querySelector("div[class='media__body branch__body'] > div > p") as HTMLElement;
+            const labelNode = document.createElement("b");
+            labelNode.innerText = "This branch was disabled for your own good.";
 
-                    if (shipStorylet) {
-                        const description = shipStorylet.querySelector("div[class='media__body branch__body'] > div > p") as HTMLElement;
-                        const labelNode = document.createElement("b");
-                        labelNode.innerText = "This branch was disabled for your own good.";
+            description.appendChild(document.createElement("br"));
+            description.appendChild(document.createElement("br"));
+            description.appendChild(labelNode);
 
-                        description.appendChild(document.createElement("br"));
-                        description.appendChild(document.createElement("br"));
-                        description.appendChild(labelNode);
+            shipStorylet.classList.add("media--locked");
+            shipStorylet
+                .querySelectorAll("button")
+                .forEach((b) => b.remove());
 
-                        shipStorylet.classList.add("media--locked");
-                        shipStorylet
-                            .querySelectorAll("button")
-                            .forEach((b) => b.remove());
-
-                        const actionButton = shipStorylet.querySelector("div[class*='buttons']");
-                        if (actionButton) {
-                            actionButton.remove();
-                        }
-                    }
-                }
+            const actionButton = shipStorylet.querySelector("div[class*='buttons']");
+            if (actionButton) {
+                actionButton.remove();
             }
-        });
+        }
     }
 
-    disable(): void {
-        this.observer.disconnect();
-    }
-
-    enable(): void {
-        this.observer.observe(document, {childList: true, subtree: true});
-    }
+    onNodeRemoved(node: HTMLElement): void {}
 }
