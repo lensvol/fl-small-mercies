@@ -38,6 +38,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "remove_sidebar_snippets": {
         description: "Remove 'Snippets' from the right sidebar.",
         default: true,
+    },
+    "remove_plan_buttons": {
+        description: "Remove 'Plans' button & related buttonlets",
+        default: true
     }
 }
 
