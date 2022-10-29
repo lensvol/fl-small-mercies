@@ -32,7 +32,7 @@ const SETTINGS_SCHEMA: SettingsSchema = {
         default: true
     },
     "remove_mask_banner": {
-        description: "Removes 'Mask of the Rose' banner.",
+        description: "Remove 'Mask of the Rose' banner.",
         default: false,
     },
     "remove_sidebar_snippets": {
