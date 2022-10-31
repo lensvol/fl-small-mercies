@@ -1,5 +1,5 @@
 import { SettingsObject } from "../settings.js";
-import {IMutationAwareFixer} from "./base.js";
+import {IMercyFixer, IMutationAwareFixer} from "./base.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = [
     "Notability",
@@ -12,7 +12,7 @@ const DISCRETE_SIDEBAR_QUALITIES = [
     "Moonlit"
 ];
 
-export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
+export class DiscreteScrollbarsFixer implements IMercyFixer, IMutationAwareFixer {
     private removeDiscreteScrollbars: boolean = false;
 
     onNodeAdded(node: HTMLElement): void {

@@ -7,7 +7,7 @@ function numberWithCommas(x: string): string {
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
 }
 
-class ThousandSeparatorFixer implements IMutationAwareFixer {
+class ThousandSeparatorFixer implements IMercyFixer, IMutationAwareFixer {
     private separateThousands: boolean = false;
     private currencyObserver: MutationObserver;
     private shopPriceObserver: MutationObserver;

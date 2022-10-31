@@ -1,15 +1,13 @@
 import {SettingsObject} from "../settings.js";
 
 interface IMercyFixer {
-    enable(): void
-    disable(): void
+    applySettings(settings: SettingsObject): void
 }
 
 interface IMutationAwareFixer{
     onNodeAdded(node: HTMLElement): void
     onNodeRemoved(node: HTMLElement): void
 
-    applySettings(settings: SettingsObject): void
     checkEligibility(node: HTMLElement): boolean
 }
 

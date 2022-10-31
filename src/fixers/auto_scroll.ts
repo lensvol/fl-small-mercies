@@ -1,4 +1,4 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMercyFixer, IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 // Adapted from
@@ -14,7 +14,7 @@ function isElementInViewport (el: Element): boolean {
     );
 }
 
-export class AutoScrollFixer implements IMutationAwareFixer {
+export class AutoScrollFixer implements IMercyFixer, IMutationAwareFixer {
     private enableAutoScrollBack: boolean = false;
 
     applySettings(settings: SettingsObject): void {

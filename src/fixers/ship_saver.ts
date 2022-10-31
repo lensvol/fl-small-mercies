@@ -1,7 +1,7 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMercyFixer, IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-export class ShipSaverFixer implements IMutationAwareFixer {
+export class ShipSaverFixer implements IMercyFixer, IMutationAwareFixer {
     private disableSaleOption: boolean = false
 
     applySettings(settings: SettingsObject): void {
