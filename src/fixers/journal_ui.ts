@@ -4,7 +4,7 @@ import {SettingsObject} from "../settings.js";
 const CALENDAR_STENCIL_SELECTOR = "svg[class*='react-date-picker__button__icon']";
 const LIGHT_TURQUOISE_RGB = "#92d1d5";
 
-class JournalUiFixer implements IMercyFixer, IMutationAwareFixer {
+export class JournalUiFixer implements IMercyFixer, IMutationAwareFixer {
     private fixJournalUI: boolean = false;
 
     applySettings(settings: SettingsObject): void {
@@ -40,5 +40,3 @@ class JournalUiFixer implements IMercyFixer, IMutationAwareFixer {
 
     onNodeRemoved(node: HTMLElement): void {}
 }
-
-export { JournalUiFixer };
