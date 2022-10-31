@@ -4,7 +4,7 @@ interface IMercyFixer {
     applySettings(settings: SettingsObject): void
 }
 
-interface IMutationAwareFixer{
+interface IMutationAwareFixer extends IMercyFixer{
     onNodeAdded(node: HTMLElement): void
     onNodeRemoved(node: HTMLElement): void
 

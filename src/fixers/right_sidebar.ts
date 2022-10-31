@@ -1,10 +1,10 @@
-import {IMercyFixer, IMutationAwareFixer} from "./base.js";
+import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const MASK_ROSE_BANNER_SELECTOR = "img[aria-label='Wishlist Mask of the Rose on Steam'"
 const SNIPPET_CONTAINER_SELECTOR = "div[class='snippet']"
 
-export class RightSidebarFixer implements IMercyFixer, IMutationAwareFixer {
+export class RightSidebarFixer implements IMutationAwareFixer {
     private removeMaskBanner: boolean = false
     private removeSnippets: boolean = false
 

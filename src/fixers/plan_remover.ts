@@ -1,10 +1,10 @@
-import {IMercyFixer, IMutationAwareFixer} from "./base.js";
+import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const PLAN_BUTTONLET_SELECTOR = "div[class='branch__plan-buttonlet'] button[aria-label='Mark this choice as a plan'"
 const PLANS_BUTTON_SELECTOR = "li[data-name='plans']"
 
-export class PlanButtonsFixer implements IMercyFixer, IMutationAwareFixer {
+export class PlanButtonsFixer implements IMutationAwareFixer {
     private removePlanButtons: boolean = false;
 
     applySettings(settings: SettingsObject): void {

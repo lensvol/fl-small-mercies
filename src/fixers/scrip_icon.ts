@@ -1,7 +1,7 @@
-import { SettingsObject } from "../settings.js";
-import {IMercyFixer, IMutationAwareFixer} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {IMutationAwareFixer} from "./base.js";
 
-export class ScripIconFixer implements IMercyFixer, IMutationAwareFixer {
+export class ScripIconFixer implements IMutationAwareFixer {
     private showScripIcon: boolean = false;
 
     onNodeAdded(node: HTMLElement): void {

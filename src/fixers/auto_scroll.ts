@@ -14,7 +14,7 @@ function isElementInViewport (el: Element): boolean {
     );
 }
 
-export class AutoScrollFixer implements IMercyFixer, IMutationAwareFixer {
+export class AutoScrollFixer implements IMutationAwareFixer {
     private enableAutoScrollBack: boolean = false;
 
     applySettings(settings: SettingsObject): void {
