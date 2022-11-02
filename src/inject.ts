@@ -7,7 +7,7 @@ import {
     DiscreteScrollbarsFixer,
     ScripIconFixer,
     ShipSaverFixer,
-    RightSidebarFixer, PlanButtonsFixer
+    RightSidebarFixer, PlanButtonsFixer, ThingSortFixer
 } from "./fixers/index.js";
 import {IMutationAwareFixer} from "./fixers/base.js";
 
@@ -20,6 +20,7 @@ const nodeAwareFixers: IMutationAwareFixer[] = [
     new ScripIconFixer(),
     new ShipSaverFixer(),
     new PlanButtonsFixer(),
+    new ThingSortFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

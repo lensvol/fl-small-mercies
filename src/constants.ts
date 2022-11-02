@@ -42,6 +42,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "remove_plan_buttons": {
         description: "Remove 'Plans' button & related buttonlets",
         default: true
+    },
+    "sort_city_mysteries": {
+        description: "Sort 'Mystery of the ... City' qualities.",
+        default: true,
     }
 }
 
