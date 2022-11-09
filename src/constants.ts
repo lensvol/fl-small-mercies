@@ -46,6 +46,14 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "sort_city_mysteries": {
         description: "Sort 'Mystery of the ... City' qualities.",
         default: true,
+    },
+    "sort_discordance_seals": {
+        description: "Sort ███████████ █████.",
+        default: true,
+    },
+    "sort_neathbow_boxes": {
+        description: "Sort Neathbow boxes in your inventory.",
+        default: true,
     }
 }
 
