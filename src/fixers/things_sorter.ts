@@ -11,92 +11,32 @@ const SEAL_ORDER = [141891, 141892, 141893, 141894, 141895, 141896, 141897, 1418
 const SEAL_SELECTOR = SEAL_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
 
-function sortSeals(sealIcons: NodeListOf<Element>) {
-    const seals = Array
-        .from(sealIcons)
+function findAndSortIcons(node: Element, selector: string, order: number[]) {
+    const icons = node.querySelectorAll(selector);
+    const things = Array
+        .from(icons)
         // @ts-ignore
         .sort((i1, i2) => i1.dataset.branchId - i2.dataset.branchId)
         .map((icon) => icon.parentElement);
 
-    if (seals.length <= 1 || seals[0] == null) {
+    if (things.length <= 1 || things[0] == null) {
         return;
     }
 
-    const parent = seals[0].parentElement;
-    const start = seals[0];
+    const parent = things[0].parentElement;
+    const start = things[0];
 
     if (parent == null) {
         return;
     }
 
-    // const parent = seals[0].parentElement;
-    // const start = seals[0].previousSibling;
-
-    seals
+    things
         .slice(1)
         .reverse()
-        .forEach(seal => {
-            if (seal != null) {
-                parent.removeChild(seal);
-                start.after(seal);
-            }
-        })
-}
-
-function sortNeathbowBoxes(neathbowIcons: NodeListOf<Element>) {
-    const neathbow = Array
-        .from(neathbowIcons)
-        // @ts-ignore
-        .sort((i1, i2) => i1.dataset.qualityId - i2.dataset.qualityId)
-        .map((icon) => icon.parentElement);
-
-    if (neathbow.length <= 1 || neathbow[0] == null) {
-        return;
-    }
-
-    const parent = neathbow[0].parentElement;
-    const start = neathbow[0];
-
-    if (parent == null) {
-        return;
-    }
-    
-    neathbow
-        .slice(1)
-        .reverse()
-        .forEach(box => {
-            if (box != null) {
-                parent.removeChild(box);
-                start.after(box);
-            }
-        })
-}
-
-function sortMysteries(mysteryIcons: NodeListOf<Element>) {
-    const mysteries = Array
-        .from(mysteryIcons)
-        // @ts-ignore
-        .sort((i1, i2) => i1.dataset.branchId - i2.dataset.branchId)
-        .map((icon) => icon.parentElement);
-
-    if (mysteries.length <= 1 || mysteries[0] == null) {
-        return;
-    }
-
-    const parent = mysteries[0].parentElement;
-    const start = mysteries[0];
-
-    if (parent == null) {
-        return;
-    }
-
-    mysteries
-        .slice(1)
-        .reverse()
-        .forEach(mystery => {
-            if (mystery != null) {
-                parent.removeChild(mystery);
-                start.after(mystery);
+        .forEach(thing => {
+            if (thing != null) {
+                parent.removeChild(thing);
+                start.after(thing);
             }
         })
 }
@@ -120,25 +60,16 @@ export class ThingSortFixer implements IMutationAwareFixer {
         const accomplishments = node.querySelectorAll("div[data-group-name='Accomplishments']");
         if (accomplishments.length > 0) {
             if (this.sortCityMysteries) {
-                const mysteryIcons = node.querySelectorAll(MYSTERIES_SELECTOR);
-                if (mysteryIcons.length > 1) {
-                    sortMysteries(mysteryIcons);
-                }
+                findAndSortIcons(node, MYSTERIES_SELECTOR, MYSTERIES_ORDER);
             }
 
             if (this.sortSeals) {
-                const sealIcons = node.querySelectorAll(SEAL_SELECTOR);
-                if (sealIcons.length > 1) {
-                    sortSeals(sealIcons);
-                }
+                findAndSortIcons(node, SEAL_SELECTOR, SEAL_ORDER);
             }
         }
-        
+
         if (this.sortNeathbow) {
-            const neathbowIcons = node.querySelectorAll(NEATHBOW_SELECTOR);
-            if (neathbowIcons.length > 1) {
-                sortNeathbowBoxes(neathbowIcons);
-            }
+            findAndSortIcons(node, NEATHBOW_SELECTOR, NEATHBOW_ORDER);
         }
     }
 
