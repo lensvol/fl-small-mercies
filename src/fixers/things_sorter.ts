@@ -4,7 +4,19 @@ import {SettingsObject} from "../settings.js";
 const MYSTERIES_ORDER = [143188, 143189, 143190, 143191, 143192];
 const MYSTERIES_SELECTOR = MYSTERIES_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
-const NEATHBOW_ORDER = [141683, 142658, 142674, 142711, 142712, 142713, 142714];
+/*
+ The following order is confirmed to be canonical by Bruno himself:
+ https://cohost.org/bruno/post/66284-favorite-new-fallen
+ */
+const NEATHBOW_ORDER = [
+    142658, // Peligin
+    142714, // Violant
+    142713, // Apocyan
+    142674, // Viric
+    141683, // Cosmogone
+    142711, // Irrigo
+    142712, // Gant
+];
 const NEATHBOW_SELECTOR = NEATHBOW_ORDER.map((i) => `div[data-quality-id='${i}']`).join(", ");
 
 const SEAL_ORDER = [141891, 141892, 141893, 141894, 141895, 141896, 141897, 141898, 142381];
