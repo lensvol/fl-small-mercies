@@ -1,7 +1,7 @@
 {
   "name": "FL Small Mercies",
   "description": "Set of small 'fixes' for Fallen London UI.",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "manifest_version": 2,
   "permissions": ["storage", "tabs"],
   "background": {
