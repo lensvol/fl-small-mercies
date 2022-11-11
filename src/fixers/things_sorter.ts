@@ -15,8 +15,13 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
     const icons = node.querySelectorAll(selector);
     const things = Array
         .from(icons)
-        // @ts-ignore
-        .sort((i1, i2) => i1.dataset.branchId - i2.dataset.branchId)
+        .sort((i1, i2) => {
+            // @ts-ignore
+            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId));
+            // @ts-ignore
+            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId));
+            return pos1 - pos2
+        })
         .map((icon) => icon.parentElement);
 
     if (things.length <= 1 || things[0] == null) {
