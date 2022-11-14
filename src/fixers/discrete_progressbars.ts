@@ -13,7 +13,7 @@ const DISCRETE_SIDEBAR_QUALITIES = [
 ];
 
 export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
-    private removeDiscreteScrollbars: boolean = false;
+    private removeDiscreteScrollbars = false;
 
     onNodeAdded(node: HTMLElement): void {
         const sidebarQualities = node.querySelectorAll("li[class*='sidebar-quality'] div[class='item__desc']");
@@ -36,13 +36,15 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+        // Do nothing if DOM node is removed.
+    }
 
     applySettings(settings: SettingsObject): void {
         this.removeDiscreteScrollbars = settings.discrete_scrollbars;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.removeDiscreteScrollbars;
     }
 

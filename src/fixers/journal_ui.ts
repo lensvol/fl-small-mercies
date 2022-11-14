@@ -5,13 +5,13 @@ const CALENDAR_STENCIL_SELECTOR = "svg[class*='react-date-picker__button__icon']
 const LIGHT_TURQUOISE_RGB = "#92d1d5";
 
 export class JournalUiFixer implements IMutationAwareFixer {
-    private fixJournalUI: boolean = false;
+    private fixJournalUI = false;
 
     applySettings(settings: SettingsObject): void {
         this.fixJournalUI = settings.fix_journal_navigation;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.fixJournalUI;
     }
 
@@ -38,5 +38,7 @@ export class JournalUiFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 }

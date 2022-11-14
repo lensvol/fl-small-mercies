@@ -29,7 +29,7 @@ settingsFrontend.registerUpdateHandler((settings) => {
     nodeAwareFixers.map((fixer) => fixer.applySettings(settings))
 });
 
-const centralMutationObserver = new MutationObserver((mutations, observer) => {
+const centralMutationObserver = new MutationObserver((mutations, _observer) => {
     centralMutationObserver.disconnect();
 
     for (let m = 0; m < mutations.length; m++) {

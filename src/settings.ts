@@ -147,12 +147,12 @@ class FLSettingsFrontend {
 
             toggle.appendChild(label);
             listContainer.appendChild(toggle);
-        };
+        }
 
         const submitButton = document.createElement("button");
         submitButton.classList.add("button", "button--primary");
         submitButton.textContent = "UPDATE";
-        submitButton.addEventListener("click", (ev) => this.saveState());
+        submitButton.addEventListener("click", (_ev) => this.saveState());
 
         containerDiv.appendChild(heading);
         containerDiv.appendChild(listContainer);
@@ -170,19 +170,18 @@ class FLSettingsFrontend {
                     const node = mutation.addedNodes[n];
 
                     if (node.nodeName.toLowerCase() === "div") {
-                        // @ts-ignore
-                        const accountSections = node.querySelector("ul[aria-label='Account sections']");
+                        const accountSections = (node as HTMLElement).querySelector("ul[aria-label='Account sections']");
                         if (accountSections) {
                             const existingExtensionsBtn = accountSections.querySelector("button[id='tab--Extensions']");
                             if (!existingExtensionsBtn) {
                                 for (const defaultBtn of accountSections.children) {
-                                    defaultBtn.addEventListener("click", (e: Event) => {
+                                    defaultBtn.addEventListener("click", (_e: Event) => {
                                         this.cleanupCustomSettings()
                                     })
                                 }
 
                                 const customSettingsButton = this.createSettingsButton();
-                                customSettingsButton.addEventListener("click", (e) => this.prepareForCustomSettings());
+                                customSettingsButton.addEventListener("click", (_e: Event) => this.prepareForCustomSettings());
                                 accountSections.insertBefore(customSettingsButton, accountSections.firstChild);
                             }
                         }
@@ -202,8 +201,7 @@ class FLSettingsFrontend {
     private updateState(newState: SettingsObject) {
         this.settings = newState || this.settings;
         this.createdToggles.forEach((toggle) => {
-            // @ts-ignore
-            toggle.checked = this.settings[toggle.id];
+            toggle.setAttribute("checked", this.settings[toggle.id] ? "true" : "false");
         });
 
         if (this.updateHandler) {
@@ -214,8 +212,7 @@ class FLSettingsFrontend {
     private saveState() {
         debug("Collecting settings values from the panel...");
         this.createdToggles.forEach((toggle) => {
-            // @ts-ignore
-            this.settings[toggle.id] = toggle.checked;
+            this.settings[toggle.id] = toggle.getAttribute("checked") == "true";
         });
 
         debug("Sending settings to be saved...");
@@ -235,7 +232,7 @@ class FLSettingsBackend {
     }
 
     private getFallenLondonTabs(): Promise<Array<Tab>> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _) => {
             chrome.windows.getCurrent(w => {
                 chrome.tabs.query(
                     {windowId: w.id, url: "*://*.fallenlondon.com/*"},
@@ -249,7 +246,13 @@ class FLSettingsBackend {
 
     private sendStateToTabs(tabs: Array<Tab>, state: SettingsObject) {
         console.debug("Sending state to tabs", state);
-        tabs.map((t) => chrome.tabs.sendMessage(t.id!, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state}));
+        tabs.map((t) => {
+            if (t.id == null) {
+                return;
+            }
+
+            chrome.tabs.sendMessage(t.id, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state})
+        });
     }
 
     isMessageRelevant(message: {[key: string]: boolean | string}) {
@@ -262,7 +265,13 @@ class FLSettingsBackend {
                 settings: message.settings
             }, () => {
                 // Send out new state to the FL tabs
-                this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, message.settings!!));
+                this.getFallenLondonTabs().then(tabs => {
+                    if (message.settings == null) {
+                        return;
+                    }
+
+                    this.sendStateToTabs(tabs, message.settings);
+                });
 
                 log("Saved settings to local storage.");
             });

@@ -20,13 +20,13 @@ console.log(`[FL Small Mercies] Setting up comms repeater...`);
     window.addEventListener(eventType, (event) => {
         chrome.runtime.sendMessage({
             action: eventType,
-            // @ts-ignore
+            // @ts-ignore: We tack our settings onto Event object
             ...event.detail,
         })
     });
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
     if (!message.action) return;
 
     if (!message.action.startsWith("FL_SM_")) return;

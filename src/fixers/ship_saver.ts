@@ -2,21 +2,23 @@ import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 export class ShipSaverFixer implements IMutationAwareFixer {
-    private disableSaleOption: boolean = false
+    private disableSaleOption = false
 
     applySettings(settings: SettingsObject): void {
         this.disableSaleOption = settings.ship_saver
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.disableSaleOption;
     }
 
     onNodeAdded(node: HTMLElement): void {
         let shipStorylet = node.querySelector("div[data-branch-id='251811']");
-        // @ts-ignore
-        if (!shipStorylet && node.hasAttribute("data-branch-id") && node.attributes["data-branch-id"].value == 251811) {
-            shipStorylet = node;
+        if (!shipStorylet && node.hasAttribute("data-branch-id")) {
+            const branchId = node.attributes.getNamedItem("data-branch-id");
+            if (branchId && branchId.value === "251811") {
+                shipStorylet = node;
+            }
         }
 
         if (shipStorylet) {
@@ -40,5 +42,7 @@ export class ShipSaverFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 }

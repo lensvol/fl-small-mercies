@@ -1,4 +1,4 @@
-import {IMercyFixer, IMutationAwareFixer} from "./base.js";
+import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 // Adapted from
@@ -15,13 +15,13 @@ function isElementInViewport (el: Element): boolean {
 }
 
 export class AutoScrollFixer implements IMutationAwareFixer {
-    private enableAutoScrollBack: boolean = false;
+    private enableAutoScrollBack = false;
 
     applySettings(settings: SettingsObject): void {
         this.enableAutoScrollBack = settings.auto_scroll_back;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.enableAutoScrollBack;
     }
 
@@ -47,6 +47,8 @@ export class AutoScrollFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 
 }

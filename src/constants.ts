@@ -1,7 +1,7 @@
 import {SettingsSchema} from "./settings";
 
-const EXTENSION_NAME: string = "FL Small Mercies"
-const EXTENSION_ID: string = "FL_SM";
+const EXTENSION_NAME = "FL Small Mercies"
+const EXTENSION_ID = "FL_SM";
 
 const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_ID}_saveSettings`;
 const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_ID}_currentSettings`;

@@ -5,8 +5,8 @@ const MASK_ROSE_BANNER_SELECTOR = "img[aria-label='Wishlist Mask of the Rose on 
 const SNIPPET_CONTAINER_SELECTOR = "div[class='snippet']"
 
 export class RightSidebarFixer implements IMutationAwareFixer {
-    private removeMaskBanner: boolean = false
-    private removeSnippets: boolean = false
+    private removeMaskBanner = false
+    private removeSnippets = false
 
     applySettings(settings: SettingsObject): void {
         this.removeMaskBanner = settings.remove_mask_banner;
@@ -25,9 +25,11 @@ export class RightSidebarFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.removeMaskBanner || !this.removeSnippets;
     }
 }

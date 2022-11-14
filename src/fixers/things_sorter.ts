@@ -24,14 +24,12 @@ const SEAL_SELECTOR = SEAL_ORDER.map((i) => `div[data-branch-id='${i}']`).join("
 
 
 function findAndSortIcons(node: Element, selector: string, order: number[]) {
-    const icons = node.querySelectorAll(selector);
+    const icons = node.querySelectorAll(selector) as NodeListOf<HTMLElement>;
     const things = Array
         .from(icons)
-        .sort((i1, i2) => {
-            // @ts-ignore
-            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId));
-            // @ts-ignore
-            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId));
+        .sort((i1: HTMLElement, i2: HTMLElement) => {
+            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId || "0"));
+            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId || "0"));
             return pos1 - pos2
         })
         .map((icon) => icon.parentElement);
@@ -59,9 +57,9 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
 }
 
 export class ThingSortFixer implements IMutationAwareFixer {
-    private sortCityMysteries: boolean = false;
-    private sortSeals: boolean = false;
-    private sortNeathbow: boolean = false;
+    private sortCityMysteries = false;
+    private sortSeals = false;
+    private sortNeathbow = false;
 
     applySettings(settings: SettingsObject): void {
         this.sortCityMysteries = settings.sort_city_mysteries;
@@ -69,7 +67,7 @@ export class ThingSortFixer implements IMutationAwareFixer {
         this.sortNeathbow = settings.sort_neathbow_boxes;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.sortCityMysteries || this.sortSeals
     }
 
@@ -90,5 +88,7 @@ export class ThingSortFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 }

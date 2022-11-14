@@ -2,7 +2,7 @@ import {SettingsObject} from "../settings.js";
 import {IMutationAwareFixer} from "./base.js";
 
 export class ScripIconFixer implements IMutationAwareFixer {
-    private showScripIcon: boolean = false;
+    private showScripIcon = false;
 
     onNodeAdded(node: HTMLElement): void {
         const currencyHeadings = node.querySelectorAll("span[class='item__name']");
@@ -16,13 +16,15 @@ export class ScripIconFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 
     applySettings(settings: SettingsObject): void {
         this.showScripIcon = settings.scrip_icon;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.showScripIcon;
     }
 }

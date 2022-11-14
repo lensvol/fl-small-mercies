@@ -8,7 +8,7 @@ function numberWithCommas(x: string): string {
 }
 
 export class ThousandSeparatorFixer implements IMutationAwareFixer {
-    private separateThousands: boolean = false;
+    private separateThousands = false;
     private currencyObserver: MutationObserver;
     private shopPriceObserver: MutationObserver;
 
@@ -24,7 +24,7 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
             }
         });
 
-        this.shopPriceObserver = new MutationObserver((mutations, observer) => {
+        this.shopPriceObserver = new MutationObserver((mutations, _) => {
             for (let m = 0; m < mutations.length; m++) {
                 const mutation = mutations[m];
 
@@ -35,8 +35,8 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
                     }
 
                     const priceField = node.querySelector("div[class*='item__price']");
-                    if (priceField) {
-                        priceField.textContent = numberWithCommas(priceField.textContent!);
+                    if (priceField && priceField.textContent != null) {
+                        priceField.textContent = numberWithCommas(priceField.textContent);
                     }
                 }
             }
@@ -45,8 +45,8 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
 
     onNodeAdded(node: HTMLElement): void {
         const echoesIndicator = node.querySelector("div[class*='sidebar'] ul li div div[class='item__value'] div[class*='item__price']");
-        if (echoesIndicator) {
-            echoesIndicator.textContent = numberWithCommas(echoesIndicator.textContent!);
+        if (echoesIndicator && echoesIndicator.textContent != null) {
+            echoesIndicator.textContent = numberWithCommas(echoesIndicator.textContent);
             this.currencyObserver.observe(echoesIndicator, {subtree: true, characterData: true});
         }
 
@@ -54,8 +54,8 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
         for (const heading of currencyHeadings) {
             if (heading.textContent == "Hinterland Scrip" && heading.parentElement) {
                 const scripIndicator = heading.parentElement.querySelector("div[class='item__value']");
-                if (scripIndicator) {
-                    scripIndicator.textContent = numberWithCommas(scripIndicator.textContent!);
+                if (scripIndicator && scripIndicator.textContent != null) {
+                    scripIndicator.textContent = numberWithCommas(scripIndicator.textContent);
                     this.currencyObserver.observe(scripIndicator, {subtree: true, characterData: true});
                 }
             }
@@ -67,7 +67,9 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 
     applySettings(settings: SettingsObject): void {
         this.separateThousands = settings.add_thousands_separator;
@@ -78,7 +80,7 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
         }
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.separateThousands;
     }
 }

@@ -5,13 +5,13 @@ const PLAN_BUTTONLET_SELECTOR = "div[class='branch__plan-buttonlet'] button[aria
 const PLANS_BUTTON_SELECTOR = "li[data-name='plans']"
 
 export class PlanButtonsFixer implements IMutationAwareFixer {
-    private removePlanButtons: boolean = false;
+    private removePlanButtons = false;
 
     applySettings(settings: SettingsObject): void {
         this.removePlanButtons = settings.remove_plan_buttons;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
+    checkEligibility(_node: HTMLElement): boolean {
         return this.removePlanButtons;
     }
 
@@ -23,5 +23,7 @@ export class PlanButtonsFixer implements IMutationAwareFixer {
             .forEach((b) => b.remove());
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+    // Do nothing if DOM node is removed.
+}
 }
