@@ -9,7 +9,6 @@ const PLAN_ARIA_LABELS = [
 const PLAN_BUTTONLET_SELECTOR = PLAN_ARIA_LABELS.map(
     (label) => `div.branch__plan-buttonlet button[aria-label='${label}']`
 ).join(", ");
-//"div.branch__plan-buttonlet button[aria-label=], div.branch__plan-buttonlet button[aria-label=''], div.branch__plan-buttonlet button[aria-label='']";
 const PLANS_BUTTON_SELECTOR = "li[data-name='plans']"
 
 export class PlanButtonsFixer implements IMutationAwareFixer {
