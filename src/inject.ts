@@ -9,9 +9,9 @@ import {
     ShipSaverFixer,
     RightSidebarFixer, PlanButtonsFixer, ThingSortFixer
 } from "./fixers/index.js";
-import {IMutationAwareFixer} from "./fixers/base.js";
+import {IMercyFixer, isMutationAware} from "./fixers/base.js";
 
-const nodeAwareFixers: IMutationAwareFixer[] = [
+const fixers: IMercyFixer[] = [
     new JournalUiFixer(),
     new ThousandSeparatorFixer(),
     new AutoScrollFixer(),
@@ -26,7 +26,7 @@ const nodeAwareFixers: IMutationAwareFixer[] = [
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
-    nodeAwareFixers.map((fixer) => fixer.applySettings(settings))
+    fixers.map((fixer) => fixer.applySettings(settings))
 });
 
 const centralMutationObserver = new MutationObserver((mutations, _observer) => {
@@ -42,7 +42,8 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
                 continue;
             }
 
-            nodeAwareFixers
+            fixers
+                .filter(isMutationAware)
                 .filter((fixer) => fixer.checkEligibility(node))
                 .map((fixer) => fixer.onNodeAdded(node))
         }
@@ -54,7 +55,8 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
                 continue;
             }
 
-            nodeAwareFixers
+            fixers
+                .filter(isMutationAware)
                 .filter((fixer) => fixer.checkEligibility(node))
                 .map((fixer) => fixer.onNodeRemoved(node))
         }

@@ -11,4 +11,6 @@ interface IMutationAwareFixer extends IMercyFixer{
     checkEligibility(node: HTMLElement): boolean
 }
 
-export { IMercyFixer, IMutationAwareFixer };
+const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAwareFixer => "onNodeAdded" in fixer
+
+export { IMercyFixer, IMutationAwareFixer, isMutationAware };
