@@ -24,7 +24,7 @@ class FLSettingsFrontend {
     private settings: SettingsObject;
     private schema: SettingsSchema;
 
-    private createdToggles: Array<HTMLElement> = [];
+    private createdToggles: Array<HTMLInputElement> = [];
     private updateHandler?: (settings: SettingsObject) => void;
 
     constructor(extensionId: string, name: string, schema: SettingsSchema) {
@@ -212,7 +212,7 @@ class FLSettingsFrontend {
     private saveState() {
         debug("Collecting settings values from the panel...");
         this.createdToggles.forEach((toggle) => {
-            this.settings[toggle.id] = toggle.getAttribute("checked") == "true";
+            this.settings[toggle.id] = toggle.checked;
         });
 
         debug("Sending settings to be saved...");
