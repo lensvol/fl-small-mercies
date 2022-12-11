@@ -28,8 +28,8 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
     const things = Array
         .from(icons)
         .sort((i1: HTMLElement, i2: HTMLElement) => {
-            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId || "0"));
-            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId || "0"));
+            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId || i1.dataset.branchId || "0"));
+            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId || i2.dataset.branchId || "0"));
             return pos1 - pos2
         })
         .map((icon) => icon.parentElement);
