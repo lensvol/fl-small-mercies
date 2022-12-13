@@ -7,6 +7,7 @@ import {ShipSaverFixer} from "./ship_saver.js";
 import {RightSidebarFixer} from "./right_sidebar.js";
 import {PlanButtonsFixer} from "./plan_remover.js";
 import {ThingSortFixer} from "./things_sorter.js";
+import {ProfileLinkFixer} from "./profile_link.js";
 
 export {
     AutoScrollFixer,
@@ -17,5 +18,6 @@ export {
     ShipSaverFixer,
     RightSidebarFixer,
     PlanButtonsFixer,
+    ProfileLinkFixer,
     ThingSortFixer,
 };

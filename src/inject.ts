@@ -7,7 +7,10 @@ import {
     DiscreteScrollbarsFixer,
     ScripIconFixer,
     ShipSaverFixer,
-    RightSidebarFixer, PlanButtonsFixer, ThingSortFixer
+    RightSidebarFixer,
+    PlanButtonsFixer,
+    ProfileLinkFixer,
+    ThingSortFixer
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -22,6 +25,7 @@ const fixers: IMercyFixer[] = [
     new ScripIconFixer(),
     new ShipSaverFixer(),
     new PlanButtonsFixer(),
+    new ProfileLinkFixer(),
     new ThingSortFixer(),
 ];
 

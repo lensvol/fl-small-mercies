@@ -54,6 +54,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "sort_neathbow_boxes": {
         description: "Sort Neathbow boxes in your inventory.",
         default: true,
+    },
+    "add_profile_link": {
+        description: "Add button that points to your profile.",
+        default: true,
     }
 }
 
