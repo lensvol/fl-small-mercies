@@ -10,6 +10,7 @@ import {
     RightSidebarFixer, PlanButtonsFixer, ThingSortFixer
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware} from "./fixers/base.js";
+import {FLApiInterceptor} from "./api_interceptor.js";
 
 const fixers: IMercyFixer[] = [
     new JournalUiFixer(),
@@ -28,6 +29,9 @@ settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
     fixers.map((fixer) => fixer.applySettings(settings))
 });
+
+const apiInterceptor = new FLApiInterceptor();
+apiInterceptor.install();
 
 const centralMutationObserver = new MutationObserver((mutations, _observer) => {
     centralMutationObserver.disconnect();
