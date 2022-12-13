@@ -9,7 +9,8 @@ import {
     ShipSaverFixer,
     RightSidebarFixer, PlanButtonsFixer, ThingSortFixer
 } from "./fixers/index.js";
-import {IMercyFixer, isMutationAware} from "./fixers/base.js";
+import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
+import {GameStateController} from "./game_state.js";
 import {FLApiInterceptor} from "./api_interceptor.js";
 
 const fixers: IMercyFixer[] = [
@@ -32,6 +33,12 @@ settingsFrontend.registerUpdateHandler((settings) => {
 
 const apiInterceptor = new FLApiInterceptor();
 apiInterceptor.install();
+
+const gameStateController = new GameStateController();
+gameStateController.hookIntoApi(apiInterceptor);
+fixers
+    .filter(isStateAware)
+    .map((fixer) => fixer.linkState(gameStateController));
 
 const centralMutationObserver = new MutationObserver((mutations, _observer) => {
     centralMutationObserver.disconnect();

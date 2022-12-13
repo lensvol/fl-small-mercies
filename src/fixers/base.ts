@@ -1,4 +1,5 @@
 import {SettingsObject} from "../settings.js";
+import {GameStateController} from "../game_state";
 
 interface IMercyFixer {
     applySettings(settings: SettingsObject): void
@@ -11,6 +12,11 @@ interface IMutationAwareFixer extends IMercyFixer{
     checkEligibility(node: HTMLElement): boolean
 }
 
-const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAwareFixer => "onNodeAdded" in fixer
+interface IStateAware extends IMercyFixer {
+    linkState(state: GameStateController): void
+}
 
-export { IMercyFixer, IMutationAwareFixer, isMutationAware };
+const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAwareFixer => "onNodeAdded" in fixer
+const isStateAware = (fixer: IMercyFixer): fixer is IStateAware => "linkState" in fixer
+
+export { IMercyFixer, IMutationAwareFixer, IStateAware, isMutationAware, isStateAware};
