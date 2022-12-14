@@ -35,6 +35,7 @@ export class Quality {
     qualityId: number;
     name: string
     level: number;
+    category: string;
 
     constructor(qualityId: number, category: string, name: string, level: number) {
         this.qualityId = qualityId;
