@@ -75,9 +75,24 @@ export class GameState {
 export class GameStateController {
     private state: GameState = new GameState();
 
-    private changeListeners: { [key in StateChangeTypes]: ((g: GameState) => void)[] } = {
+    private changeListeners: { [key in StateChangeTypes]: ((...args: any[]) => void)[] } = {
         [StateChangeTypes.StateChanged]: [],
         [StateChangeTypes.QualityChanged]: [],
+    }
+
+    private updateOrCreateQuality(qualityId: number, categoryName: string, qualityName: string, level: number) {
+        const existingQuality = this.state.getQuality(categoryName, qualityName);
+
+        if (existingQuality && existingQuality.level != level) {
+            // We save previous value here so that we can update quality value in-place and still pass it on.
+            const previousLevel = existingQuality.level;
+            existingQuality.level = level;
+            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, level);
+        } else {
+            const quality = new Quality(qualityId, categoryName, qualityName, level);
+            this.state.setQuality(categoryName, qualityName, quality);
+            this.triggerListeners(StateChangeTypes.QualityChanged, quality, 0, level);
+        }
     }
 
     public parseUserResponse(response: Object) {
@@ -86,7 +101,7 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
 
-        this.triggerListeners(StateChangeTypes.StateChanged)
+        this.triggerListeners(StateChangeTypes.StateChanged, this.state);
     }
 
     public parseMyselfResponse(response: Object) {
@@ -97,22 +112,26 @@ export class GameStateController {
 
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                const existingQuality = this.state.getQuality(category.name, thing.name);
-
-                if (existingQuality && existingQuality.level != thing.level) {
-                    // We save previous value here so that we can update quality value in-place and still pass it on.
-                    const previousLevel = existingQuality.level;
-                    existingQuality.level = thing.level;
-                    this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, thing.effectiveLevel);
-                } else {
-                    const quality = new Quality(thing.id, thing.category, thing.name, thing.level);
-                    this.state.setQuality(category.name, thing.name, quality);
-                    this.triggerListeners(StateChangeTypes.QualityChanged, quality, 0, thing.effectiveLevel);
-                }
+                this.updateOrCreateQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
             }
         }
 
         this.triggerListeners(StateChangeTypes.StateChanged, this.state);
+    }
+
+    public parseChooseBranchResponse(response: Object) {
+        if (!("messages" in response)) return;
+
+        let changesWereMade = false;
+
+        for (const message of response.messages) {
+            if (message.type == "StandardQualityChangeMessage"
+                || message.type == "PyramidQualityChangeMessage"
+                || message.type == "QualityExplicitlySetMessage") {
+                const thing = message.possession;
+                this.updateOrCreateQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+            }
+        }
     }
 
     public onStateChanged(handler: ((g: GameState) => void)) {
@@ -130,5 +149,6 @@ export class GameStateController {
     public hookIntoApi(interceptor: FLApiInterceptor) {
         interceptor.onResponseReceived("/api/login/user", this.parseUserResponse.bind(this));
         interceptor.onResponseReceived("/api/character/myself", this.parseMyselfResponse.bind(this));
+        interceptor.onResponseReceived("/api/storylet/choosebranch", this.parseChooseBranchResponse.bind(this));
     }
 }
