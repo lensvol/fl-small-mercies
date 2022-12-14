@@ -66,7 +66,7 @@ export class GameState {
             this.qualities.set(categoryName, new Map());
         }
 
-        const category = this.qualities.get(categoryName);
+        const category = this.qualities.get(categoryName) || new Map();
         category.set(qualityName, quality);
     }
 }
