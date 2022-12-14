@@ -102,6 +102,7 @@ export class GameStateController {
                 if (existingQuality && existingQuality.level != thing.level) {
                     // We save previous value here so that we can update quality value in-place and still pass it on.
                     const previousLevel = existingQuality.level;
+                    existingQuality.level = thing.level;
                     this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, thing.effectiveLevel);
                 } else {
                     const quality = new Quality(thing.id, thing.category, thing.name, thing.level);
