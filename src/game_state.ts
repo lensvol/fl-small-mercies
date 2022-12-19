@@ -1,12 +1,26 @@
 // @ts-nocheck: There is hell and then there is typing other people's API.
 import {FLApiInterceptor} from "./api_interceptor";
 
-export class UnknownUser {}
-export class UnknownCharacter {}
+export const UNKNOWN = -1;
+
+export class UnknownUser {
+}
+
+export class UnknownCharacter {
+}
+
+export enum StoryletPhases {
+    Available,
+    In,
+    End,
+    Unknown
+}
 
 enum StateChangeTypes {
-    StateChanged,
     QualityChanged,
+    CharacterDataLoaded,
+    UserDataLoaded,
+    StoryletPhaseChanged
 }
 
 export class FLUser {
@@ -49,9 +63,14 @@ export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
 
+    public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
+
     public actionsLeft = 0;
 
+    public storyletId = UNKNOWN;
+
     private qualities: Map<string, Map<string, Quality>> = new Map();
+
     public getQuality(category: string, name: string): Quality | undefined {
         const existingCategory = this.qualities.get(category);
         if (existingCategory == undefined) {
@@ -76,22 +95,24 @@ export class GameStateController {
     private state: GameState = new GameState();
 
     private changeListeners: { [key in StateChangeTypes]: ((...args: any[]) => void)[] } = {
-        [StateChangeTypes.StateChanged]: [],
         [StateChangeTypes.QualityChanged]: [],
+        [StateChangeTypes.CharacterDataLoaded]: [],
+        [StateChangeTypes.UserDataLoaded]: [],
+        [StateChangeTypes.StoryletPhaseChanged]: [],
     }
 
-    private updateOrCreateQuality(qualityId: number, categoryName: string, qualityName: string, level: number) {
+    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != level) {
             // We save previous value here so that we can update quality value in-place and still pass it on.
             const previousLevel = existingQuality.level;
             existingQuality.level = level;
-            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, level);
+            return [existingQuality, previousLevel];
         } else {
             const quality = new Quality(qualityId, categoryName, qualityName, level);
             this.state.setQuality(categoryName, qualityName, quality);
-            this.triggerListeners(StateChangeTypes.QualityChanged, quality, 0, level);
+            return [quality, 0];
         }
     }
 
@@ -101,7 +122,7 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
 
-        this.triggerListeners(StateChangeTypes.StateChanged, this.state);
+        this.triggerListeners(StateChangeTypes.UserDataLoaded, this.state);
     }
 
     public parseMyselfResponse(response: Object) {
@@ -112,30 +133,78 @@ export class GameStateController {
 
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.updateOrCreateQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
             }
         }
 
-        this.triggerListeners(StateChangeTypes.StateChanged, this.state);
+        this.triggerListeners(StateChangeTypes.CharacterDataLoaded, this.state);
+    }
+
+    private decodePhase(phase: String): StoryletPhases {
+        if (phase == "Available") {
+            return StoryletPhases.Available;
+        }
+
+        if (phase == "In") {
+            return StoryletPhases.In;
+        }
+
+        if (phase == "End") {
+            return StoryletPhases.End;
+        }
+
+        return StoryletPhases.Unknown;
     }
 
     public parseChooseBranchResponse(response: Object) {
         if (!("messages" in response)) return;
-
-        let changesWereMade = false;
 
         for (const message of response.messages) {
             if (message.type == "StandardQualityChangeMessage"
                 || message.type == "PyramidQualityChangeMessage"
                 || message.type == "QualityExplicitlySetMessage") {
                 const thing = message.possession;
-                this.updateOrCreateQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
+            }
+        }
+
+        if (response.phase != undefined) {
+            const currentPhase = this.decodePhase(response.phase);
+            if (currentPhase != this.state.storyletPhase) {
+                if (currentPhase == StoryletPhases.End) {
+                    this.state.storyletId = UNKNOWN;
+                }
+
+                this.state.storyletPhase = currentPhase;
+                this.triggerListeners(StateChangeTypes.StoryletPhaseChanged, this.state);
             }
         }
     }
 
-    public onStateChanged(handler: ((g: GameState) => void)) {
-        this.changeListeners[StateChangeTypes.StateChanged].push(handler);
+    public parseStoryletResponse(response: Object) {
+        if (!("phase" in response)) return;
+        this.state.storyletPhase = this.decodePhase(response.phase);
+
+        if ("storylet" in response) {
+            this.state.storyletId = response.storylet.id;
+        } else {
+            this.state.storyletId = UNKNOWN;
+        }
+
+        this.triggerListeners(StateChangeTypes.StoryletPhaseChanged, this.state);
+    }
+
+    public onStoryletPhaseChanged(handler: ((g: GameState) => void)) {
+        this.changeListeners[StateChangeTypes.StoryletPhaseChanged].push(handler);
+    }
+
+    public onCharacterDataLoaded(handler: ((g: GameState) => void)) {
+        this.changeListeners[StateChangeTypes.CharacterDataLoaded].push(handler);
+    }
+
+    public onUserDataLoaded(handler: ((g: GameState) => void)) {
+        this.changeListeners[StateChangeTypes.UserDataLoaded].push(handler);
     }
 
     public onQualityChanged(handler: ((quality: Quality, previousLevel: number, currentLevel: number) => void)) {
@@ -150,5 +219,8 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/login/user", this.parseUserResponse.bind(this));
         interceptor.onResponseReceived("/api/character/myself", this.parseMyselfResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/choosebranch", this.parseChooseBranchResponse.bind(this));
+        interceptor.onResponseReceived("/api/storylet", this.parseStoryletResponse.bind(this));
+        interceptor.onResponseReceived("/api/storylet/begin", this.parseStoryletResponse.bind(this));
+        interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
     }
 }

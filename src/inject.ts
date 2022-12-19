@@ -10,7 +10,8 @@ import {
     RightSidebarFixer,
     PlanButtonsFixer,
     ProfileLinkFixer,
-    ThingSortFixer
+    ThingSortFixer,
+    QuickShareFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -27,6 +28,7 @@ const fixers: IMercyFixer[] = [
     new PlanButtonsFixer(),
     new ProfileLinkFixer(),
     new ThingSortFixer(),
+    new QuickShareFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

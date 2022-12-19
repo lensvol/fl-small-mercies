@@ -56,7 +56,7 @@ export class ProfileLinkFixer implements IMutationAwareFixer, IStateAware {
     }
 
     linkState(stateController: GameStateController): void {
-        stateController.onStateChanged((g: GameState) => {
+        stateController.onUserDataLoaded((g: GameState) => {
             if (g.character instanceof FLCharacter) {
                 this.currentUserName = g.character.name;
             }

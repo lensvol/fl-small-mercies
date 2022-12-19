@@ -58,6 +58,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "add_profile_link": {
         description: "Add button that points to your profile.",
         default: true,
+    },
+    "quick_share_button": {
+        description: "Replace usual 'Share snippet' button with a quicker alternative.",
+        default: true,
     }
 }
 

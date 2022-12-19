@@ -8,6 +8,7 @@ import {RightSidebarFixer} from "./right_sidebar.js";
 import {PlanButtonsFixer} from "./plan_remover.js";
 import {ThingSortFixer} from "./things_sorter.js";
 import {ProfileLinkFixer} from "./profile_link.js";
+import {QuickShareFixer} from "./quick_share.js";
 
 export {
     AutoScrollFixer,
@@ -20,4 +21,5 @@ export {
     PlanButtonsFixer,
     ProfileLinkFixer,
     ThingSortFixer,
+    QuickShareFixer,
 };
