@@ -42,6 +42,7 @@ apiInterceptor.install();
 
 const gameStateController = new GameStateController();
 gameStateController.hookIntoApi(apiInterceptor);
+gameStateController.onStoryletPhaseChanged((g) => console.log(`Phase: ${g.storyletPhase}, storylet: ${g.storyletId}`));
 fixers
     .filter(isStateAware)
     .map((fixer) => fixer.linkState(gameStateController));

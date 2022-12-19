@@ -49,6 +49,6 @@ export class AutoScrollFixer implements IMutationAwareFixer {
 
     onNodeRemoved(_node: HTMLElement): void {
     // Do nothing if DOM node is removed.
-}
+    }
 
 }

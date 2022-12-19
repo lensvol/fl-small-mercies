@@ -28,7 +28,7 @@ export class FLUser {
     jwtToken: string
     name: string
 
-    constructor(userId: number, name: string,  jwtToken: string) {
+    constructor(userId: number, name: string, jwtToken: string) {
         this.userId = userId;
         this.jwtToken = jwtToken;
         this.name = name;

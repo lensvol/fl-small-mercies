@@ -2,7 +2,7 @@ import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
 
-const SHARE_BUTTON_SELECTOR = "button[class='buttonlet-container'] span[class*='buttonlet-edit']"
+const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']"
 const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/
 
 export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
