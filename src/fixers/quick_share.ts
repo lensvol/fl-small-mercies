@@ -9,6 +9,57 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
     private replaceShareButton = false;
     private currentStoryletId: number | null = null;
     private authToken: string | null = null;
+    private shareClickListener: EventListener;
+
+    constructor() {
+        this.shareClickListener = (ev) => {
+            const image = document.querySelector("img[class*='storylet-root__card-image']") as HTMLImageElement;
+            const title = document.querySelector("h1[class*='storylet-root__heading']");
+            // For some reason event target here is the button itself, not the buttonlet container
+            const icon = (ev.target as HTMLElement);
+
+            const requestData = {
+                contentClass: "EventConclusion",
+                contentKey: this.currentStoryletId,
+                image: "snowflake",
+                message: title?.textContent || "Hello, world!"
+            }
+
+            if (image) {
+                const parts = image.src.match(SOURCE_EXTRACTION_REGEX);
+                if (parts) {
+                    requestData["image"] = parts[1];
+                }
+            }
+
+            fetch(
+                "https://api.fallenlondon.com/api/profile/share",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${this.authToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestData)
+                }
+            )
+                .then(r => {
+                    // FIXME: Replace direct CSS manipulation with something classier
+                    icon?.classList.remove("fa-pencil");
+                    icon?.classList.add("fa-check");
+
+                    icon?.parentElement?.classList.remove("buttonlet-enabled");
+                    icon.parentElement?.parentElement?.removeEventListener("click", this.shareClickListener);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    // Make buttonlet to indicate that there was an error
+                    if (icon?.parentElement) {
+                        icon.parentElement.style.color = "red";
+                    }
+                });
+        }
+    }
 
     applySettings(settings: SettingsObject): void {
         this.replaceShareButton = settings.quick_share_button;
@@ -26,55 +77,9 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
         const shareButton = node.querySelector(SHARE_BUTTON_SELECTOR);
         const shareContainer = shareButton?.parentElement;
         if (shareContainer != null && shareContainer.parentElement != null) {
-            // FIXME: Replace buttonlet container, not the buttonlet itself!
             const shareMimic = (shareContainer.cloneNode(true) as HTMLElement);
 
-            shareMimic.addEventListener("click", (ev) => {
-                const image = document.querySelector("img[class*='storylet-root__card-image']") as HTMLImageElement;
-                const title = document.querySelector("h1[class*='storylet-root__heading']");
-                // For some reason event target here is the button itself, not the buttonlet container
-                const icon = (ev.target as HTMLElement);
-
-                const requestData = {
-                    contentClass: "EventConclusion",
-                    contentKey: this.currentStoryletId,
-                    image: "snowflake",
-                    message: title?.textContent || "Hello, world!"
-                }
-
-                if (image) {
-                    const parts = image.src.match(SOURCE_EXTRACTION_REGEX);
-                    if (parts) {
-                        requestData["image"] = parts[1];
-                    }
-                }
-
-                fetch(
-                   "https://api.fallenlondon.com/api/profile/share",
-                   {
-                       method: "POST",
-                       headers: {
-                           "Authorization": `Bearer ${this.authToken}`,
-                           "Content-Type": "application/json",
-                       },
-                       body: JSON.stringify(requestData)
-                   }
-                )
-                    .then(r => {
-                        // FIXME: Replace direct CSS manipulation with something classier
-                        icon?.classList.remove("fa-pencil");
-                        icon?.classList.add("fa-check");
-
-                        icon?.parentElement?.classList.remove("buttonlet-enabled");
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        // Make buttonlet to indicate that there was an error
-                        if (icon?.parentElement) {
-                            icon.parentElement.style.color = "red";
-                        }
-                    });
-            });
+            shareMimic.addEventListener("click", this.shareClickListener);
             shareContainer.parentElement.replaceChild(shareMimic, shareContainer);
         }
     }
