@@ -32,6 +32,10 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
                 }
             }
 
+            icon?.parentElement?.classList.remove("buttonlet-enabled");
+            icon?.classList.remove("fa-pencil");
+            icon?.classList.add("fa-cloud-upload");
+
             fetch(
                 "https://api.fallenlondon.com/api/profile/share",
                 {
@@ -45,14 +49,15 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
             )
                 .then(r => {
                     // FIXME: Replace direct CSS manipulation with something classier
-                    icon?.classList.remove("fa-pencil");
+                    icon?.classList.remove("fa-cloud-upload");
                     icon?.classList.add("fa-check");
 
-                    icon?.parentElement?.classList.remove("buttonlet-enabled");
-                    icon.parentElement?.parentElement?.removeEventListener("click", this.shareClickListener);
+                    icon?.parentElement?.classList.add("buttonlet-enabled");
                 })
                 .catch((err) => {
                     console.error(err);
+                    icon?.parentElement?.classList.add("buttonlet-enabled");
+
                     // Make buttonlet to indicate that there was an error
                     if (icon?.parentElement) {
                         icon.parentElement.style.color = "red";
