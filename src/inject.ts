@@ -12,6 +12,7 @@ import {
     ProfileLinkFixer,
     ThingSortFixer,
     QuickShareFixer,
+    AsceticModeFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -29,6 +30,7 @@ const fixers: IMercyFixer[] = [
     new ProfileLinkFixer(),
     new ThingSortFixer(),
     new QuickShareFixer(),
+    new AsceticModeFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

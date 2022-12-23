@@ -62,6 +62,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "quick_share_button": {
         description: "Replace usual 'Share snippet' button with a quicker alternative.",
         default: true,
+    },
+    "ascetic_mode": {
+        description: "Remove both location banner and candles.",
+        default: true,
     }
 }
 

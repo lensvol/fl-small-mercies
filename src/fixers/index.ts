@@ -9,6 +9,7 @@ import {PlanButtonsFixer} from "./plan_remover.js";
 import {ThingSortFixer} from "./things_sorter.js";
 import {ProfileLinkFixer} from "./profile_link.js";
 import {QuickShareFixer} from "./quick_share.js";
+import {AsceticModeFixer} from "./ascetic_mode.js";
 
 export {
     AutoScrollFixer,
@@ -22,4 +23,5 @@ export {
     ProfileLinkFixer,
     ThingSortFixer,
     QuickShareFixer,
+    AsceticModeFixer,
 };
