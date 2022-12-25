@@ -10,6 +10,7 @@ import {ThingSortFixer} from "./things_sorter.js";
 import {ProfileLinkFixer} from "./profile_link.js";
 import {QuickShareFixer} from "./quick_share.js";
 import {AsceticModeFixer} from "./ascetic_mode.js";
+import {FavourTrackerFixer} from "./favour_tracker.js";
 
 export {
     AutoScrollFixer,
@@ -24,4 +25,5 @@ export {
     ThingSortFixer,
     QuickShareFixer,
     AsceticModeFixer,
+    FavourTrackerFixer,
 };

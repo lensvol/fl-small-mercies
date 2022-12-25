@@ -66,6 +66,10 @@ const SETTINGS_SCHEMA: SettingsSchema = {
     "ascetic_mode": {
         description: "Remove both location banner and candles.",
         default: true,
+    },
+    "display_favour_tracker": {
+        description: "Display Favours in the right sidebar.",
+        default: true,
     }
 }
 
