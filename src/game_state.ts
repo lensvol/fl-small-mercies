@@ -50,12 +50,14 @@ export class Quality {
     name: string
     level: number;
     category: string;
+    image: string;
 
-    constructor(qualityId: number, category: string, name: string, level: number) {
+    constructor(qualityId: number, category: string, name: string, level: number, image: string) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
         this.level = level;
+        this.image = image;
     }
 }
 
@@ -101,7 +103,7 @@ export class GameStateController {
         [StateChangeTypes.StoryletPhaseChanged]: [],
     }
 
-    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number): [Quality, number] {
+    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != level) {
@@ -110,7 +112,7 @@ export class GameStateController {
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
-            const quality = new Quality(qualityId, categoryName, qualityName, level);
+            const quality = new Quality(qualityId, categoryName, qualityName, level, image);
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
         }
@@ -133,7 +135,7 @@ export class GameStateController {
 
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image);
             }
         }
 
@@ -164,7 +166,7 @@ export class GameStateController {
                 || message.type == "PyramidQualityChangeMessage"
                 || message.type == "QualityExplicitlySetMessage") {
                 const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel);
+                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image);
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
             }
         }
