@@ -14,14 +14,15 @@ export class AsceticModeFixer implements IMutationAwareFixer {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const banner = node.querySelector("div[class*='banner']") as HTMLElement;
+        const banner = node.querySelector("div[class*='banner--lg-up']") as HTMLElement;
         if (banner) {
-            banner.style.cssText = "display: none;"
+            const parentDiv = banner?.parentElement?.parentElement;
+            parentDiv?.classList.add("u-visually-hidden");
         }
 
         const candleContainer = node.querySelector("div[class='candle-container']") as HTMLElement;
         if (candleContainer) {
-            candleContainer.style.cssText = "display: none;"
+            candleContainer.classList.add("u-visually-hidden");
         }
 
         // Shift columns a little to make overall look nicer
