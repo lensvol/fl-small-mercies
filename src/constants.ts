@@ -78,17 +78,17 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "Whimsical stuff",
         settings: {
-            "remove_plan_buttons": {
-                description: "Remove 'Plans' button & related buttonlets",
-                default: true
-            },
             "ship_saver": {
                 description: "Disable storylet that lets you sell your Ship.",
                 default: true
             },
+            "remove_plan_buttons": {
+                description: "Remove 'Plans' button & related buttonlets",
+                default: false
+            },
             "ascetic_mode": {
                 description: "Remove both location banner and candles.",
-                default: true,
+                default: false,
             },
         }
     },
