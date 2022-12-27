@@ -4,13 +4,15 @@ import {SettingsObject} from "../settings.js";
 
 export class AsceticModeFixer implements IMutationAwareFixer {
     private removeHeaderAndCandles = false;
+    private removeFateCounter = false;
 
     applySettings(settings: SettingsObject): void {
         this.removeHeaderAndCandles = settings.ascetic_mode;
+        this.removeFateCounter = settings.remove_fate_counter;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.removeHeaderAndCandles;
+        return this.removeHeaderAndCandles || this.removeFateCounter;
     }
 
     onNodeAdded(node: HTMLElement): void {
@@ -34,6 +36,13 @@ export class AsceticModeFixer implements IMutationAwareFixer {
         const tertiaryColumn = node.querySelector("div[class='col-tertiary']") as HTMLElement;
         if (tertiaryColumn) {
             tertiaryColumn.style.cssText = "padding-top: 44px;"
+        }
+
+        if (this.removeFateCounter) {
+            const fateButton = node.querySelector("button[class*='sidebar__fate-button']");
+            const fateItem = fateButton?.parentElement;
+            fateItem?.classList.remove("item");
+            fateItem?.classList.add("u-visually-hidden");
         }
     }
 

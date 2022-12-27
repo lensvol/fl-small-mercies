@@ -90,6 +90,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Remove both location banner and candles.",
                 default: false,
             },
+            "remove_fate_counter": {
+                description: "Remove Fate counter from the sidebar.",
+                default: false,
+            }
         }
     },
 ]
