@@ -5,14 +5,17 @@ import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js"
 import Tab = chrome.tabs.Tab;
 
 type SettingDescriptor = { description: string, default: boolean }
-type SettingsSchema = { [key: string]: SettingDescriptor }
+type SettingGroupDescriptor = { title: string, settings: {[key: string]: SettingDescriptor} }
+type SettingsSchema = SettingGroupDescriptor[]
 type SettingsObject = {[key: string]: boolean}
 type SettingsMessage = { action: string, settings?: SettingsObject }
 
 function createDefaultSettings(schema: SettingsSchema): SettingsObject {
     const defaultSettings: {[key: string]: boolean} = {};
-    for (const [toggleId, descriptor] of Object.entries(schema)) {
-        defaultSettings[toggleId] = descriptor.default;
+    for (const groupDescriptor of schema) {
+        for (const [toggleId, descriptor] of Object.entries(groupDescriptor.settings)) {
+            defaultSettings[toggleId] = descriptor.default;
+        }
     }
     return defaultSettings;
 }
@@ -22,7 +25,7 @@ class FLSettingsFrontend {
     private readonly extensionId: string;
 
     private settings: SettingsObject;
-    private schema: SettingsSchema;
+    private readonly schema: SettingsSchema;
 
     private createdToggles: Array<HTMLInputElement> = [];
     private updateHandler?: (settings: SettingsObject) => void;
@@ -117,6 +120,14 @@ class FLSettingsFrontend {
         return wrapper;
     }
 
+    createGroupHeader(title: string) {
+        const groupTitle = document.createElement('h2');
+        groupTitle.classList.add('heading', 'heading--4');
+        groupTitle.textContent = title;
+
+        return groupTitle;
+    }
+
     private createLocalSettingsPanel(): Node {
         const containerDiv = document.createElement("div");
         containerDiv.setAttribute("custom-settings", this.extensionId);
@@ -129,24 +140,28 @@ class FLSettingsFrontend {
         const listContainer = document.createElement("ul");
 
         this.createdToggles = [];
-        for (const [toggleId, descriptor] of Object.entries(this.schema)) {
-            const toggle = document.createElement("li");
-            toggle.classList.add("checkbox");
+        for (const groupDescriptor of this.schema) {
+            listContainer.appendChild(this.createGroupHeader(groupDescriptor.title));
 
-            const label = document.createElement("label");
+            for (const [toggleId, descriptor] of Object.entries(groupDescriptor.settings)) {
+                const toggle = document.createElement("li");
+                toggle.classList.add("checkbox");
 
-            const input = document.createElement("input");
-            input.setAttribute("id", toggleId);
-            input.setAttribute("type", "checkbox");
-            input.checked = this.settings[toggleId];
+                const label = document.createElement("label");
 
-            this.createdToggles.push(input);
+                const input = document.createElement("input");
+                input.setAttribute("id", toggleId);
+                input.setAttribute("type", "checkbox");
+                input.checked = this.settings[toggleId];
 
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(descriptor.description));
+                this.createdToggles.push(input);
 
-            toggle.appendChild(label);
-            listContainer.appendChild(toggle);
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(descriptor.description));
+
+                toggle.appendChild(label);
+                listContainer.appendChild(toggle);
+            }
         }
 
         const submitButton = document.createElement("button");
