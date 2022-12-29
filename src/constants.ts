@@ -10,34 +10,32 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "UI Fixes",
         settings: {
-            "fix_journal_navigation":
-            {
+            "fix_journal_navigation": {
                 description: "Fix color and alignment of the navigation buttons in Journal.",
                 default: true
             },
-            "discrete_scrollbars":
-            {
+            "discrete_scrollbars": {
                 description: "Remove scrollbars from discrete sidebar qualities.",
                 default: true
             },
-            "scrip_icon":
-            {
+            "scrip_icon": {
                 description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
                 default: true
             },
-            "sort_city_mysteries":
-            {
+            "sort_city_mysteries": {
                 description: "Sort 'Mystery of the ... City' qualities.",
                 default: true,
             },
-            "sort_discordance_seals":
-            {
+            "sort_discordance_seals": {
                 description: "Sort ███████████ █████.",
                 default: true,
             },
-            "sort_neathbow_boxes":
-            {
+            "sort_neathbow_boxes": {
                 description: "Sort Neathbow boxes in your inventory.",
+                default: true,
+            },
+            "fix_empty_requirements": {
+                description: "Remove empty requirements bar in social storylets.",
                 default: true,
             },
         }

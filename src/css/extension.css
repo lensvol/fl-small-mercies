@@ -7,3 +7,7 @@
     margin: 0 0 -0.8em;
     background-size: 1.75em;
 }
+
+.hidden {
+    display: none;
+}
