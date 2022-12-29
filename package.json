@@ -1,6 +1,6 @@
 {
   "name": "fl-small-mercies",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/chrome": "^0.0.190",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
