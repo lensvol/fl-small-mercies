@@ -16,9 +16,11 @@ function isElementInViewport (el: Element): boolean {
 
 export class AutoScrollFixer implements IMutationAwareFixer {
     private enableAutoScrollBack = false;
+    private scrollBehavior = "auto";
 
     applySettings(settings: SettingsObject): void {
         this.enableAutoScrollBack = settings.auto_scroll_back;
+        this.scrollBehavior = settings.scroll_back_behavior;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
@@ -40,9 +42,9 @@ export class AutoScrollFixer implements IMutationAwareFixer {
             console.debug("Storylet not visible, scrolling back...");
             const tabList = document.querySelector("ul[role='tablist']");
             if (tabList) {
-                tabList.scrollIntoView();
+                tabList.scrollIntoView({ behavior: this.scrollBehavior });
             } else {
-                mediaRoot.scrollIntoView();
+                mediaRoot.scrollIntoView({ behavior: this.scrollBehavior });
             }
         }
     }

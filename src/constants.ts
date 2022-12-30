@@ -94,6 +94,19 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             }
         }
     },
+    {
+        title: "Fine tuning",
+        settings: {
+            "scroll_back_behavior": {
+                description: "Scroll back mode",
+                default: "auto",
+                choices: [
+                    ["auto", "Instant"],
+                    ["smooth", "Smooth"],
+                ],
+            }
+        }
+    }
 ]
 
 
