@@ -12,15 +12,15 @@ const SETTINGS_SCHEMA: SettingsSchema = [
         settings: {
             "fix_journal_navigation": {
                 description: "Fix color and alignment of the navigation buttons in Journal.",
-                default: true
+                default: true,
             },
             "discrete_scrollbars": {
                 description: "Remove scrollbars from discrete sidebar qualities.",
-                default: true
+                default: true,
             },
             "scrip_icon": {
                 description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
-                default: true
+                default: true,
             },
             "sort_city_mysteries": {
                 description: "Sort 'Mystery of the ... City' qualities.",
@@ -65,7 +65,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             },
             "auto_scroll_back": {
                 description: "Auto-scroll to the storylet after choosing branch.",
-                default: true
+                default: true,
             },
             "quick_share_button": {
                 description: "Replace usual 'Share snippet' button with a quicker alternative.",
@@ -78,11 +78,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
         settings: {
             "ship_saver": {
                 description: "Disable storylet that lets you sell your Ship.",
-                default: true
+                default: true,
             },
             "remove_plan_buttons": {
                 description: "Remove 'Plans' button & related buttonlets",
-                default: false
+                default: false,
             },
             "ascetic_mode": {
                 description: "Remove both location banner and candles.",

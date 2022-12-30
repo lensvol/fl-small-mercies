@@ -1,24 +1,30 @@
-import {debug, log} from "./logging.js";
+import {debug, log, error} from "./logging.js";
 import {sendToServiceWorker} from "./comms.js";
 import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js";
 
 import Tab = chrome.tabs.Tab;
 
-type SettingDescriptor = { description: string, default: boolean }
+type MultipleChoices = [string, string][]
+type ToggleSetting = { description: string, default: boolean }
+type MultipleChoiceSetting = { description: string, default: string, choices: MultipleChoices }
+type SettingDescriptor = MultipleChoiceSetting | ToggleSetting
 type SettingGroupDescriptor = { title: string, settings: {[key: string]: SettingDescriptor} }
 type SettingsSchema = SettingGroupDescriptor[]
-type SettingsObject = {[key: string]: boolean}
+type SettingsObject = {[key: string]: boolean | string }
 type SettingsMessage = { action: string, settings?: SettingsObject }
 
 function createDefaultSettings(schema: SettingsSchema): SettingsObject {
-    const defaultSettings: {[key: string]: boolean} = {};
+    const defaultSettings: {[key: string]: boolean | string} = {};
     for (const groupDescriptor of schema) {
-        for (const [toggleId, descriptor] of Object.entries(groupDescriptor.settings)) {
-            defaultSettings[toggleId] = descriptor.default;
+        for (const [settingId, descriptor] of Object.entries(groupDescriptor.settings)) {
+            defaultSettings[settingId] = descriptor.default;
         }
     }
     return defaultSettings;
 }
+
+const isToggle = (setting: SettingDescriptor): setting is ToggleSetting => typeof setting.default == "boolean"
+const isMultipleChoice = (setting: SettingDescriptor): setting is MultipleChoiceSetting => "choices" in setting
 
 class FLSettingsFrontend {
     private readonly name: string;
@@ -27,7 +33,6 @@ class FLSettingsFrontend {
     private settings: SettingsObject;
     private readonly schema: SettingsSchema;
 
-    private createdToggles: Array<HTMLInputElement> = [];
     private updateHandler?: (settings: SettingsObject) => void;
 
     constructor(extensionId: string, name: string, schema: SettingsSchema) {
@@ -122,10 +127,49 @@ class FLSettingsFrontend {
 
     createGroupHeader(title: string) {
         const groupTitle = document.createElement('h2');
-        groupTitle.classList.add('heading', 'heading--4');
+        groupTitle.classList.add('heading', 'heading--3');
         groupTitle.textContent = title;
 
         return groupTitle;
+    }
+
+    createMultipleChoice(title: string, settingId: string, choices: MultipleChoices) {
+        const div = document.createElement('div');
+        div.style.cssText = "padding-top: 5px";
+
+        const titleHeader = document.createElement('h2');
+        titleHeader.textContent = title + ":";
+
+        const form = document.createElement('form');
+        form.setAttribute('action', '#');
+        form.setAttribute('id', `choice-${settingId}`);
+
+        const choicesDiv = document.createElement('div');
+        choicesDiv.setAttribute('role', 'group');
+
+        for (const [value, description] of choices) {
+            const choiceId = `${settingId}-${value}`;
+
+            const label = document.createElement('label');
+            label.classList.add('radio');
+            label.setAttribute('for', choiceId);
+            label.style.cssText = 'margin-left: 20px;';
+
+            const choice = document.createElement('input');
+            choice.setAttribute('value', value);
+            choice.setAttribute('name', settingId);
+            choice.setAttribute('type', 'radio');
+
+            label.appendChild(choice);
+            label.appendChild(document.createTextNode(description));
+
+            choicesDiv.appendChild(label);
+        }
+
+        div.appendChild(titleHeader);
+        div.appendChild(form);
+        form.appendChild(choicesDiv);
+        return div;
     }
 
     private createLocalSettingsPanel(): Node {
@@ -138,29 +182,45 @@ class FLSettingsFrontend {
         heading.setAttribute("id", "extension-panel");
 
         const listContainer = document.createElement("ul");
+        // FIXME: Use proper CSS classes for that
+        listContainer.style.cssText = "padding-left: 5px";
 
-        this.createdToggles = [];
         for (const groupDescriptor of this.schema) {
             listContainer.appendChild(this.createGroupHeader(groupDescriptor.title));
 
-            for (const [toggleId, descriptor] of Object.entries(groupDescriptor.settings)) {
-                const toggle = document.createElement("li");
-                toggle.classList.add("checkbox");
+            for (const [settingId, descriptor] of Object.entries(groupDescriptor.settings)) {
+                if (isToggle(descriptor)) {
+                    const toggle = document.createElement("li");
+                    toggle.classList.add("checkbox");
 
-                const label = document.createElement("label");
+                    const label = document.createElement("label");
 
-                const input = document.createElement("input");
-                input.setAttribute("id", toggleId);
-                input.setAttribute("type", "checkbox");
-                input.checked = this.settings[toggleId];
+                    const input = document.createElement("input");
+                    input.setAttribute("id", settingId);
+                    input.setAttribute("type", "checkbox");
+                    input.checked = (this.settings[settingId] as boolean);
 
-                this.createdToggles.push(input);
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(descriptor.description));
 
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(descriptor.description));
+                    toggle.appendChild(label);
+                    listContainer.appendChild(toggle);
+                }
 
-                toggle.appendChild(label);
-                listContainer.appendChild(toggle);
+                if (isMultipleChoice(descriptor)) {
+                    const choicePanel = this.createMultipleChoice(descriptor.description, settingId, descriptor.choices);
+
+                    const radios: NodeListOf<HTMLInputElement> = choicePanel.querySelectorAll(`input[name='${settingId}']`);
+                    for (const radio of radios) {
+                        if (radio.value == this.settings[settingId]) {
+                            radio.setAttribute("checked", "");
+                        } else {
+                            radio.removeAttribute("checked");
+                        }
+                    }
+
+                    listContainer.appendChild(choicePanel);
+                }
             }
         }
 
@@ -215,9 +275,6 @@ class FLSettingsFrontend {
 
     private updateState(newState: SettingsObject) {
         this.settings = newState || this.settings;
-        this.createdToggles.forEach((toggle) => {
-            toggle.setAttribute("checked", this.settings[toggle.id] ? "true" : "false");
-        });
 
         if (this.updateHandler) {
             this.updateHandler(this.settings);
@@ -226,9 +283,30 @@ class FLSettingsFrontend {
 
     private saveState() {
         debug("Collecting settings values from the panel...");
-        this.createdToggles.forEach((toggle) => {
-            this.settings[toggle.id] = toggle.checked;
-        });
+
+        const rootNode = document.querySelector(`div[custom-settings="${this.extensionId}"]`);
+        if (!rootNode) {
+            debug("Failed to save state because of missing settings panel.");
+            return;
+        }
+
+        for (const groupDescriptor of this.schema) {
+            for (const [settingId, descriptor] of Object.entries(groupDescriptor.settings)) {
+                if (isToggle(descriptor)) {
+                    const toggleInput = rootNode.querySelector(`input[id=${settingId}]`)
+                    this.settings[settingId] = (toggleInput as HTMLInputElement)?.checked;
+                }
+
+                if (isMultipleChoice(descriptor)) {
+                    const radios: NodeListOf<HTMLInputElement> = rootNode.querySelectorAll(`input[name='${settingId}']`);
+                    for (const radio of radios) {
+                        if (radio.checked) {
+                            this.settings[settingId] = radio.value;
+                        }
+                    }
+                }
+            }
+        }
 
         debug("Sending settings to be saved...");
         sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, {settings: this.settings});

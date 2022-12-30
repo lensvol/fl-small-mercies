@@ -8,4 +8,8 @@ function log(message: string){
     console.log(`[${EXTENSION_NAME}] ${message}`);
 }
 
-export { log, debug }
+function error(message: string){
+    console.error(`[${EXTENSION_NAME}] ${message}`);
+}
+
+export { log, debug, error }
