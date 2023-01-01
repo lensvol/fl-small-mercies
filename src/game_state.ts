@@ -61,6 +61,7 @@ export class Quality {
     }
 }
 
+
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
@@ -133,6 +134,7 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.character = new FLCharacter(response.character.id, response.character.name);
 
+        // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
                 this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image);
@@ -161,6 +163,7 @@ export class GameStateController {
     public parseChooseBranchResponse(response: Object) {
         if (!("messages" in response)) return;
 
+        // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of response.messages) {
             if (message.type == "StandardQualityChangeMessage"
                 || message.type == "PyramidQualityChangeMessage"
@@ -171,7 +174,9 @@ export class GameStateController {
             }
         }
 
+        // @ts-ignore: There is hell and then there is writing types for external APIs
         if (response.phase != undefined) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
             const currentPhase = this.decodePhase(response.phase);
             if (currentPhase != this.state.storyletPhase) {
                 if (currentPhase == StoryletPhases.End) {
@@ -186,9 +191,11 @@ export class GameStateController {
 
     public parseStoryletResponse(response: Object) {
         if (!("phase" in response)) return;
+        // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.storyletPhase = this.decodePhase(response.phase);
 
         if ("storylet" in response) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.storyletId = response.storylet.id;
         } else {
             this.state.storyletId = UNKNOWN;
