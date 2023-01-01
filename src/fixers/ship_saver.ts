@@ -5,7 +5,7 @@ export class ShipSaverFixer implements IMutationAwareFixer {
     private disableSaleOption = false
 
     applySettings(settings: SettingsObject): void {
-        this.disableSaleOption = settings.ship_saver
+        this.disableSaleOption = settings.ship_saver as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

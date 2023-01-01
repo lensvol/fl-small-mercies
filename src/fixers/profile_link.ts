@@ -22,7 +22,7 @@ export class ProfileLinkFixer implements IMutationAwareFixer, IStateAware {
     }
 
     applySettings(settings: SettingsObject): void {
-        this.addProfileLink = settings.add_profile_link;
+        this.addProfileLink = settings.add_profile_link as boolean;
     }
 
     checkEligibility(node: HTMLElement): boolean {

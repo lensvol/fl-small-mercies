@@ -98,7 +98,7 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     }
 
     applySettings(settings: SettingsObject): void {
-        this.displayFavourTracker = settings.display_favour_tracker;
+        this.displayFavourTracker = settings.display_favour_tracker as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

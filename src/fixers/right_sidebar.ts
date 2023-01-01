@@ -9,8 +9,8 @@ export class RightSidebarFixer implements IMutationAwareFixer {
     private removeSnippets = false
 
     applySettings(settings: SettingsObject): void {
-        this.removeMaskBanner = settings.remove_mask_banner;
-        this.removeSnippets = settings.remove_sidebar_snippets;
+        this.removeMaskBanner = settings.remove_mask_banner as boolean;
+        this.removeSnippets = settings.remove_sidebar_snippets as boolean;
     }
 
     onNodeAdded(node: HTMLElement): void {

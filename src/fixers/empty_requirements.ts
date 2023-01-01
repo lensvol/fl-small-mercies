@@ -5,7 +5,7 @@ export class SocialEmptyReqsFixer implements IMutationAwareFixer {
     private fixEmptyRequirements = false;
 
     applySettings(settings: SettingsObject): void {
-        this.fixEmptyRequirements = settings.fix_empty_requirements;
+        this.fixEmptyRequirements = settings.fix_empty_requirements as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

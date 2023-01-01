@@ -67,7 +67,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
     }
 
     applySettings(settings: SettingsObject): void {
-        this.replaceShareButton = settings.quick_share_button;
+        this.replaceShareButton = settings.quick_share_button as boolean;
     }
 
     checkEligibility(node: HTMLElement): boolean {

@@ -19,8 +19,8 @@ export class AutoScrollFixer implements IMutationAwareFixer {
     private scrollBehavior = "auto";
 
     applySettings(settings: SettingsObject): void {
-        this.enableAutoScrollBack = settings.auto_scroll_back;
-        this.scrollBehavior = settings.scroll_back_behavior;
+        this.enableAutoScrollBack = settings.auto_scroll_back as boolean;
+        this.scrollBehavior = settings.scroll_back_behavior as string;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
@@ -42,9 +42,9 @@ export class AutoScrollFixer implements IMutationAwareFixer {
             console.debug("Storylet not visible, scrolling back...");
             const tabList = document.querySelector("ul[role='tablist']");
             if (tabList) {
-                tabList.scrollIntoView({ behavior: this.scrollBehavior });
+                tabList.scrollIntoView({ behavior: this.scrollBehavior as ScrollBehavior });
             } else {
-                mediaRoot.scrollIntoView({ behavior: this.scrollBehavior });
+                mediaRoot.scrollIntoView({ behavior: this.scrollBehavior as ScrollBehavior});
             }
         }
     }

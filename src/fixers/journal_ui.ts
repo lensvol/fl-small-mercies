@@ -8,7 +8,7 @@ export class JournalUiFixer implements IMutationAwareFixer {
     private fixJournalUI = false;
 
     applySettings(settings: SettingsObject): void {
-        this.fixJournalUI = settings.fix_journal_navigation;
+        this.fixJournalUI = settings.fix_journal_navigation as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

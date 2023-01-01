@@ -15,7 +15,7 @@ export class PlanButtonsFixer implements IMutationAwareFixer {
     private removePlanButtons = false;
 
     applySettings(settings: SettingsObject): void {
-        this.removePlanButtons = settings.remove_plan_buttons;
+        this.removePlanButtons = settings.remove_plan_buttons as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

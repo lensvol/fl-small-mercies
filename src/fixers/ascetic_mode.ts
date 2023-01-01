@@ -7,8 +7,8 @@ export class AsceticModeFixer implements IMutationAwareFixer {
     private removeFateCounter = false;
 
     applySettings(settings: SettingsObject): void {
-        this.removeHeaderAndCandles = settings.ascetic_mode;
-        this.removeFateCounter = settings.remove_fate_counter;
+        this.removeHeaderAndCandles = settings.ascetic_mode as boolean;
+        this.removeFateCounter = settings.remove_fate_counter as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

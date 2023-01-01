@@ -21,7 +21,7 @@ export class ScripIconFixer implements IMutationAwareFixer {
 }
 
     applySettings(settings: SettingsObject): void {
-        this.showScripIcon = settings.scrip_icon;
+        this.showScripIcon = settings.scrip_icon as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

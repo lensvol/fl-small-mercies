@@ -72,7 +72,7 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
 }
 
     applySettings(settings: SettingsObject): void {
-        this.separateThousands = settings.add_thousands_separator;
+        this.separateThousands = settings.add_thousands_separator as boolean;
 
         if (!this.separateThousands) {
             this.shopPriceObserver.disconnect();

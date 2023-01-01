@@ -62,9 +62,9 @@ export class ThingSortFixer implements IMutationAwareFixer {
     private sortNeathbow = false;
 
     applySettings(settings: SettingsObject): void {
-        this.sortCityMysteries = settings.sort_city_mysteries;
-        this.sortSeals = settings.sort_discordance_seals;
-        this.sortNeathbow = settings.sort_neathbow_boxes;
+        this.sortCityMysteries = settings.sort_city_mysteries as boolean;
+        this.sortSeals = settings.sort_discordance_seals as boolean;
+        this.sortNeathbow = settings.sort_neathbow_boxes as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {

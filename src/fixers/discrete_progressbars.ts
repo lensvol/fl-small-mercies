@@ -41,7 +41,7 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
     }
 
     applySettings(settings: SettingsObject): void {
-        this.removeDiscreteScrollbars = settings.discrete_scrollbars;
+        this.removeDiscreteScrollbars = settings.discrete_scrollbars as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
