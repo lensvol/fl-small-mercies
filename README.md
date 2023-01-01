@@ -7,12 +7,19 @@
 Set of small "fixers" for the Fallen London UI. Each of them can be disabled or enabled individually via the "Extensions" section on the "Account" screen.
 
 Current features:
+* Display Favours in the right sidebar.
+* Quicker sharing of storylet snippets.
+* Remove "Plans" button and related UI.
 * Fix color and alignment of the navigation buttons in Journal.
 * Add comma after thousands in the currency indicators.
 * Auto-scroll to the storylet after choosing branch.
 * Remove scrollbars from discrete sidebar qualities.
 * Add Hinterlands Scrip Icon to a sidebar indicator.
 * Disable storylet that lets you sell your Ship.
+* Remove various UI elements (MotR banner, candles, Fate counter etc.)
+* Remove empty requirements bar from social storylets.
+* Sort various in-game things according to canonical order.
+* Add "Profile" button to the top bar.
 
 _NB: This extension is **not** (yet) whitelisted by Failbetter Games. Use at your own risk!_
 
