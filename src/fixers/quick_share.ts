@@ -101,7 +101,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
         });
 
         stateController.onStoryletPhaseChanged((g: GameState) => {
-            if (g.storyletPhase == StoryletPhases.In) {
+            if ([StoryletPhases.In, StoryletPhases.End].includes(g.storyletPhase)) {
                 this.currentStoryletId = g.storyletId;
             } else {
                 this.currentStoryletId = null;
