@@ -8,6 +8,8 @@ const FAVOUR_NAMES = [
     "Favours: Criminals",
     "Favours: The Church",
     "Favours: The Docks",
+    "Favours: Urchins",
+    "Favours: Constables",
     "Favours: Fingerkings",
     "Favours: Hell",
     "Favours: Revolutionaries",
