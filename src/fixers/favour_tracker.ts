@@ -102,7 +102,7 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return true;
+        return this.displayFavourTracker;
     }
 
     onNodeAdded(node: HTMLElement): void {
