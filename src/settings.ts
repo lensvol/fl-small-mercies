@@ -226,12 +226,13 @@ class FLSettingsFrontend {
 
         const submitButton = document.createElement("button");
         submitButton.classList.add("button", "button--primary");
-        submitButton.textContent = "UPDATE";
+        submitButton.textContent = "SAVE SETTINGS";
+        submitButton.style.cssText = "margin-top: 10px; margin-bottom: 10px";
         submitButton.addEventListener("click", (_ev) => this.saveState());
 
         containerDiv.appendChild(heading);
-        containerDiv.appendChild(listContainer);
         containerDiv.appendChild(submitButton);
+        containerDiv.appendChild(listContainer);
 
         return containerDiv;
     }
