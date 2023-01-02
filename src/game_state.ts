@@ -180,7 +180,8 @@ export class GameStateController {
             const currentPhase = this.decodePhase(response.phase);
             if (currentPhase != this.state.storyletPhase) {
                 if (currentPhase == StoryletPhases.End) {
-                    this.state.storyletId = UNKNOWN;
+                    // @ts-ignore: There is hell and then there is writing types for external APIs
+                    this.state.storyletId = response.endStorylet.rootEventId;
                 }
 
                 this.state.storyletPhase = currentPhase;
