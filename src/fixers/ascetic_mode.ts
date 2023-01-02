@@ -17,25 +17,28 @@ export class AsceticModeFixer implements IMutationAwareFixer {
 
     onNodeAdded(node: HTMLElement): void {
         const banner = node.querySelector("div[class*='banner--lg-up']") as HTMLElement;
-        if (banner) {
-            const parentDiv = banner?.parentElement?.parentElement;
-            parentDiv?.classList.add("u-visually-hidden");
-        }
 
-        const candleContainer = node.querySelector("div[class='candle-container']") as HTMLElement;
-        if (candleContainer) {
-            candleContainer.classList.add("u-visually-hidden");
-        }
+        if (this.removeHeaderAndCandles) {
+            if (banner) {
+                const parentDiv = banner?.parentElement?.parentElement;
+                parentDiv?.classList.add("u-visually-hidden");
+            }
 
-        // Shift columns a little to make overall look nicer
-        const primaryColumn = node.querySelector("div[class*='col-primary']") as HTMLElement;
-        if (primaryColumn) {
-            primaryColumn.style.cssText = "padding-top: 10px;"
-        }
+            const candleContainer = node.querySelector("div[class='candle-container']") as HTMLElement;
+            if (candleContainer) {
+                candleContainer.classList.add("u-visually-hidden");
+            }
 
-        const tertiaryColumn = node.querySelector("div[class='col-tertiary']") as HTMLElement;
-        if (tertiaryColumn) {
-            tertiaryColumn.style.cssText = "padding-top: 44px;"
+            // Shift columns a little to make overall look nicer
+            const primaryColumn = node.querySelector("div[class*='col-primary']") as HTMLElement;
+            if (primaryColumn) {
+                primaryColumn.style.cssText = "padding-top: 10px;"
+            }
+
+            const tertiaryColumn = node.querySelector("div[class='col-tertiary']") as HTMLElement;
+            if (tertiaryColumn) {
+                tertiaryColumn.style.cssText = "padding-top: 44px;"
+            }
         }
 
         if (this.removeFateCounter) {
