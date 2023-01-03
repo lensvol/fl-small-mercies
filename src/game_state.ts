@@ -181,7 +181,7 @@ export class GameStateController {
             if (currentPhase != this.state.storyletPhase) {
                 if (currentPhase == StoryletPhases.End) {
                     // @ts-ignore: There is hell and then there is writing types for external APIs
-                    this.state.storyletId = response.endStorylet.rootEventId;
+                    this.state.storyletId = response.endStorylet.event.id;
                 }
 
                 this.state.storyletPhase = currentPhase;
