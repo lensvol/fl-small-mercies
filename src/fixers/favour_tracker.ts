@@ -116,6 +116,11 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
             sidebar = document.createElement("div");
             sidebar.id = "right-sidebar";
             sidebar.classList.add("sidebar");
+
+            if (travelColumn.querySelector("div[class='snippet']")) {
+                // Give some clearance in case snippets are not disabled.
+                (sidebar as HTMLElement).style.cssText = "margin-top: 30px";
+            }
             travelColumn.appendChild(sidebar);
         }
 
