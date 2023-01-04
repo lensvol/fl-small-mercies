@@ -13,7 +13,7 @@ Current features:
 * Fix color and alignment of the navigation buttons in Journal.
 * Add comma after thousands in the currency indicators.
 * Auto-scroll to the storylet after choosing branch.
-* Remove scrollbars from discrete sidebar qualities.
+* Remove progress bars from discrete sidebar qualities.
 * Add Hinterlands Scrip Icon to a sidebar indicator.
 * Disable storylet that lets you sell your Ship.
 * Remove various UI elements (MotR banner, candles, Fate counter etc.)
@@ -92,5 +92,5 @@ How to do it:
 
 * [rahv7](https://www.reddit.com/user/rahv7/) - for having the nerve to goad me into writing this.
 * [idyl](https://www.reddit.com/user/idyl/) - for suggesting idea with thousands separator.
-* **RagCall** - for suggesting idea with removing scrollbars on discrete qualities.
+* [RagCall](https://fallenlondon.wiki/wiki/User:RagCall) - for suggesting idea with removing progress bars on discrete qualities.
 * [Saklad5](https://github.com/Saklad5) - for finding the appropriate graphic for Hinterlands Scrip icon.
