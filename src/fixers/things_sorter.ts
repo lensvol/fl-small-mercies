@@ -86,7 +86,7 @@ export class ThingSortFixer implements IMutationAwareFixer {
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.sortCityMysteries || this.sortSeals || this.sortDreams
+        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow
     }
 
     onNodeAdded(node: HTMLElement): void {
