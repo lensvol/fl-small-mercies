@@ -30,6 +30,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Sort ███████████ █████.",
                 default: true,
             },
+            "sort_dreams": {
+                description: "Sort advanced dreams (Stormy-Eyed, Seeing in Apocyan, Haunted by Stairs) below their base qualities.",
+                default: true,
+            },
             "sort_neathbow_boxes": {
                 description: "Sort Neathbow boxes in your inventory.",
                 default: true,
