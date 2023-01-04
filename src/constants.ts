@@ -15,7 +15,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             "discrete_scrollbars": {
-                description: "Remove scrollbars from discrete sidebar qualities.",
+                description: "Remove progress bars from discrete sidebar qualities.",
                 default: true,
             },
             "scrip_icon": {
