@@ -22,6 +22,21 @@ const NEATHBOW_SELECTOR = NEATHBOW_ORDER.map((i) => `div[data-quality-id='${i}']
 const SEAL_ORDER = [141891, 141892, 141893, 141894, 141895, 141896, 141897, 141898, 142381];
 const SEAL_SELECTOR = SEAL_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
+const DREAM_ORDER = [
+    239,    // HRD: A Game of Chess
+    142643, // HRD: Betwixt Us and the Sun
+    235,    // HRD: Death by Water
+    142642, // HRD: I Shot the Albatross
+    234,    // HRD: Is Someone There?
+    237,    // HRD: The Burial of the Dead
+    141026, // Haunted by Stairs
+    238,    // HRD: The Fire Sermon
+    141027, // Seeing in Apocyan
+    236,    // HRD: What the Thunder Said
+    774,    // Stormy-Eyed
+];
+const DREAM_SELECTOR = DREAM_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
+
 
 function findAndSortIcons(node: Element, selector: string, order: number[]) {
     const icons = node.querySelectorAll(selector) as NodeListOf<HTMLElement>;
@@ -59,20 +74,24 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
 export class ThingSortFixer implements IMutationAwareFixer {
     private sortCityMysteries = false;
     private sortSeals = false;
+    private sortDreams = false;
     private sortNeathbow = false;
+
 
     applySettings(settings: SettingsObject): void {
         this.sortCityMysteries = settings.sort_city_mysteries as boolean;
         this.sortSeals = settings.sort_discordance_seals as boolean;
+        this.sortDreams = settings.sort_dreams as boolean;
         this.sortNeathbow = settings.sort_neathbow_boxes as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.sortCityMysteries || this.sortSeals
+        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow
     }
 
     onNodeAdded(node: HTMLElement): void {
         const accomplishments = node.querySelectorAll("div[data-group-name='Accomplishments']");
+        // if found, we are on the "Myself" tab
         if (accomplishments.length > 0) {
             if (this.sortCityMysteries) {
                 findAndSortIcons(node, MYSTERIES_SELECTOR, MYSTERIES_ORDER);
@@ -80,6 +99,10 @@ export class ThingSortFixer implements IMutationAwareFixer {
 
             if (this.sortSeals) {
                 findAndSortIcons(node, SEAL_SELECTOR, SEAL_ORDER);
+            }
+
+            if (this.sortDreams) {
+                findAndSortIcons(node, DREAM_SELECTOR, DREAM_ORDER);
             }
         }
 
@@ -90,5 +113,5 @@ export class ThingSortFixer implements IMutationAwareFixer {
 
     onNodeRemoved(_node: HTMLElement): void {
     // Do nothing if DOM node is removed.
-}
+    }
 }
