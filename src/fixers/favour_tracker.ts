@@ -1,6 +1,7 @@
 import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController, Quality} from "../game_state.js";
+import {error} from "../logging.js";
 
 const FAVOUR_NAMES = [
     "Favours: Bohemians",
@@ -27,7 +28,7 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
 
         const favourTracker = document.querySelector("ul[class*='favour_tracker']");
         if (!favourTracker) {
-            console.error("Favour tracker not found!");
+            error("Favour tracker not found!");
             return;
         }
 

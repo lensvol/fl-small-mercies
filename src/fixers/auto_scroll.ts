@@ -1,5 +1,6 @@
 import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import {debug} from "../logging.js";
 
 // Adapted from
 // https://stackoverflow.com/questions/123999/how-can-i-tell-if-a-dom-element-is-visible-in-the-current-viewport
@@ -39,7 +40,7 @@ export class AutoScrollFixer implements IMutationAwareFixer {
         }
 
         if (!isElementInViewport(mediaRoot)) {
-            console.debug("Storylet not visible, scrolling back...");
+            debug("Storylet not visible, scrolling back...");
             const tabList = document.querySelector("ul[role='tablist']");
             if (tabList) {
                 tabList.scrollIntoView({ behavior: this.scrollBehavior as ScrollBehavior });
