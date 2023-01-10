@@ -1,29 +1,31 @@
 import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import {GameStateController, Quality} from "../game_state.js";
+import {GameStateController} from "../game_state.js";
 import {error} from "../logging.js";
 
-const FAVOUR_NAMES = [
-    "Favours: Bohemians",
-    "Favours: Society",
-    "Favours: Criminals",
-    "Favours: The Church",
-    "Favours: The Docks",
-    "Favours: Urchins",
-    "Favours: Constables",
-    "Favours: Fingerkings",
-    "Favours: Hell",
-    "Favours: Revolutionaries",
-    "Favours: Rubbery Men",
-    "Favours: The Great Game",
-    "Favours: Tomb-Colonies",
-];
+// Mapping of favour name to its respective image
+const FAVOURS = new Map([
+    ["Favours: Bohemians", "bohogirl1"],
+    ["Favours: Society", "salon2"],
+    ["Favours: Criminals", "manacles"],
+    ["Favours: The Church", "clergy"],
+    ["Favours: The Docks", "ship"],
+    ["Favours: Urchins", "urchin"],
+    ["Favours: Constables", "constablebadge"],
+    ["Favours: Fingerkings", "fingerking"],
+    ["Favours: Hell", "devil"],
+    ["Favours: Revolutionaries", "flames"],
+    ["Favours: Rubbery Men", "rubberyman"],
+    ["Favours: The Great Game", "pawn"],
+    ["Favours: Tomb-Colonies", "bandagedman"]
+]);
 
 export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     private displayFavourTracker = false;
-    private favourValues: Map<string, Quality> = new Map();
+    private favourValues: Map<string, number> = new Map();
 
-    private updateOrCreateFavour(title: string, icon: string, value: number) {
+    private updateOrCreateFavour(title: string, value: number) {
+        const icon = FAVOURS.get(title) || "question";
         title = title.replace("Favours: ", "");
 
         const favourTracker = document.querySelector("ul[class*='favour_tracker']");
@@ -138,8 +140,8 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
             sidebar?.appendChild(favoursPanel);
         }
 
-        for (const favourQuality of this.favourValues.values()) {
-            this.updateOrCreateFavour(favourQuality.name, favourQuality.image, favourQuality.level);
+        for (const [favourName, level] of this.favourValues.entries()) {
+            this.updateOrCreateFavour(favourName, level);
         }
     }
 
@@ -149,17 +151,19 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
 
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((g) => {
-            for (const groupName of FAVOUR_NAMES) {
-                const quality = g.getQuality("Contacts", groupName);
+            for (const favourName of FAVOURS.keys()) {
+                const quality = g.getQuality("Contacts", favourName);
                 if (quality) {
-                    this.favourValues.set(groupName, quality);
+                    this.favourValues.set(favourName, quality.level);
+                } else {
+                    this.favourValues.set(favourName, 0);
                 }
             }
         });
 
         state.onQualityChanged((quality, previous, current) => {
-           if (FAVOUR_NAMES.includes(quality.name)) {
-               this.updateOrCreateFavour(quality.name, quality.image, current);
+           if (FAVOURS.has(quality.name)) {
+               this.updateOrCreateFavour(quality.name, current);
            }
         });
     }
