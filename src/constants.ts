@@ -18,6 +18,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Remove progress bars from discrete sidebar qualities.",
                 default: true,
             },
+            "maxed_out_scrollbars": {
+                description: "Remove progress bars from maxed-out sidebar qualities.",
+                default: true,
+            },
             "scrip_icon": {
                 description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
                 default: true,

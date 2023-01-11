@@ -1,5 +1,6 @@
+import { GameStateController } from "../game_state.js";
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAwareFixer, IStateAware} from "./base.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = [
     "Notability",
@@ -12,8 +13,10 @@ const DISCRETE_SIDEBAR_QUALITIES = [
     "Moonlit"
 ];
 
-export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
+export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware {
     private removeDiscreteScrollbars = false;
+    private removeMaxedOutScrollbars = false;
+    private maxedOutQualities: string[] = [];
 
     onNodeAdded(node: HTMLElement): void {
         const sidebarQualities = node.querySelectorAll("li[class*='sidebar-quality'] div[class='item__desc']");
@@ -24,13 +27,21 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
                     continue;
                 }
 
-                if (DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) {
-                    const progressBar = quality.querySelector("div[class*='progress-bar']");
+                if ((this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent))
+                    || (this.removeMaxedOutScrollbars && this.maxedOutQualities.includes(qualityName.textContent))) {
+                    const progressBar = quality.querySelector("div[class*='progress-bar']") as HTMLElement;
                     if (progressBar) {
-                        progressBar.remove();
+                        // FIXME: Create a helper function to manipulate those accurately
+                        progressBar.style.cssText = "display: none";
                     }
 
-                    (quality as HTMLElement).style.cssText = "padding-top: 7px";
+                    // This is hackish as heck, but still better than misaligned quality names... So be it.
+                    // (although "Monstrous Anatomy" will still fail the check and be misaligned)
+                    if (qualityName.textContent.length < 16) {
+                        (quality as HTMLElement).style.cssText = "padding-top: 7px";
+                    } else {
+                        (quality as HTMLElement).style.cssText = "margin-top: -4px";
+                    }
                 }
             }
         }
@@ -42,10 +53,22 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer {
 
     applySettings(settings: SettingsObject): void {
         this.removeDiscreteScrollbars = settings.discrete_scrollbars as boolean;
+        this.removeMaxedOutScrollbars = settings.maxed_out_scrollbars as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.removeDiscreteScrollbars;
+        return this.removeDiscreteScrollbars || this.removeMaxedOutScrollbars;
     }
 
+    linkState(state: GameStateController): void {
+        // FIXME: Take into account that qualities can be affected as a result of the branch!!
+
+        state.onUserDataLoaded((g) => {
+            for (const quality of g.enumerateQualities()) {
+                if (quality.category != "Thing" && quality.level >= quality.cap) {
+                    this.maxedOutQualities.push(quality.name);
+                }
+            }
+        });
+    }
 }

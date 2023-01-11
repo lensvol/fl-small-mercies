@@ -51,13 +51,15 @@ export class Quality {
     level: number;
     category: string;
     image: string;
+    cap: number;
 
-    constructor(qualityId: number, category: string, name: string, level: number, image: string) {
+    constructor(qualityId: number, category: string, name: string, level: number, image: string, cap: number) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
         this.level = level;
         this.image = image;
+        this.cap = cap;
     }
 }
 
@@ -91,6 +93,14 @@ export class GameState {
         const category = this.qualities.get(categoryName) || new Map();
         category.set(qualityName, quality);
     }
+
+    public* enumerateQualities() {
+        for (const category of this.qualities.values()) {
+            for (const thing of category.values()) {
+                yield thing
+            }
+        }
+    }
 }
 
 
@@ -104,7 +114,7 @@ export class GameStateController {
         [StateChangeTypes.StoryletPhaseChanged]: [],
     }
 
-    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string): [Quality, number] {
+    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string, cap: number): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != level) {
@@ -113,7 +123,7 @@ export class GameStateController {
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
-            const quality = new Quality(qualityId, categoryName, qualityName, level, image);
+            const quality = new Quality(qualityId, categoryName, qualityName, level, image, cap);
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
         }
@@ -137,7 +147,7 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image);
+                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image, thing.cap || 0);
             }
         }
 
@@ -169,7 +179,7 @@ export class GameStateController {
                 || message.type == "PyramidQualityChangeMessage"
                 || message.type == "QualityExplicitlySetMessage") {
                 const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image);
+                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image, thing.cap || 0);
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
             }
         }
