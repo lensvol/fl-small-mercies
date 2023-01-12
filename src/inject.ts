@@ -15,6 +15,7 @@ import {
     AsceticModeFixer,
     FavourTrackerFixer,
     SocialEmptyReqsFixer,
+    AfterFallYearFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -35,6 +36,7 @@ const fixers: IMercyFixer[] = [
     new AsceticModeFixer(),
     new FavourTrackerFixer(),
     new SocialEmptyReqsFixer(),
+    new AfterFallYearFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

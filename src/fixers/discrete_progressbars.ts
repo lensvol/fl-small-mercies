@@ -66,7 +66,6 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
 
         state.onUserDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
-                // FIXME: Track actual level, not effective one!
                 if (quality.nature != "Thing" && quality.cap > 0 && quality.level >= quality.cap) {
                     debug(`"${quality.name}" is maxed out! (${quality.level} >= ${quality.cap})`);
                     this.maxedOutQualities.push(quality.name);

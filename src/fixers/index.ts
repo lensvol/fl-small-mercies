@@ -12,6 +12,7 @@ import {QuickShareFixer} from "./quick_share.js";
 import {AsceticModeFixer} from "./ascetic_mode.js";
 import {FavourTrackerFixer} from "./favour_tracker.js";
 import {SocialEmptyReqsFixer} from "./empty_requirements.js";
+import {AfterFallYearFixer} from "./af_year.js"
 
 export {
     AutoScrollFixer,
@@ -27,5 +28,6 @@ export {
     QuickShareFixer,
     AsceticModeFixer,
     FavourTrackerFixer,
-    SocialEmptyReqsFixer
+    SocialEmptyReqsFixer,
+    AfterFallYearFixer
 };

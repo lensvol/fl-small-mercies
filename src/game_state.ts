@@ -49,16 +49,18 @@ export class Quality {
     qualityId: number;
     name: string
     level: number;
+    effectiveLevel: number;
     category: string;
     image: string;
     cap: number;
     nature: string
 
-    constructor(qualityId: number, category: string, name: string, level: number, image: string, cap: number, nature: string) {
+    constructor(qualityId: number, category: string, name: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
         this.level = level;
+        this.effectiveLevel = effectiveLevel;
         this.image = image;
         this.cap = cap;
         this.nature = nature;
@@ -116,7 +118,7 @@ export class GameStateController {
         [StateChangeTypes.StoryletPhaseChanged]: [],
     }
 
-    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string, cap: number, nature: string): [Quality, number] {
+    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != level) {
@@ -125,7 +127,7 @@ export class GameStateController {
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
-            const quality = new Quality(qualityId, categoryName, qualityName, level, image, cap, nature);
+            const quality = new Quality(qualityId, categoryName, qualityName, effectiveLevel, level, image, cap, nature);
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
         }
@@ -151,7 +153,7 @@ export class GameStateController {
             for (const thing of category.possessions) {
                 this.upsertQuality(
                     thing.id, thing.category, thing.name, thing.effectiveLevel,
-                    thing.image, thing.cap || 0, thing.nature
+                    thing.level, thing.image, thing.cap || 0, thing.nature
                 );
             }
         }
@@ -186,7 +188,7 @@ export class GameStateController {
                 const thing = message.possession;
                 const [quality, previousLevel] = this.upsertQuality(
                     thing.id, thing.category, thing.name,
-                    thing.effectiveLevel, thing.image, thing.cap || 0,
+                    thing.effectiveLevel, thing.level, thing.image, thing.cap || 0,
                     thing.nature
                 );
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);

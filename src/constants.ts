@@ -99,6 +99,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             "remove_fate_counter": {
                 description: "Remove Fate counter from the sidebar.",
                 default: false,
+            },
+            "show_af_year": {
+                description: "Show After Fall years on Journal snippets.",
+                default: false,
             }
         }
     },
