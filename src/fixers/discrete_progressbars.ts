@@ -1,6 +1,7 @@
 import { GameStateController } from "../game_state.js";
 import {SettingsObject} from "../settings.js";
 import {IMutationAwareFixer, IStateAware} from "./base.js";
+import {debug} from "../logging.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = [
     "Notability",
@@ -65,7 +66,9 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
 
         state.onUserDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
-                if (quality.category != "Thing" && quality.level >= quality.cap) {
+                // FIXME: Track actual level, not effective one!
+                if (quality.nature != "Thing" && quality.cap > 0 && quality.level >= quality.cap) {
+                    debug(`"${quality.name}" is maxed out! (${quality.level} >= ${quality.cap})`);
                     this.maxedOutQualities.push(quality.name);
                 }
             }
