@@ -52,14 +52,16 @@ export class Quality {
     category: string;
     image: string;
     cap: number;
+    nature: string
 
-    constructor(qualityId: number, category: string, name: string, level: number, image: string, cap: number) {
+    constructor(qualityId: number, category: string, name: string, level: number, image: string, cap: number, nature: string) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
         this.level = level;
         this.image = image;
         this.cap = cap;
+        this.nature = nature;
     }
 }
 
@@ -114,7 +116,7 @@ export class GameStateController {
         [StateChangeTypes.StoryletPhaseChanged]: [],
     }
 
-    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string, cap: number): [Quality, number] {
+    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, level: number, image: string, cap: number, nature: string): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != level) {
@@ -123,7 +125,7 @@ export class GameStateController {
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
-            const quality = new Quality(qualityId, categoryName, qualityName, level, image, cap);
+            const quality = new Quality(qualityId, categoryName, qualityName, level, image, cap, nature);
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
         }
@@ -147,7 +149,10 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image, thing.cap || 0);
+                this.upsertQuality(
+                    thing.id, thing.category, thing.name, thing.effectiveLevel,
+                    thing.image, thing.cap || 0, thing.nature
+                );
             }
         }
 
@@ -179,7 +184,11 @@ export class GameStateController {
                 || message.type == "PyramidQualityChangeMessage"
                 || message.type == "QualityExplicitlySetMessage") {
                 const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.image, thing.cap || 0);
+                const [quality, previousLevel] = this.upsertQuality(
+                    thing.id, thing.category, thing.name,
+                    thing.effectiveLevel, thing.image, thing.cap || 0,
+                    thing.nature
+                );
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
             }
         }
