@@ -31,7 +31,11 @@ export class FLApiInterceptor {
     }
 
     private triggerResponseListeners(uri: string, response: any): void {
-        this.responseListeners.get(uri)?.map((handler) => handler(response))
+        try {
+            this.responseListeners.get(uri)?.map((handler) => handler(response))
+        } catch (error) {
+            console.error(`Error encountered when running listener for ${uri}:`, error);
+        }
     }
 
     private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, responseText: string) => void): AjaxMethod {
