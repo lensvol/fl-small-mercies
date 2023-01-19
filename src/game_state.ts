@@ -121,9 +121,10 @@ export class GameStateController {
     private upsertQuality(qualityId: number, categoryName: string, qualityName: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
-        if (existingQuality && existingQuality.level != level) {
+        if (existingQuality && existingQuality.level != effectiveLevel) {
             // We save previous value here so that we can update quality value in-place and still pass it on.
             const previousLevel = existingQuality.level;
+            existingQuality.effectiveLevel = effectiveLevel;
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
