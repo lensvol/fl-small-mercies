@@ -212,6 +212,20 @@ export class GameStateController {
         }
     }
 
+    public parseEquipResponse(response: Object) {
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        for (const thing of response.changedPossessions) {
+            const [quality, previous] = this.upsertQuality(
+                thing.id, thing.category, thing.name, thing.effectiveLevel,
+                thing.level, thing.image, thing.cap || 0, thing.nature
+            );
+
+            if (quality.level != previous) {
+                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
+            }
+        }
+    }
+
     public parseStoryletResponse(response: Object) {
         if (!("phase" in response)) return;
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -250,6 +264,8 @@ export class GameStateController {
     public hookIntoApi(interceptor: FLApiInterceptor) {
         interceptor.onResponseReceived("/api/login/user", this.parseUserResponse.bind(this));
         interceptor.onResponseReceived("/api/character/myself", this.parseMyselfResponse.bind(this));
+        interceptor.onResponseReceived("/api/outfit/equip", this.parseEquipResponse.bind(this));
+        interceptor.onResponseReceived("/api/outfit/unequip", this.parseEquipResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/choosebranch", this.parseChooseBranchResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/begin", this.parseStoryletResponse.bind(this));
