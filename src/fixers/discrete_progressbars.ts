@@ -17,7 +17,7 @@ const DISCRETE_SIDEBAR_QUALITIES = [
 export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware {
     private removeDiscreteScrollbars = false;
     private removeMaxedOutScrollbars = false;
-    private maxedOutQualities: string[] = [];
+    private maxedOutQualities: Set<string> = new Set();
 
     onNodeAdded(node: HTMLElement): void {
         const sidebarQualities = node.querySelectorAll("li[class*='sidebar-quality'] div[class='item__desc']");
@@ -29,12 +29,8 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
                 }
 
                 if ((this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent))
-                    || (this.removeMaxedOutScrollbars && this.maxedOutQualities.includes(qualityName.textContent))) {
-                    const progressBar = quality.querySelector("div[class*='progress-bar']") as HTMLElement;
-                    if (progressBar) {
-                        // FIXME: Create a helper function to manipulate those accurately
-                        progressBar.style.cssText = "display: none";
-                    }
+                    || (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))) {
+                    this.hideScrollBar(quality as HTMLElement);
 
                     // This is hackish as heck, but still better than misaligned quality names... So be it.
                     // (although "Monstrous Anatomy" will still fail the check and be misaligned)
@@ -61,16 +57,64 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
         return this.removeDiscreteScrollbars || this.removeMaxedOutScrollbars;
     }
 
+    hideScrollBar(node: HTMLElement) {
+        const scrollBar = node.parentElement?.querySelector("div[class='progress-bar']") as HTMLElement;
+        if (scrollBar) {
+            // FIXME: Use classes to manipulate visibility
+            scrollBar.style.cssText = "display: none;";
+        }
+    }
+
+    showScrollBar(node: HTMLElement) {
+        const scrollBar = node.parentElement?.querySelector("div[class='progress-bar']") as HTMLElement;
+        if (scrollBar) {
+            // FIXME: Use classes to manipulate visibility
+            scrollBar.style.cssText = "";
+        }
+    }
+
     linkState(state: GameStateController): void {
         // FIXME: Take into account that qualities can be affected as a result of the branch!!
-
-        state.onUserDataLoaded((g) => {
+        state.onCharacterDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
-                if (quality.nature != "Thing" && quality.cap > 0 && quality.level >= quality.cap) {
+                if (quality.cap > 0 && quality.effectiveLevel >= quality.cap) {
                     debug(`"${quality.name}" is maxed out! (${quality.level} >= ${quality.cap})`);
-                    this.maxedOutQualities.push(quality.name);
+                    this.maxedOutQualities.add(quality.name);
                 }
             }
         });
+
+        state.onQualityChanged((quality, before, after) => {
+            if (quality.qualityId === 212) {
+                debugger;
+            }
+
+            // FIXME: Optimize by looking at "before"
+            if (quality.level < quality.cap) {
+                this.maxedOutQualities.delete(quality.name);
+            } else {
+                this.maxedOutQualities.add(quality.name);
+            }
+
+            const sidebarIndicatior = this.findSidebarQuality(quality.name);
+            if (sidebarIndicatior) {
+                if (this.maxedOutQualities.has(quality.name)) {
+                    this.hideScrollBar(sidebarIndicatior);
+                } else {
+                    this.showScrollBar(sidebarIndicatior);
+                }
+            }
+        });
+    }
+
+    private findSidebarQuality(qualityName: string): HTMLElement | null {
+        const sideBarLabels = document.querySelectorAll(`li[class*='sidebar-quality'] span[class*='item__name']`);
+        for (const label of sideBarLabels) {
+            if (label.textContent == qualityName) {
+                return label as HTMLElement;
+            }
+        }
+
+        return null;
     }
 }
