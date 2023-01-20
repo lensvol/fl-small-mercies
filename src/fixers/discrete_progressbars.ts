@@ -76,10 +76,6 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
         });
 
         state.onQualityChanged((quality, before, after) => {
-            if (quality.qualityId === 212) {
-                debugger;
-            }
-
             // FIXME: Optimize by looking at "before"
             if (quality.level < quality.cap) {
                 this.maxedOutQualities.delete(quality.name);
