@@ -30,7 +30,7 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
 
                 if ((this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent))
                     || (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))) {
-                    this.hideScrollBar(quality as HTMLElement);
+                    this.changeScrollBarVisibility(quality as HTMLElement, true);
 
                     // This is hackish as heck, but still better than misaligned quality names... So be it.
                     // (although "Monstrous Anatomy" will still fail the check and be misaligned)
@@ -57,19 +57,10 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
         return this.removeDiscreteScrollbars || this.removeMaxedOutScrollbars;
     }
 
-    hideScrollBar(node: HTMLElement) {
+    changeScrollBarVisibility(node: HTMLElement, hidden: boolean) {
         const scrollBar = node.parentElement?.querySelector("div[class='progress-bar']") as HTMLElement;
         if (scrollBar) {
-            // FIXME: Use classes to manipulate visibility
-            scrollBar.style.cssText = "display: none;";
-        }
-    }
-
-    showScrollBar(node: HTMLElement) {
-        const scrollBar = node.parentElement?.querySelector("div[class='progress-bar']") as HTMLElement;
-        if (scrollBar) {
-            // FIXME: Use classes to manipulate visibility
-            scrollBar.style.cssText = "";
+            scrollBar.style.cssText = hidden ? "display: none;" : "";
         }
     }
 
@@ -98,11 +89,7 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
 
             const sidebarIndicatior = this.findSidebarQuality(quality.name);
             if (sidebarIndicatior) {
-                if (this.maxedOutQualities.has(quality.name)) {
-                    this.hideScrollBar(sidebarIndicatior);
-                } else {
-                    this.showScrollBar(sidebarIndicatior);
-                }
+                this.changeScrollBarVisibility(sidebarIndicatior, this.maxedOutQualities.has(quality.name));
             }
         });
     }
