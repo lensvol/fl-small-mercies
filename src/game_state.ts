@@ -17,10 +17,10 @@ export enum StoryletPhases {
 }
 
 enum StateChangeTypes {
-    QualityChanged,
-    CharacterDataLoaded,
-    UserDataLoaded,
-    StoryletPhaseChanged
+    QualityChanged= "QualityChanged",
+    CharacterDataLoaded = "CharacterDataLoaded",
+    UserDataLoaded = "UserDataLoaded",
+    StoryletPhaseChanged = "StoryletPhaseChanged"
 }
 
 export class FLUser {
