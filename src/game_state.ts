@@ -258,7 +258,13 @@ export class GameStateController {
     }
 
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
-        this.changeListeners[changeType].map((handler) => handler(...additionalArgs));
+        this.changeListeners[changeType].map((handler) => {
+            try {
+                handler(...additionalArgs)
+            } catch (e) {
+                console.error(`Error caught while triggering listeners for "${changeType}":`, e)
+            }
+        });
     }
 
     public hookIntoApi(interceptor: FLApiInterceptor) {

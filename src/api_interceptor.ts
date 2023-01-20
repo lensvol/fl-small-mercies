@@ -34,7 +34,7 @@ export class FLApiInterceptor {
         try {
             this.responseListeners.get(uri)?.map((handler) => handler(response))
         } catch (error) {
-            console.error(`Error encountered when running listener for ${uri}:`, error);
+            console.error(`Error caught when running listener for ${uri}:`, error);
         }
     }
 
