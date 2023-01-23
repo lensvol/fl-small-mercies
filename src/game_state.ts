@@ -179,10 +179,8 @@ export class GameStateController {
     }
 
     public parseChooseBranchResponse(response: Object) {
-        if (!("messages" in response)) return;
-
         // @ts-ignore: There is hell and then there is writing types for external APIs
-        for (const message of response.messages) {
+        for (const message of (response.messages || [])) {
             if (message.type == "StandardQualityChangeMessage"
                 || message.type == "PyramidQualityChangeMessage"
                 || message.type == "QualityExplicitlySetMessage") {
