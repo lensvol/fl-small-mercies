@@ -13,6 +13,7 @@ import {AsceticModeFixer} from "./ascetic_mode.js";
 import {FavourTrackerFixer} from "./favour_tracker.js";
 import {SocialEmptyReqsFixer} from "./empty_requirements.js";
 import {AfterFallYearFixer} from "./af_year.js"
+import {KhanateOracleFixer} from "./khanate_oracle.js";
 
 export {
     AutoScrollFixer,
@@ -29,5 +30,6 @@ export {
     AsceticModeFixer,
     FavourTrackerFixer,
     SocialEmptyReqsFixer,
-    AfterFallYearFixer
+    AfterFallYearFixer,
+    KhanateOracleFixer,
 };

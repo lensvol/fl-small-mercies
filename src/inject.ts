@@ -16,8 +16,9 @@ import {
     FavourTrackerFixer,
     SocialEmptyReqsFixer,
     AfterFallYearFixer,
+    KhanateOracleFixer,
 } from "./fixers/index.js";
-import {IMercyFixer, isMutationAware, isStateAware} from "./fixers/base.js";
+import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
 import {FLApiInterceptor} from "./api_interceptor.js";
 
@@ -37,6 +38,7 @@ const fixers: IMercyFixer[] = [
     new FavourTrackerFixer(),
     new SocialEmptyReqsFixer(),
     new AfterFallYearFixer(),
+    new KhanateOracleFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
@@ -47,6 +49,9 @@ settingsFrontend.registerUpdateHandler((settings) => {
 
 const apiInterceptor = new FLApiInterceptor();
 apiInterceptor.install();
+fixers
+    .filter(isNetworkAware)
+    .map((fixer) => fixer.linkNetworkTools(apiInterceptor));
 
 const gameStateController = new GameStateController();
 gameStateController.hookIntoApi(apiInterceptor);

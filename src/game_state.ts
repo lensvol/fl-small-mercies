@@ -134,7 +134,7 @@ export class GameStateController {
         }
     }
 
-    public parseUserResponse(response: Object) {
+    public parseUserResponse(request: Object, response: Object) {
         if (!("user" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -143,7 +143,7 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.UserDataLoaded, this.state);
     }
 
-    public parseMyselfResponse(response: Object) {
+    public parseMyselfResponse(request: Object, response: Object) {
         if (!("character" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -178,7 +178,7 @@ export class GameStateController {
         return StoryletPhases.Unknown;
     }
 
-    public parseChooseBranchResponse(response: Object) {
+    public parseChooseBranchResponse(request: Object, response: Object) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of (response.messages || [])) {
             if (message.type == "StandardQualityChangeMessage"
@@ -210,7 +210,7 @@ export class GameStateController {
         }
     }
 
-    public parseEquipResponse(response: Object) {
+    public parseEquipResponse(request: Object, response: Object) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const thing of response.changedPossessions) {
             const [quality, previous] = this.upsertQuality(
@@ -224,7 +224,7 @@ export class GameStateController {
         }
     }
 
-    public parseStoryletResponse(response: Object) {
+    public parseStoryletResponse(request: Object, response: Object) {
         if (!("phase" in response)) return;
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.storyletPhase = this.decodePhase(response.phase);
