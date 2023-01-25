@@ -3,22 +3,24 @@ type AjaxMethod = (method: string, url: string, async: boolean) => any
 const DONE = 4;
 
 export class FLApiInterceptor {
-    private responseListeners: Map<string, ((response: any) => void)[]> = new Map();
+    private responseListeners: Map<string, ((response: any) => any)[]> = new Map();
 
-    private processResponse(fullUrl: string, responseText: string) {
+    private processResponse(fullUrl: string, responseText: string): string {
         const url = new URL(fullUrl);
 
         if (!this.responseListeners.has(url.pathname)) {
             // Do not waste time deserializing things no one asked us to
-            return;
+            return responseText;
         }
 
         try {
-            const response = JSON.parse(responseText);
-            this.triggerResponseListeners(url.pathname, response);
+            const originalResponse = JSON.parse(responseText);
+            const modifiedResponse = this.triggerResponseListeners(url.pathname, originalResponse);
+            return JSON.stringify(modifiedResponse);
         } catch (e) {
             console.error(e);
             console.error(`Received from ${url.pathname}:`, responseText);
+            return responseText;
         }
     }
 
@@ -30,15 +32,22 @@ export class FLApiInterceptor {
         this.responseListeners.get(uri)?.push(handler);
     }
 
-    private triggerResponseListeners(uri: string, response: any): void {
+    private triggerResponseListeners(uri: string, response: any): any {
+        let resultingResponse = response;
+
         try {
-            this.responseListeners.get(uri)?.map((handler) => handler(response))
+            const listeners = this.responseListeners.get(uri) || [];
+            for (const handler of listeners) {
+                resultingResponse = handler(resultingResponse) || resultingResponse;
+            }
         } catch (error) {
             console.error(`Error caught when running listener for ${uri}:`, error);
+            return response;
         }
+        return resultingResponse;
     }
 
-    private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, responseText: string) => void): AjaxMethod {
+    private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, responseText: string) => any): AjaxMethod {
         return function (method, url, async) {
             // @ts-ignore
             this._targetUrl = url;
@@ -47,7 +56,11 @@ export class FLApiInterceptor {
                 // @ts-ignore
                 if (this.readyState == DONE) {
                     // FIXME: also filter out non-200 responses
-                    handler(url, event.currentTarget.responseText)
+                    const responseText = handler(url, event.currentTarget.responseText)
+                    // @ts-ignore
+                    Object.defineProperty(this, 'responseText', {writable: true});
+                    // @ts-ignore
+                    this.responseText = responseText;
                 }
             });
             // @ts-ignore
