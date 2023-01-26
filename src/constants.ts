@@ -103,6 +103,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             "show_af_year": {
                 description: "Show After Fall years on Journal snippets.",
                 default: false,
+            },
+            "enable_khanate_oracle": {
+                description: "Show prospects for recruitment when cycling 'Airs of Khanate'.",
+                default: false,
             }
         }
     },
