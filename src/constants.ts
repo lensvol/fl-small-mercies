@@ -120,6 +120,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                     ["auto", "Instant"],
                     ["smooth", "Smooth"],
                 ],
+            },
+            "show_zero_favours": {
+                description: "Show factions with zero Favours.",
+                default: false,
             }
         }
     }

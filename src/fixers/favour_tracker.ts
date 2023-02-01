@@ -22,6 +22,7 @@ const FAVOURS = new Map([
 
 export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     private displayFavourTracker = false;
+    private showZeroFavours = false;
     private favourValues: Map<string, number> = new Map();
 
     private updateOrCreateFavour(title: string, value: number) {
@@ -34,20 +35,29 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
             return;
         }
 
-        const qualityDisplay = favourTracker.querySelector(`li[data-favour-type='${title}']`);
+        const qualityDisplay = favourTracker.querySelector(`li[data-favour-type='${title}']`) as HTMLElement;
         if (qualityDisplay) {
-            const valueSpan = qualityDisplay.querySelector("span[class='item__value']");
-            if (valueSpan) {
-                valueSpan.textContent = ` ${value} / 7`;
-            }
-            const progressBarSpan = qualityDisplay.querySelector("span[class*='progress-bar__stripe']") as HTMLElement;
-            if (progressBarSpan) {
-                const percentage = (value / 7) * 100;
-                progressBarSpan.style.cssText = `width: ${percentage}%;`;
+            if (value == 0 && !this.showZeroFavours) {
+                // TODO: Use classes.
+                qualityDisplay.style.cssText = "display: none";
+            } else {
+                qualityDisplay.style.cssText = "";
+
+                const valueSpan = qualityDisplay.querySelector("span[class='item__value']");
+                if (valueSpan) {
+                    valueSpan.textContent = ` ${value} / 7`;
+                }
+                const progressBarSpan = qualityDisplay.querySelector("span[class*='progress-bar__stripe']") as HTMLElement;
+                if (progressBarSpan) {
+                    const percentage = (value / 7) * 100;
+                    progressBarSpan.style.cssText = `width: ${percentage}%;`;
+                }
             }
         } else {
-            const newDisplay = this.createFavourDisplay(title, icon + "small", value);
-            favourTracker.appendChild(newDisplay);
+            if (value > 0 || this.showZeroFavours) {
+                const newDisplay = this.createFavourDisplay(title, icon + "small", value);
+                favourTracker.appendChild(newDisplay);
+            }
         }
     }
 
@@ -104,6 +114,7 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
 
     applySettings(settings: SettingsObject): void {
         this.displayFavourTracker = settings.display_favour_tracker as boolean;
+        this.showZeroFavours = settings.show_zero_favours as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
