@@ -41,7 +41,7 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
                 // TODO: Use classes.
                 qualityDisplay.style.cssText = "display: none";
             } else {
-                qualityDisplay.style.cssText = "";
+                qualityDisplay.style.cssText = "text-align: left";
 
                 const valueSpan = qualityDisplay.querySelector("span[class='item__value']");
                 if (valueSpan) {
