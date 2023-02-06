@@ -19,6 +19,7 @@ const FAVOURS = new Map([
     ["Favours: The Great Game", "pawn"],
     ["Favours: Tomb-Colonies", "bandagedman"]
 ]);
+const FAVOUR_ORDER = [...FAVOURS.keys()];
 
 export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     private displayFavourTracker = false;
@@ -57,6 +58,19 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
             if (value > 0 || this.showZeroFavours) {
                 const newDisplay = this.createFavourDisplay(title, icon + "small", value);
                 favourTracker.appendChild(newDisplay);
+
+                // FIXME: Performance here will be atrocious, optimize it later so it only resorts new elements!
+                let sortedFavours = Array.from(favourTracker.children).sort((a, b) => {
+                    let name1 = (a as HTMLElement).dataset.favourType || "";
+                    let name2 = (b as HTMLElement).dataset.favourType || "";
+                    return FAVOUR_ORDER.indexOf(name1) - FAVOUR_ORDER.indexOf(name2);
+                });
+
+                while (favourTracker.firstChild) {
+                    favourTracker.removeChild(favourTracker.firstChild);
+                }
+
+                sortedFavours.map((el) => favourTracker.appendChild(el));
             }
         }
     }
