@@ -199,6 +199,7 @@ class FLSettingsFrontend {
                     input.setAttribute("id", settingId);
                     input.setAttribute("type", "checkbox");
                     input.checked = (this.settings[settingId] as boolean);
+                    input.addEventListener("click", (_ev) => this.saveState());
 
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(descriptor.description));
@@ -217,6 +218,8 @@ class FLSettingsFrontend {
                         } else {
                             radio.removeAttribute("checked");
                         }
+
+                        radio.addEventListener("click", (_ev) => this.saveState());
                     }
 
                     listContainer.appendChild(choicePanel);
@@ -224,14 +227,7 @@ class FLSettingsFrontend {
             }
         }
 
-        const submitButton = document.createElement("button");
-        submitButton.classList.add("button", "button--primary");
-        submitButton.textContent = "SAVE SETTINGS";
-        submitButton.style.cssText = "margin-top: 10px; margin-bottom: 10px";
-        submitButton.addEventListener("click", (_ev) => this.saveState());
-
         containerDiv.appendChild(heading);
-        containerDiv.appendChild(submitButton);
         containerDiv.appendChild(listContainer);
 
         return containerDiv;
