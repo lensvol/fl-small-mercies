@@ -55,22 +55,10 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
                 }
             }
         } else {
-            if (value > 0 || this.showZeroFavours) {
-                const newDisplay = this.createFavourDisplay(title, icon + "small", value);
-                favourTracker.appendChild(newDisplay);
-
-                // FIXME: Performance here will be atrocious, optimize it later so it only resorts new elements!
-                let sortedFavours = Array.from(favourTracker.children).sort((a, b) => {
-                    let name1 = (a as HTMLElement).dataset.favourType || "";
-                    let name2 = (b as HTMLElement).dataset.favourType || "";
-                    return FAVOUR_ORDER.indexOf(name1) - FAVOUR_ORDER.indexOf(name2);
-                });
-
-                while (favourTracker.firstChild) {
-                    favourTracker.removeChild(favourTracker.firstChild);
-                }
-
-                sortedFavours.map((el) => favourTracker.appendChild(el));
+            const newDisplay = this.createFavourDisplay(title, icon + "small", value);
+            favourTracker.appendChild(newDisplay);
+            if (value == 0 && !this.showZeroFavours) {
+                newDisplay.style.cssText = "display: none";
             }
         }
     }
