@@ -135,7 +135,8 @@ class FLSettingsFrontend {
 
     createMultipleChoice(title: string, settingId: string, choices: MultipleChoices) {
         const div = document.createElement('div');
-        div.style.cssText = "padding-top: 5px";
+        // FIXME: Use proper CSS classes here!
+        div.style.cssText = "padding-left: 20px";
 
         const titleHeader = document.createElement('h2');
         titleHeader.textContent = title + ":";
@@ -183,7 +184,7 @@ class FLSettingsFrontend {
 
         const listContainer = document.createElement("ul");
         // FIXME: Use proper CSS classes for that
-        listContainer.style.cssText = "padding-left: 5px";
+        listContainer.style.cssText = "padding-left: 12px";
 
         for (const groupDescriptor of this.schema) {
             listContainer.appendChild(this.createGroupHeader(groupDescriptor.title));

@@ -113,6 +113,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "Fine tuning",
         settings: {
+            "show_zero_favours": {
+                description: "Show factions with zero Favours.",
+                default: false,
+            },
             "scroll_back_behavior": {
                 description: "Scroll back mode",
                 default: "auto",
@@ -121,10 +125,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                     ["smooth", "Smooth"],
                 ],
             },
-            "show_zero_favours": {
-                description: "Show factions with zero Favours.",
-                default: false,
-            }
         }
     }
 ]
