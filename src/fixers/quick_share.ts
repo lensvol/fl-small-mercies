@@ -34,7 +34,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
 
             icon?.parentElement?.classList.remove("buttonlet-enabled");
             icon?.classList.remove("fa-pencil");
-            icon?.classList.add("fa-cloud-upload");
+            icon?.classList.add("fa-refresh", "fa-spin");
 
             fetch(
                 "https://api.fallenlondon.com/api/profile/share",
@@ -49,7 +49,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
             )
                 .then(r => {
                     // FIXME: Replace direct CSS manipulation with something classier
-                    icon?.classList.remove("fa-cloud-upload");
+                    icon?.classList.remove("fa-refresh", "fa-spin");
                     icon?.classList.add("fa-check");
 
                     icon?.parentElement?.classList.add("buttonlet-enabled");
