@@ -68,7 +68,7 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
         // FIXME: Take into account that qualities can be affected as a result of the branch!!
         state.onCharacterDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
-                if (quality.cap > 0 && quality.effectiveLevel >= quality.cap) {
+                if (quality.cap > 0 && quality.level >= quality.cap) {
                     this.maxedOutQualities.add(quality.name);
                 }
             }
