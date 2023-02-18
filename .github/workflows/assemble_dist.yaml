@@ -1,0 +1,27 @@
+name: Attach extension artifacts to release
+
+on:
+  push:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Publish extension archives
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout source code
+
+      - uses: actions/setup-node@v3
+        name: Install Node.js
+
+      - name: Install TypeScript
+        run: npm install --save-dev typescript ts-loader '@types/chrome'
+
+      - name: Build extension
+        run: make build_dist
