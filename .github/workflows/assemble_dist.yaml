@@ -2,8 +2,8 @@ name: Attach extension artifacts to release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,3 +25,18 @@ jobs:
 
       - name: Build extension
         run: make build_dist
+
+      - name: Assemble V2 archive
+        run: make extension_v2
+
+      - name: Assemble V3 archive
+        run: make extension_v3
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          overwrite: true
+          file: "fl-small-mercies-*.zip"
+
