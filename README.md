@@ -4,6 +4,8 @@
 
 ![screenshot](https://raw.githubusercontent.com/lensvol/fl-small-mercies/master/screenshot.png)
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L4L0D1FN6)
+
 Set of small "fixers" for the Fallen London UI. Each of them can be disabled or enabled individually via the "Extensions" section on the "Account" screen.
 
 Current features:
