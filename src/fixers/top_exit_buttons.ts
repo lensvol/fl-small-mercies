@@ -20,6 +20,35 @@ export class TopExitButtonsFixer implements IMutationAwareFixer {
         return container.querySelector(`div[class*='${className}']`);
     }
 
+    createPerhapsNotMimic(): [HTMLElement, HTMLElement] {
+        const root = document.createElement('div');
+
+        const container = document.createElement('div');
+        container.classList.add('buttons', 'buttons--left', 'buttons--storylet-exit-options');
+
+        const button = document.createElement('button');
+        button.classList.add('button', 'button--primary');
+        button.setAttribute('type', 'button');
+
+        const textSpan = document.createElement('span');
+
+        const italics = document.createElement('i');
+        italics.classList.add('fa', 'fa-arrow-left');
+
+        const text = document.createTextNode('Perhaps not');
+
+        root.appendChild(container);
+
+        container.appendChild(button);
+
+        button.appendChild(textSpan);
+
+        textSpan.appendChild(italics);
+        textSpan.appendChild(text);
+
+        return [root, button];
+    }
+
     onNodeAdded(node: HTMLElement): void {
         const exitButtonDiv = this.findNodeWithClass(node, 'buttons--storylet-exit-options');
 
@@ -29,7 +58,17 @@ export class TopExitButtonsFixer implements IMutationAwareFixer {
                 return;
             }
 
-            mediaRoot.parentElement?.insertBefore(exitButtonDiv, mediaRoot.nextSibling!!);
+            const trueButton = exitButtonDiv.querySelector("button");
+            const [mimicPanel, mimicButton] = this.createPerhapsNotMimic();
+
+            if (trueButton && mimicButton) {
+                trueButton.addEventListener("click", () => mimicPanel.remove());
+                mimicButton.addEventListener("click", () => {
+                    trueButton!!.click();
+                    mimicPanel.remove();
+                });
+                mediaRoot.parentElement?.insertBefore(mimicPanel, mediaRoot.nextSibling!!);
+            }
         }
     }
 
