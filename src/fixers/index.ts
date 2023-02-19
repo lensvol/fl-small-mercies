@@ -14,6 +14,7 @@ import {FavourTrackerFixer} from "./favour_tracker.js";
 import {SocialEmptyReqsFixer} from "./empty_requirements.js";
 import {AfterFallYearFixer} from "./af_year.js"
 import {KhanateOracleFixer} from "./khanate_oracle.js";
+import {TopExitButtonsFixer} from "./top_exit_buttons.js";
 
 export {
     AutoScrollFixer,
@@ -32,4 +33,5 @@ export {
     SocialEmptyReqsFixer,
     AfterFallYearFixer,
     KhanateOracleFixer,
+    TopExitButtonsFixer,
 };

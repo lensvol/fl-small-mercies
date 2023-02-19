@@ -16,7 +16,7 @@ import {
     FavourTrackerFixer,
     SocialEmptyReqsFixer,
     AfterFallYearFixer,
-    KhanateOracleFixer,
+    KhanateOracleFixer, TopExitButtonsFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -39,6 +39,7 @@ const fixers: IMercyFixer[] = [
     new SocialEmptyReqsFixer(),
     new AfterFallYearFixer(),
     new KhanateOracleFixer(),
+    new TopExitButtonsFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

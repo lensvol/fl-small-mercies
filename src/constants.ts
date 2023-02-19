@@ -107,6 +107,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             "enable_khanate_oracle": {
                 description: "Show prospects for recruitment when cycling 'Airs of Khanate'.",
                 default: false,
+            },
+            "top_exit_buttons": {
+                description: "Move 'Perhaps Not' button to the top.",
+                default: false,
             }
         }
     },
