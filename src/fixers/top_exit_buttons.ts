@@ -25,6 +25,8 @@ export class TopExitButtonsFixer implements IMutationAwareFixer {
 
         const container = document.createElement('div');
         container.classList.add('buttons', 'buttons--left', 'buttons--storylet-exit-options');
+        // Mark as mimic to prevent duplicates
+        container.classList.add('mimic-perhaps-not')
 
         const button = document.createElement('button');
         button.classList.add('button', 'button--primary');
@@ -53,20 +55,33 @@ export class TopExitButtonsFixer implements IMutationAwareFixer {
         const exitButtonDiv = this.findNodeWithClass(node, 'buttons--storylet-exit-options');
 
         if (exitButtonDiv) {
+            if (exitButtonDiv.classList.contains("mimic-perhaps-not")) {
+                return;
+            }
+
             const mediaRoot = exitButtonDiv.parentElement?.querySelector("div[class*='media--root']");
             if (!mediaRoot) {
                 return;
             }
 
-            const trueButton = exitButtonDiv.querySelector("button");
+            let originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector("button > span > i[class*='fa-arrow-left']");
             const [mimicPanel, mimicButton] = this.createPerhapsNotMimic();
 
-            if (trueButton && mimicButton) {
-                trueButton.addEventListener("click", () => mimicPanel.remove());
+            if (originalPerhapsNot && mimicButton) {
                 mimicButton.addEventListener("click", () => {
-                    trueButton!!.click();
                     mimicPanel.remove();
+                    originalPerhapsNot!!.click();
                 });
+
+                for (const exitBtn of exitButtonDiv.querySelectorAll("button")) {
+                    exitBtn.addEventListener("click", () => mimicPanel.remove());
+                }
+
+                const otherButtons = exitButtonDiv.parentElement?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
+                for (const otherBtn of otherButtons) {
+                    otherBtn.addEventListener("click", () => mimicPanel.remove());
+                }
+
                 mediaRoot.parentElement?.insertBefore(mimicPanel, mediaRoot.nextSibling!!);
             }
         }
