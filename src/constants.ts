@@ -109,7 +109,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: false,
             },
             "top_exit_buttons": {
-                description: "Move 'Perhaps Not' button to the top.",
+                description: "Move 'Perhaps Not' button to the top in selected storylets.",
                 default: false,
             }
         }

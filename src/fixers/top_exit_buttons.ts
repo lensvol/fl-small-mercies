@@ -1,15 +1,24 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import {GameStateController} from "../game_state";
 
-export class TopExitButtonsFixer implements IMutationAwareFixer {
+const SUPPORTED_STORYLETS: number[] = [
+    // Offering Tribute to the Court of the Wakeful Eye
+    285304,
+    // Assembling Skeleton at the Bone Market
+    330107,
+];
+
+export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
     private moveExitButtonsToTop = true;
+    private inSupportedStorylet = false;
 
     applySettings(settings: SettingsObject): void {
         this.moveExitButtonsToTop = settings.top_exit_buttons as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.moveExitButtonsToTop;
+        return this.moveExitButtonsToTop && this.inSupportedStorylet;
     }
 
     findNodeWithClass(container: HTMLElement, className: string): HTMLElement | null {
@@ -89,5 +98,11 @@ export class TopExitButtonsFixer implements IMutationAwareFixer {
 
     onNodeRemoved(_node: HTMLElement): void {
         // Do nothing if DOM node is removed.
+    }
+
+    linkState(stateController: GameStateController): void {
+        stateController.onStoryletPhaseChanged((state) => {
+            this.inSupportedStorylet = SUPPORTED_STORYLETS.includes(state.storyletId);
+        })
     }
 }
