@@ -20,7 +20,8 @@ enum StateChangeTypes {
     QualityChanged= "QualityChanged",
     CharacterDataLoaded = "CharacterDataLoaded",
     UserDataLoaded = "UserDataLoaded",
-    StoryletPhaseChanged = "StoryletPhaseChanged"
+    StoryletPhaseChanged = "StoryletPhaseChanged",
+    LocationChanged = "LocationChanged",
 }
 
 export class FLUser {
@@ -44,6 +45,39 @@ export class FLCharacter {
         this.name = name;
     }
 }
+
+export class Area {
+    areaId: number;
+    name: string;
+
+    constructor(areaId: number, name: string) {
+        this.areaId = areaId;
+        this.name = name;
+    }
+}
+
+export class GeoSetting {
+    settingId: number;
+    name: string;
+
+    constructor(settingId: number, name: string) {
+        this.settingId = settingId;
+        this.name = name;
+    }
+}
+
+export class FLPlayerLocation {
+    setting: GeoSetting;
+    area: Area;
+
+    constructor(setting: GeoSetting, area: Area) {
+        this.setting = setting;
+        this.area = area;
+    }
+}
+
+const UNKNOWN_AREA = new Area(UNKNOWN, "<UNKNOWN AREA>");
+const UNKNOWN_GEO_SETTING = new GeoSetting(UNKNOWN, "<UNKNOWN SETTING>");
 
 export class Quality {
     qualityId: number;
@@ -71,6 +105,7 @@ export class Quality {
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
+    public location: FLPlayerLocation = new FLPlayerLocation(UNKNOWN_GEO_SETTING, UNKNOWN_AREA);
 
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
 
@@ -116,6 +151,7 @@ export class GameStateController {
         [StateChangeTypes.CharacterDataLoaded]: [],
         [StateChangeTypes.UserDataLoaded]: [],
         [StateChangeTypes.StoryletPhaseChanged]: [],
+        [StateChangeTypes.LocationChanged]: [],
     }
 
     private upsertQuality(qualityId: number, categoryName: string, qualityName: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string): [Quality, number] {
@@ -140,6 +176,16 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
 
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if ("area" in response.user) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
+            const currentArea = new Area(response.user.area.id, response.user.area.name);
+            if (currentArea !== this.state.location.area) {
+                this.state.location.area = currentArea;
+                this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
+            }
+        }
+
         this.triggerListeners(StateChangeTypes.UserDataLoaded, this.state);
     }
 
@@ -148,6 +194,13 @@ export class GameStateController {
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.character = new FLCharacter(response.character.id, response.character.name);
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        const currentGeoSetting = new GeoSetting(response.character.setting.id, response.character.setting.name);
+        if (this.state.location.setting !== currentGeoSetting) {
+            this.state.location.setting = currentGeoSetting;
+            this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
+        }
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
@@ -181,9 +234,9 @@ export class GameStateController {
     public parseChooseBranchResponse(request: Object, response: Object) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of (response.messages || [])) {
-            if (message.type == "StandardQualityChangeMessage"
-                || message.type == "PyramidQualityChangeMessage"
-                || message.type == "QualityExplicitlySetMessage") {
+            if (message.type === "StandardQualityChangeMessage"
+                || message.type === "PyramidQualityChangeMessage"
+                || message.type === "QualityExplicitlySetMessage") {
                 const thing = message.possession;
                 const [quality, previousLevel] = this.upsertQuality(
                     thing.id, thing.category, thing.name,
@@ -191,6 +244,16 @@ export class GameStateController {
                     thing.nature
                 );
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
+            }
+
+            if (message.type === "AreaChangeMessage") {
+                this.state.location.area = new Area(message.area.id, message.area.name);
+                this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
+            }
+
+            if (message.type === "SettingChangeMessage") {
+                this.state.location.setting = new GeoSetting(message.setting.id, message.setting.name);
+                this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
             }
         }
 
@@ -239,6 +302,31 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged, this.state);
     }
 
+    public parseMapResponse(request: Object, response: Object) {
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if (!response.isSuccess) return;
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        const newArea = new Area(response.currentArea.id, response.currentArea.name);
+        if (this.state.location.area != newArea) {
+            this.state.location.area = newArea;
+            this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
+        }
+    }
+
+    public parseMapMoveResponse(request: Object, response: Object) {
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if (!response.isSuccess) return;
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        const newArea = new Area(response.area.id, response.area.name);
+        if (this.state.location.area != newArea) {
+            this.state.location.area = newArea;
+            this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
+        }
+    }
+
+
     public onStoryletPhaseChanged(handler: ((g: GameState) => void)) {
         this.changeListeners[StateChangeTypes.StoryletPhaseChanged].push(handler);
     }
@@ -253,6 +341,10 @@ export class GameStateController {
 
     public onQualityChanged(handler: ((quality: Quality, previousLevel: number, currentLevel: number) => void)) {
         this.changeListeners[StateChangeTypes.QualityChanged].push(handler);
+    }
+
+    public onLocationChanged(handler: ((location: FLPlayerLocation) => void)) {
+        this.changeListeners[StateChangeTypes.LocationChanged].push(handler);
     }
 
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
@@ -274,5 +366,9 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/storylet", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/begin", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
+        interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
+        interceptor.onResponseReceived("/api/map", this.parseMapResponse.bind(this));
+        interceptor.onResponseReceived("/api/map/move", this.parseMapMoveResponse.bind(this));
+
     }
 }
