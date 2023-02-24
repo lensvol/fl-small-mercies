@@ -46,6 +46,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Remove empty requirements bar in social storylets.",
                 default: true,
             },
+            "hide_nonlocal_qualities": {
+                description: "Hide qualities not appropriate for current location.",
+                default: true,
+            }
         }
     },
     {
