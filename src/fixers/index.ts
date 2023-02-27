@@ -16,6 +16,7 @@ import {AfterFallYearFixer} from "./af_year.js"
 import {KhanateOracleFixer} from "./khanate_oracle.js";
 import {TopExitButtonsFixer} from "./top_exit_buttons.js";
 import {LocationQualitiesFixer} from "./location_qualities.js";
+import {MoreCurrencyDisplaysFixer} from "./currency_displays.js";
 
 export {
     AutoScrollFixer,
@@ -36,4 +37,5 @@ export {
     KhanateOracleFixer,
     TopExitButtonsFixer,
     LocationQualitiesFixer,
+    MoreCurrencyDisplaysFixer,
 };

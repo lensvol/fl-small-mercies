@@ -83,6 +83,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Replace usual 'Share snippet' button with a quicker alternative.",
                 default: true,
             },
+            "display_more_currencies": {
+                description: "Show more currencies in the left sidebar.",
+                default: true,
+            },
+
         }
     },
     {
