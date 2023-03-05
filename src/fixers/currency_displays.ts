@@ -31,10 +31,12 @@ class CurrencyDisplay {
             return;
         }
 
-        const currencyDisplays = currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
-        for (const display of currencyDisplays) {
+        const currencyNames = currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
+        // TODO: Re-implement with .find()
+        for (const display of currencyNames) {
             if (display.textContent === this.name || display.textContent === this.title) {
-                currentDisplay = display;
+                currentDisplay = display.parentElement;
+                break;
             }
         }
 
@@ -43,7 +45,8 @@ class CurrencyDisplay {
             currencyList.appendChild(currentDisplay);
         }
 
-        const valueIndicator = currentDisplay.querySelector("div[class*='item__value']");
+        console.debug(`${this.name} ${this.quantity}`);
+        const valueIndicator = currentDisplay?.querySelector("div[class*='item__value']");
         if (valueIndicator) {
             valueIndicator.textContent = this.quantity.toString();
         }
@@ -131,7 +134,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const currencyList = document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) return;
 
         for (const display of this.currencyToDisplay.values()) {
