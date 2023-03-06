@@ -1,6 +1,6 @@
 # FL Small Mercies
 
-[![License](https://img.shields.io/github/license/lensvol/fl-small-mercies)](https://github.com/lensvol/fl-small-mercies/blob/master/LICENSE) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lensvol/fl-small-mercies) [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/efcjeepmkepahpaodagjlioagpganblf)](https://chrome.google.com/webstore/detail/fl-small-mercies/efcjeepmkepahpaodagjlioagpganblf) [![Mozilla Add-on](https://img.shields.io/amo/v/fl-small-mercies)](https://addons.mozilla.org/en-US/firefox/addon/fl-small-mercies/) ![User count](https://badges.lensvol.dev/extensions/users/fl_small_mercies.svg)
+[![License](https://img.shields.io/github/license/lensvol/fl-small-mercies)](https://github.com/lensvol/fl-small-mercies/blob/master/LICENSE) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lensvol/fl-small-mercies) [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/efcjeepmkepahpaodagjlioagpganblf)](https://chrome.google.com/webstore/detail/fl-small-mercies/efcjeepmkepahpaodagjlioagpganblf) [![Mozilla Add-on](https://img.shields.io/amo/v/fl-small-mercies)](https://addons.mozilla.org/en-US/firefox/addon/fl-small-mercies/) ![User count](https://badges.lensvol.dev/extensions/users/fl_small_mercies.svg?bogus-cache-buster=yes)
 
 ![screenshot](https://raw.githubusercontent.com/lensvol/fl-small-mercies/master/screenshot.png)
 
