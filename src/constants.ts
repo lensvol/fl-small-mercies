@@ -42,6 +42,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Sort Neathbow boxes in your inventory.",
                 default: true,
             },
+            "sort_vanity_qualities": {
+                description: "Sort 777 Vanity Qualities on the Myself tab.",
+                default: true,
+            },
             "fix_empty_requirements": {
                 description: "Remove empty requirements bar in social storylets.",
                 default: true,
