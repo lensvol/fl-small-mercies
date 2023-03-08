@@ -37,6 +37,36 @@ const DREAM_ORDER = [
 ];
 const DREAM_SELECTOR = DREAM_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
+// Current list of 777 QLD Vanity Qualities
+
+const VANITY_ORDER = [
+   142587, // A Historian of the Neath
+   142894, // A Hunter of Zee Beasts
+   143869, // A Synthetic Philosopher
+   144029, // Crate Conveyor
+   142585, // Dedicated Brawler
+   140974, // Dream-Trophies of Parabola
+   142586, // Fabricator of Past Lives
+   141532, // Familiarity with the Carpenter's Granddaughter
+   142032, // Meals Served at Station VIII
+   142565, // Oneiropomp
+   142505, // Painter of Fine Art
+   140888, // Palaeontologist
+
+   // 143753, // Palaeozoologist (does not yet have QLDs)
+
+   143306, // Prolific Advertiser
+   140904, // Record of Successful Forgery
+   143573, // Scintillack Dreaming
+
+   // 142753, // Strength of your Khaganian Network (does not yet have QLDs)
+
+   127253, // Teaching Reputation of Your Laboratory
+   127257 // The Prestige of your Laboratory
+
+];
+const VANITY_SELECTOR = VANITY_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
+
 
 function findAndSortIcons(node: Element, selector: string, order: number[]) {
     const icons = node.querySelectorAll(selector) as NodeListOf<HTMLElement>;
@@ -76,17 +106,18 @@ export class ThingSortFixer implements IMutationAwareFixer {
     private sortSeals = false;
     private sortDreams = false;
     private sortNeathbow = false;
-
+    private sortVanity = false;
 
     applySettings(settings: SettingsObject): void {
         this.sortCityMysteries = settings.sort_city_mysteries as boolean;
         this.sortSeals = settings.sort_discordance_seals as boolean;
         this.sortDreams = settings.sort_dreams as boolean;
         this.sortNeathbow = settings.sort_neathbow_boxes as boolean;
+        this.sortVanity = settings.sort_vanity_qualities as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow
+        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow || this.sortVanity
     }
 
     onNodeAdded(node: HTMLElement): void {
@@ -108,6 +139,10 @@ export class ThingSortFixer implements IMutationAwareFixer {
 
         if (this.sortNeathbow) {
             findAndSortIcons(node, NEATHBOW_SELECTOR, NEATHBOW_ORDER);
+        }
+     
+     if (this.sortVanity) {
+            findAndSortIcons(node, VANITY_SELECTOR, VANITY_ORDER);
         }
     }
 
