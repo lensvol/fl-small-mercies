@@ -43,6 +43,7 @@ const VANITY_ORDER = [
    142587, // A Historian of the Neath
    142894, // A Hunter of Zee Beasts
    143869, // A Synthetic Philosopher
+   144063, // A Prolific Pirate
    144029, // Crate Conveyor
    142585, // Dedicated Brawler
    140974, // Dream-Trophies of Parabola
