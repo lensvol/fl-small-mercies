@@ -44,8 +44,7 @@ class CurrencyDisplay {
             currentDisplay = this.createMimic();
             currencyList.appendChild(currentDisplay);
         }
-
-        console.debug(`${this.name} ${this.quantity}`);
+        
         const valueIndicator = currentDisplay?.querySelector("div[class*='item__value']");
         if (valueIndicator) {
             valueIndicator.textContent = this.quantity.toString();
