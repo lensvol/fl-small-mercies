@@ -1,7 +1,7 @@
 import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-const MASK_ROSE_BANNER_SELECTOR = "img[aria-label='Wishlist Mask of the Rose on Steam'"
+const MASK_ROSE_BANNER_SELECTOR = "div[class='travel'] a[target='_blank'][rel='noopener noreferrer'] img"
 const SNIPPET_CONTAINER_SELECTOR = "div[class='snippet']"
 
 export class RightSidebarFixer implements IMutationAwareFixer {
