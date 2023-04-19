@@ -1,6 +1,7 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAwareFixer, IStateAware} from "./base";
-import {FLPlayerLocation, GameStateController} from "../game_state.js";
+import {GameState, GameStateController} from "../game_state.js";
+import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
 
 class CurrencyDisplay {
     private readonly name: string;
@@ -9,6 +10,7 @@ class CurrencyDisplay {
     private readonly currencySymbol: string;
 
     private quantity: number = 0;
+    private hidden: boolean = false;
 
     constructor(fullName: string, icon: string, symbol: string, title?: string) {
         this.name = fullName;
@@ -23,19 +25,29 @@ class CurrencyDisplay {
         this.refresh();
     }
 
+    hide() {
+        this.hidden = true;
+        this.refresh();
+    }
+
+    show() {
+        this.hidden = false;
+        this.refresh();
+    }
+
     refresh() {
         let currentDisplay = null;
 
-        const currencyList = document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const currencyList= document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) {
             return;
         }
 
-        const currencyNames = currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
+        const currencyNames= currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
         // TODO: Re-implement with .find()
         for (const display of currencyNames) {
             if (display.textContent === this.name || display.textContent === this.title) {
-                currentDisplay = display.parentElement;
+                currentDisplay = display.parentElement?.parentElement;
                 break;
             }
         }
@@ -44,7 +56,11 @@ class CurrencyDisplay {
             currentDisplay = this.createMimic();
             currencyList.appendChild(currentDisplay);
         }
-        
+
+        if (currentDisplay) {
+            currentDisplay.style.cssText = this.hidden ? "display: none" : "";
+        }
+
         const valueIndicator = currentDisplay?.querySelector("div[class*='item__value']");
         if (valueIndicator) {
             valueIndicator.textContent = this.quantity.toString();
@@ -52,8 +68,6 @@ class CurrencyDisplay {
     }
 
     createMimic() {
-        const root = document.createElement('div');
-
         const li = document.createElement('li');
         li.classList.add('item');
 
@@ -77,8 +91,6 @@ class CurrencyDisplay {
 
         const text2 = document.createTextNode('0');
 
-        root.appendChild(li);
-
         li.appendChild(container);
         li.appendChild(container2);
 
@@ -91,25 +103,39 @@ class CurrencyDisplay {
 
         container3.appendChild(text2);
 
-        return root;
+        return li;
     }
 }
 
 export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAware {
     private displayMoreCurrencies = false;
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
+    private currencyToPredicate = new Map<string, StateMatcher>();
 
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
         this.currencyToDisplay.set("Assortment of Khaganian Coinage", new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage"));
+
+        this.currencyToPredicate.set(
+            "Assortment of Khaganian Coinage",
+            new OrPredicate(
+                new IsInSetting(107955), // Khanate (Inner)
+                new IsInSetting(107959)  // Khanate (Copper Quarter)
+            )
+        );
+
+        this.currencyToPredicate.set(
+            "Rat-Shilling",
+            new IsInSetting(107960),  // Rat-Market
+        );
     }
 
     applySettings(settings: SettingsObject): void {
         this.displayMoreCurrencies = settings.display_more_currencies as boolean;
     }
 
-    linkState(stateController: GameStateController): void {
-        stateController.onCharacterDataLoaded((state) => {
+    linkState(controller: GameStateController): void {
+        controller.onCharacterDataLoaded((state) => {
             for (const [name, display] of this.currencyToDisplay.entries()) {
                 const quality = state.getQuality("Currency", name);
                 if (quality) {
@@ -118,7 +144,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
             }
         });
 
-        stateController.onQualityChanged((quality, previous, current) => {
+        controller.onQualityChanged((state: GameState, quality, previous, current) => {
             if (quality.category !== "Currency") return;
 
             const display = this.currencyToDisplay.get(quality.name);
@@ -126,6 +152,25 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
                 display.setQuantity(quality.level);
             }
         });
+
+        controller.onLocationChanged((state, location) => {
+            this.checkVisibilityPredicates(state);
+        });
+
+        controller.onStoryletPhaseChanged((state) => {
+            this.checkVisibilityPredicates(state);
+        })
+    }
+
+    private checkVisibilityPredicates(state: GameState) {
+        for (const [name, predicate] of this.currencyToPredicate.entries()) {
+            const display = this.currencyToDisplay.get(name)!!;
+            if (!predicate.match(state)) {
+                display.hide();
+            } else {
+                display.show();
+            }
+        }
     }
 
     checkEligibility(node: HTMLElement): boolean {

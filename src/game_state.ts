@@ -186,7 +186,7 @@ export class GameStateController {
             }
         }
 
-        this.triggerListeners(StateChangeTypes.UserDataLoaded, this.state);
+        this.triggerListeners(StateChangeTypes.UserDataLoaded);
     }
 
     public parseMyselfResponse(request: Object, response: Object) {
@@ -212,7 +212,7 @@ export class GameStateController {
             }
         }
 
-        this.triggerListeners(StateChangeTypes.CharacterDataLoaded, this.state);
+        this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
     }
 
     private decodePhase(phase: String): StoryletPhases {
@@ -268,7 +268,7 @@ export class GameStateController {
                 }
 
                 this.state.storyletPhase = currentPhase;
-                this.triggerListeners(StateChangeTypes.StoryletPhaseChanged, this.state);
+                this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
             }
         }
     }
@@ -299,7 +299,7 @@ export class GameStateController {
             this.state.storyletId = UNKNOWN;
         }
 
-        this.triggerListeners(StateChangeTypes.StoryletPhaseChanged, this.state);
+        this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
     }
 
     public parseMapResponse(request: Object, response: Object) {
@@ -339,18 +339,18 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.UserDataLoaded].push(handler);
     }
 
-    public onQualityChanged(handler: ((quality: Quality, previousLevel: number, currentLevel: number) => void)) {
+    public onQualityChanged(handler: ((g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void)) {
         this.changeListeners[StateChangeTypes.QualityChanged].push(handler);
     }
 
-    public onLocationChanged(handler: ((location: FLPlayerLocation) => void)) {
+    public onLocationChanged(handler: ((g: GameState, location: FLPlayerLocation) => void)) {
         this.changeListeners[StateChangeTypes.LocationChanged].push(handler);
     }
 
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
         this.changeListeners[changeType].map((handler) => {
             try {
-                handler(...additionalArgs)
+                handler(this.state,...additionalArgs)
             } catch (e) {
                 console.error(`Error caught while triggering listeners for "${changeType}":`, e)
             }

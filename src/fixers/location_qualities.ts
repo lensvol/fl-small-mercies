@@ -1,6 +1,6 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAwareFixer, IStateAware} from "./base";
-import {FLPlayerLocation, GameStateController} from "../game_state.js";
+import {FLPlayerLocation, GameState, GameStateController} from "../game_state.js";
 
 type LocationPredicate = (location: FLPlayerLocation) => boolean
 
@@ -28,7 +28,7 @@ export class LocationQualitiesFixer implements IMutationAwareFixer, IStateAware 
     }
 
     linkState(state: GameStateController): void {
-        state.onLocationChanged((location) => {
+        state.onLocationChanged((state, location) => {
             this.currentLocation = location;
             if (this.hideNonlocalQualities) {
                 this.processSidebarQualities(location);
