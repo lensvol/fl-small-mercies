@@ -87,7 +87,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show more currencies in the left sidebar.",
                 default: true,
             },
-
+            "two_step_confirmations": {
+                description: "Protect certain 'dangerous' branches with two step confirmation process.",
+                default: true,
+            }
         }
     },
     {
