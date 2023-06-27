@@ -17,6 +17,7 @@ import {KhanateOracleFixer} from "./khanate_oracle.js";
 import {TopExitButtonsFixer} from "./top_exit_buttons.js";
 import {LocationQualitiesFixer} from "./location_qualities.js";
 import {MoreCurrencyDisplaysFixer} from "./currency_displays.js";
+import {TwoStepConfirmationsFixer} from "./two_step_confirmations.js";
 
 export {
     AutoScrollFixer,
@@ -38,4 +39,5 @@ export {
     TopExitButtonsFixer,
     LocationQualitiesFixer,
     MoreCurrencyDisplaysFixer,
+    TwoStepConfirmationsFixer,
 };

@@ -19,7 +19,7 @@ import {
     KhanateOracleFixer,
     TopExitButtonsFixer,
     LocationQualitiesFixer,
-    MoreCurrencyDisplaysFixer,
+    MoreCurrencyDisplaysFixer, TwoStepConfirmationsFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -45,6 +45,7 @@ const fixers: IMercyFixer[] = [
     new TopExitButtonsFixer(),
     new LocationQualitiesFixer(),
     new MoreCurrencyDisplaysFixer(),
+    new TwoStepConfirmationsFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
