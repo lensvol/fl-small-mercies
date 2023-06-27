@@ -6,17 +6,28 @@ import {Branch, Storylet} from "../game_components.js";
 const DANGEROUS_BRANCHES = [
     9425, // "Doing the decent thing"
 
-    18162,  /* A Flash of White */
-    18164,  /* The Mournfully Rubbery Instrument */
-    18165,  /* A Raggedy Creature */
-    13368,  /* A Little Omen (mood) */
-    13373,  /* A Dusty Bookshop (mood) */
-    15360,  /* Disgraceful Spectacle */
-    18168,  /* The Skin of the Bazaar */
-    21762,  /* A Visit */
-    99374,  /* An Unsigned Message */
-    122163,  /* A Dream of Blood */
-    311724,  /* A Dream of Roses */
+    // TODO: Re-enable it when support for protecting cards is added
+    // 18162,  /* A Flash of White */
+    // 18164,  /* The Mournfully Rubbery Instrument */
+    // 18165,  /* A Raggedy Creature */
+    // 13368,  /* A Little Omen (mood) */
+    // 13373,  /* A Dusty Bookshop (mood) */
+    // 15360,  /* Disgraceful Spectacle */
+    // 18168,  /* The Skin of the Bazaar */
+    // 21762,  /* A Visit */
+    // 99374,  /* An Unsigned Message */
+    // 122163,  /* A Dream of Blood */
+    // 311724,  /* A Dream of Roses */
+    // 7490,  /* Your sprouting companion */
+    // 7493,  /* Your green lodger */
+    // 7496,  /* Your green project */
+    // 7687,  /* Is it fruiting? */
+    // 7690,  /* Taking care of your green friend */
+    // 7693,  /* A well-rooted plant */
+    // 7696,  /* As big as your head */
+    // 7699,  /* Sleep is becoming a problem */
+    // 7702,  /* Your plant is singing */
+
     63707,  /* Nadir: Revolutionaries */
     63708,  /* Nadir: Hell */
     63709,  /* Nadir: The Great Game */
@@ -39,15 +50,6 @@ const DANGEROUS_BRANCHES = [
     11129,  /* AoB: The Conscience of Empire; A night of desperate ambushes; Wade in with the neddy men */
     11132,  /* AoB: The Conscience of Empire; Encryption of a sort; See that the messages arrive safely */
     11134,  /* AoB: The Conscience of Empire; A strong box; Tell the gentlemen in blue... */
-    7490,  /* Your sprouting companion */
-    7493,  /* Your green lodger */
-    7496,  /* Your green project */
-    7687,  /* Is it fruiting? */
-    7690,  /* Taking care of your green friend */
-    7693,  /* A well-rooted plant */
-    7696,  /* As big as your head */
-    7699,  /* Sleep is becoming a problem */
-    7702,  /* Your plant is singing */
     6787,  /* Criminals: Consult with a master thief */
     6789,  /* Docks: Fencing lessons with a Dashing Captain */
     6791,  /* Bohemians: Take tea with a Reclusive Novelist */
