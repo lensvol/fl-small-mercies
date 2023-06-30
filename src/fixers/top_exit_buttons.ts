@@ -1,24 +1,20 @@
 import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import {GameStateController} from "../game_state";
-
-const SUPPORTED_STORYLETS: number[] = [
-    // Offering Tribute to the Court of the Wakeful Eye
-    285304,
-    // Assembling Skeleton at the Bone Market
-    330107,
-];
+import {GameStateController, StoryletPhases} from "../game_state.js";
 
 export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
-    private moveExitButtonsToTop = true;
-    private inSupportedStorylet = false;
+    private moveExitButtonsToTop = false;
+    private ignoreBranchAmount = false;
+    private inStorylet = false;
+    private mimicPanel?: HTMLElement;
 
     applySettings(settings: SettingsObject): void {
         this.moveExitButtonsToTop = settings.top_exit_buttons as boolean;
+        this.ignoreBranchAmount = settings.top_exit_buttons_always as boolean;
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.moveExitButtonsToTop && this.inSupportedStorylet;
+        return this.moveExitButtonsToTop && this.inStorylet;
     }
 
     findNodeWithClass(container: HTMLElement, className: string): HTMLElement | null {
@@ -46,7 +42,7 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
         const italics = document.createElement("i");
         italics.classList.add("fa", "fa-arrow-left");
 
-        const text = document.createTextNode("Perhaps not");
+        const text = document.createTextNode(" Perhaps not");
 
         root.appendChild(container);
 
@@ -61,51 +57,72 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const exitButtonDiv = this.findNodeWithClass(node, "buttons--storylet-exit-options");
+        /**
+         * When navigating nested storylets (branch leads into more branches), default exit buttons aren't deleted.
+         * This means that we can't reliably use exit buttons to track when we need to insert mimic.
+         */
+        let mediaRoot: ParentNode | undefined | null;
 
+        if (node.classList.contains("media--branch")) {
+            // track branches after the page is loaded
+            mediaRoot = node.parentNode?.querySelector(".media--root");
+        } else {
+            // track anything that contains media root when the page initially loads
+            mediaRoot = node.querySelector(".media--root");
+        }
+
+        if (!mediaRoot) {
+            return;
+        }
+
+        // don't show unless storylet has more than a 4 or more branches
+        if (!this.ignoreBranchAmount && (mediaRoot.parentNode?.querySelectorAll(".media--branch").length ?? 0) < 4) {
+            return;
+        }
+
+        const exitButtonDiv = mediaRoot.parentNode?.querySelector(".buttons--storylet-exit-options");
         if (exitButtonDiv) {
             if (exitButtonDiv.classList.contains("mimic-perhaps-not")) {
-                return;
-            }
-
-            const mediaRoot = exitButtonDiv.parentElement?.querySelector("div[class*='media--root']");
-            if (!mediaRoot) {
                 return;
             }
 
             const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector(
                 "button > span > i[class*='fa-arrow-left']"
             );
-            const [mimicPanel, mimicButton] = this.createPerhapsNotMimic();
+            let mimicButton: HTMLElement;
+            [this.mimicPanel, mimicButton] = this.createPerhapsNotMimic();
 
             if (originalPerhapsNot && mimicButton) {
                 mimicButton.addEventListener("click", () => {
-                    mimicPanel.remove();
-                    originalPerhapsNot!!.click();
+                    this.mimicPanel?.remove();
+                    originalPerhapsNot.click();
                 });
 
                 for (const exitBtn of exitButtonDiv.querySelectorAll("button")) {
-                    exitBtn.addEventListener("click", () => mimicPanel.remove());
+                    exitBtn.addEventListener("click", () => this.mimicPanel?.remove());
                 }
 
                 const otherButtons =
-                    exitButtonDiv.parentElement?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
+                    exitButtonDiv.parentNode?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
                 for (const otherBtn of otherButtons) {
-                    otherBtn.addEventListener("click", () => mimicPanel.remove());
+                    otherBtn.addEventListener("click", () => this.mimicPanel?.remove());
                 }
 
-                mediaRoot.parentElement?.insertBefore(mimicPanel, mediaRoot.nextSibling!!);
+                mediaRoot.parentNode?.insertBefore(this.mimicPanel, mediaRoot.nextSibling);
             }
         }
     }
 
-    onNodeRemoved(_node: HTMLElement): void {
-        // Do nothing if DOM node is removed.
+    onNodeRemoved(node: HTMLElement): void {
+        // fix: When we switch equipment loadouts delete the mimic
+        if (node.matches("div[class*='media--root']")) {
+            this.mimicPanel?.remove();
+        }
     }
 
     linkState(stateController: GameStateController): void {
         stateController.onStoryletPhaseChanged((state) => {
-            this.inSupportedStorylet = SUPPORTED_STORYLETS.includes(state.storyletId);
+            this.inStorylet = state.storyletPhase === StoryletPhases.In;
         });
     }
 }
