@@ -103,7 +103,9 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
                 }
 
                 const otherButtons =
-                    exitButtonDiv.parentNode?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
+                    exitButtonDiv.parentNode?.querySelectorAll(
+                        ".media--branch[data-branch-id] .storylet__buttons .button--primary"
+                    ) || [];
                 for (const otherBtn of otherButtons) {
                     otherBtn.addEventListener("click", () => this.mimicPanel?.remove());
                 }
