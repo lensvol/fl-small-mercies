@@ -30,23 +30,23 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
     }
 
     createPerhapsNotMimic(): [HTMLElement, HTMLElement] {
-        const root = document.createElement('div');
+        const root = document.createElement("div");
 
-        const container = document.createElement('div');
-        container.classList.add('buttons', 'buttons--left', 'buttons--storylet-exit-options');
+        const container = document.createElement("div");
+        container.classList.add("buttons", "buttons--left", "buttons--storylet-exit-options");
         // Mark as mimic to prevent duplicates
-        container.classList.add('mimic-perhaps-not')
+        container.classList.add("mimic-perhaps-not");
 
-        const button = document.createElement('button');
-        button.classList.add('button', 'button--primary');
-        button.setAttribute('type', 'button');
+        const button = document.createElement("button");
+        button.classList.add("button", "button--primary");
+        button.setAttribute("type", "button");
 
-        const textSpan = document.createElement('span');
+        const textSpan = document.createElement("span");
 
-        const italics = document.createElement('i');
-        italics.classList.add('fa', 'fa-arrow-left');
+        const italics = document.createElement("i");
+        italics.classList.add("fa", "fa-arrow-left");
 
-        const text = document.createTextNode('Perhaps not');
+        const text = document.createTextNode("Perhaps not");
 
         root.appendChild(container);
 
@@ -61,7 +61,7 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const exitButtonDiv = this.findNodeWithClass(node, 'buttons--storylet-exit-options');
+        const exitButtonDiv = this.findNodeWithClass(node, "buttons--storylet-exit-options");
 
         if (exitButtonDiv) {
             if (exitButtonDiv.classList.contains("mimic-perhaps-not")) {
@@ -73,7 +73,9 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
                 return;
             }
 
-            let originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector("button > span > i[class*='fa-arrow-left']");
+            const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector(
+                "button > span > i[class*='fa-arrow-left']"
+            );
             const [mimicPanel, mimicButton] = this.createPerhapsNotMimic();
 
             if (originalPerhapsNot && mimicButton) {
@@ -86,7 +88,8 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
                     exitBtn.addEventListener("click", () => mimicPanel.remove());
                 }
 
-                const otherButtons = exitButtonDiv.parentElement?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
+                const otherButtons =
+                    exitButtonDiv.parentElement?.querySelectorAll("div[class*='media'][data-branch-id]") || [];
                 for (const otherBtn of otherButtons) {
                     otherBtn.addEventListener("click", () => mimicPanel.remove());
                 }
@@ -103,6 +106,6 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
     linkState(stateController: GameStateController): void {
         stateController.onStoryletPhaseChanged((state) => {
             this.inSupportedStorylet = SUPPORTED_STORYLETS.includes(state.storyletId);
-        })
+        });
     }
 }
