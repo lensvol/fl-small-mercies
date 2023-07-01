@@ -10,29 +10,17 @@ const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
 
 const DANGEROUS_BRANCHES = [
     9425, // "Doing the decent thing"
-    254443,
+    252104,  // Dismissing the Grizzled Veteran
+    252056,  // Abandoning Khaganian Intrigue
 
-    // TODO: Re-enable it when support for protecting cards is added
-    // 18162,  /* A Flash of White */
-    // 18164,  /* The Mournfully Rubbery Instrument */
-    // 18165,  /* A Raggedy Creature */
-    // 13368,  /* A Little Omen (mood) */
-    // 13373,  /* A Dusty Bookshop (mood) */
-    // 15360,  /* Disgraceful Spectacle */
-    // 18168,  /* The Skin of the Bazaar */
-    // 21762,  /* A Visit */
-    // 99374,  /* An Unsigned Message */
-    // 122163,  /* A Dream of Blood */
-    // 311724,  /* A Dream of Roses */
-    // 7490,  /* Your sprouting companion */
-    // 7493,  /* Your green lodger */
-    // 7496,  /* Your green project */
-    // 7687,  /* Is it fruiting? */
-    // 7690,  /* Taking care of your green friend */
-    // 7693,  /* A well-rooted plant */
-    // 7696,  /* As big as your head */
-    // 7699,  /* Sleep is becoming a problem */
-    // 7702,  /* Your plant is singing */
+    // Various storylets concerned with placement of the Tracklayers City
+    251105,
+    251107,
+    251108,
+    251109,
+    251110,
+    251111,
+    251112,
 
     63707,  /* Nadir: Revolutionaries */
     63708,  /* Nadir: Hell */
@@ -82,6 +70,28 @@ const DANGEROUS_BRANCHES = [
     121107,  /* Don't sell your soul at Sackmas */
     205784,  /* A Reputation of Some Importance: Another Way */
     246280,  /* Adulterine Castle: Leave through the Mirror-Marches */
+
+    // TODO: Re-enable it when support for protecting cards is added
+    // 18162,  /* A Flash of White */
+    // 18164,  /* The Mournfully Rubbery Instrument */
+    // 18165,  /* A Raggedy Creature */
+    // 13368,  /* A Little Omen (mood) */
+    // 13373,  /* A Dusty Bookshop (mood) */
+    // 15360,  /* Disgraceful Spectacle */
+    // 18168,  /* The Skin of the Bazaar */
+    // 21762,  /* A Visit */
+    // 99374,  /* An Unsigned Message */
+    // 122163,  /* A Dream of Blood */
+    // 311724,  /* A Dream of Roses */
+    // 7490,  /* Your sprouting companion */
+    // 7493,  /* Your green lodger */
+    // 7496,  /* Your green project */
+    // 7687,  /* Is it fruiting? */
+    // 7690,  /* Taking care of your green friend */
+    // 7693,  /* A well-rooted plant */
+    // 7696,  /* As big as your head */
+    // 7699,  /* Sleep is becoming a problem */
+    // 7702,  /* Your plant is singing */
 ];
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
