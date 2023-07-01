@@ -1,7 +1,8 @@
 import {SettingsObject} from "../settings.js";
-import {INetworkAware} from "./base.js";
+import {INetworkAware, IStateAware} from "./base.js";
 import {FLApiInterceptor} from "../api_interceptor.js";
 import {Branch, Storylet} from "../game_components.js";
+import { GameStateController } from "../game_state.js";
 
 const FAKE_BRANCH_ID_THRESHOLD = 77_000_000;
 const FAKE_BRANCH_ID_CEILING = 87_000_000;
@@ -9,6 +10,7 @@ const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
 
 const DANGEROUS_BRANCHES = [
     9425, // "Doing the decent thing"
+    254443,
 
     // TODO: Re-enable it when support for protecting cards is added
     // 18162,  /* A Flash of White */
@@ -82,9 +84,10 @@ const DANGEROUS_BRANCHES = [
     246280,  /* Adulterine Castle: Leave through the Mirror-Marches */
 ];
 
-export class TwoStepConfirmationsFixer implements INetworkAware {
+export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
     private showConfirmations: boolean = true;
     private currentStoryletContents: any = {};
+    private currentActions: number = 0;
 
     applySettings(settings: SettingsObject): void {
         this.showConfirmations = settings.two_step_confirmations as boolean;
@@ -92,6 +95,12 @@ export class TwoStepConfirmationsFixer implements INetworkAware {
 
     checkEligibility(_node: HTMLElement): boolean {
         return this.showConfirmations;
+    }
+
+    linkState(state: GameStateController): void {
+        state.onActionsChanged((state, actions) => {
+            this.currentActions = actions;
+        });
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
@@ -112,7 +121,7 @@ export class TwoStepConfirmationsFixer implements INetworkAware {
                 confirmationStorylet.addBranch(yesBranch);
 
                 return {
-                    actions: 42,
+                    actions: this.currentActions,
                     canChangeOutfit: true,
                     isSuccess: true,
                     phase: "In",
