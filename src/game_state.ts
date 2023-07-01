@@ -366,7 +366,6 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/storylet", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/begin", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
-        interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/map", this.parseMapResponse.bind(this));
         interceptor.onResponseReceived("/api/map/move", this.parseMapMoveResponse.bind(this));
 
