@@ -21,6 +21,7 @@ enum StateChangeTypes {
     CharacterDataLoaded = "CharacterDataLoaded",
     UserDataLoaded = "UserDataLoaded",
     StoryletPhaseChanged = "StoryletPhaseChanged",
+    ActionsCountChanged = "ActionsCountChanged",
     LocationChanged = "LocationChanged",
 }
 
@@ -147,11 +148,12 @@ export class GameStateController {
     private state: GameState = new GameState();
 
     private changeListeners: { [key in StateChangeTypes]: ((...args: any[]) => void)[] } = {
+        [StateChangeTypes.ActionsCountChanged]: [],
         [StateChangeTypes.QualityChanged]: [],
         [StateChangeTypes.CharacterDataLoaded]: [],
         [StateChangeTypes.UserDataLoaded]: [],
         [StateChangeTypes.StoryletPhaseChanged]: [],
-        [StateChangeTypes.LocationChanged]: [],
+        [StateChangeTypes.LocationChanged]: []
     }
 
     private upsertQuality(qualityId: number, categoryName: string, qualityName: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string): [Quality, number] {
@@ -212,7 +214,25 @@ export class GameStateController {
             }
         }
 
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if (response.character.actions != undefined && response.character.actions !== this.state.actionsLeft) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
+            this.state.actionsLeft = response.character.actions;
+            this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
+        }
+
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
+    }
+
+    public parseActionsResponse(request: Object, response: Object) {
+        if (!("actions" in response)) return;
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if (response.actions !== this.state.actionsLeft) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
+            this.state.actionsLeft = response.actions;
+            this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
+        }
     }
 
     private decodePhase(phase: String): StoryletPhases {
@@ -270,6 +290,13 @@ export class GameStateController {
                 this.state.storyletPhase = currentPhase;
                 this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
             }
+        }
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if (response.actions != undefined && response.actions !== this.state.actionsLeft) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
+            this.state.actionsLeft = response.actions;
+            this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
         }
     }
 
@@ -347,6 +374,10 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.LocationChanged].push(handler);
     }
 
+    public onActionsChanged(handler: ((g: GameState, actions: number) => void)) {
+        this.changeListeners[StateChangeTypes.ActionsCountChanged].push(handler);
+    }
+
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
         this.changeListeners[changeType].map((handler) => {
             try {
@@ -360,6 +391,7 @@ export class GameStateController {
     public hookIntoApi(interceptor: FLApiInterceptor) {
         interceptor.onResponseReceived("/api/login/user", this.parseUserResponse.bind(this));
         interceptor.onResponseReceived("/api/character/myself", this.parseMyselfResponse.bind(this));
+        interceptor.onResponseReceived("/api/character/actions", this.parseActionsResponse.bind(this));
         interceptor.onResponseReceived("/api/outfit/equip", this.parseEquipResponse.bind(this));
         interceptor.onResponseReceived("/api/outfit/unequip", this.parseEquipResponse.bind(this));
         interceptor.onResponseReceived("/api/storylet/choosebranch", this.parseChooseBranchResponse.bind(this));
