@@ -3,6 +3,10 @@ import {INetworkAware} from "./base.js";
 import {FLApiInterceptor} from "../api_interceptor.js";
 import {Branch, Storylet} from "../game_components.js";
 
+const FAKE_BRANCH_ID_THRESHOLD = 77_000_000;
+const FAKE_BRANCH_ID_CEILING = 87_000_000;
+const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
+
 const DANGEROUS_BRANCHES = [
     9425, // "Doing the decent thing"
 
@@ -96,13 +100,13 @@ export class TwoStepConfirmationsFixer implements INetworkAware {
         });
 
         interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
-            const confirmationStorylet = new Storylet(776_777_777, "Have you thought this through?")
+            const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "Have you thought this through?")
                 .description("I mean, really chewed it down to the bone?");
 
             if (DANGEROUS_BRANCHES.includes(request.branchId)) {
-                const yesBranch = new Branch(776_777_778 + request.branchId, "YES.")
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES.")
                     .image("well");
-                const noBranch = new Branch(776_777_777, "...No?");
+                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No?");
 
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);
@@ -116,12 +120,12 @@ export class TwoStepConfirmationsFixer implements INetworkAware {
                 }
             }
 
-            if (request.branchId === 776_777_777) {
+            if (request.branchId === CONFIRMATION_BRANCH_ID) {
                 return this.currentStoryletContents;
             }
 
-            if (request.branchId > 776_777_778) {
-                request.branchId -= 776_777_778;
+            if (request.branchId > FAKE_BRANCH_ID_THRESHOLD && request.branchId < FAKE_BRANCH_ID_CEILING) {
+                request.branchId -= FAKE_BRANCH_ID_THRESHOLD;
                 return null;
             }
         })
