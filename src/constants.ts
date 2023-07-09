@@ -47,7 +47,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             "hide_nonlocal_qualities": {
-                description: "Hide qualities not appropriate for current location.",
+                description: "Hide qualities not appropriate for the current location.",
                 default: true,
             }
         }
@@ -56,11 +56,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
         title: "UI Improvements",
         settings: {
             "add_thousands_separator": {
-                description: "Add comma after thousands in the currency indicators.",
+                description: "Add a comma after thousands in the currency indicators.",
                 default: true,
             },
             "remove_mask_banner": {
-                description: "Remove 'Mask of the Rose' banner.",
+                description: "Remove the 'Mask of the Rose' banner.",
                 default: false,
             },
             "remove_sidebar_snippets": {
@@ -76,11 +76,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             "auto_scroll_back": {
-                description: "Auto-scroll to the storylet after choosing branch.",
+                description: "Auto-scroll to the storylet after choosing a branch.",
                 default: true,
             },
             "quick_share_button": {
-                description: "Replace usual 'Share snippet' button with a quicker alternative.",
+                description: "Replace the usual 'Share snippet' button with a quicker alternative.",
                 default: true,
             },
             "display_more_currencies": {
@@ -88,7 +88,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             "two_step_confirmations": {
-                description: "Protect certain 'dangerous' branches with two step confirmation process.",
+                description: "Protect certain 'dangerous' branches with a two-step confirmation process.",
                 default: true,
             }
         }
@@ -101,7 +101,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             "remove_plan_buttons": {
-                description: "Remove 'Plans' button & related buttonlets",
+                description: "Remove the 'Plans' button & related buttonlets",
                 default: false,
             },
             "ascetic_mode": {
@@ -123,15 +123,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             "top_exit_buttons": {
                 description: "Show 'Perhaps Not' button at the top in storylets that have 4 branches or more.",
                 default: false,
-            },
-            "top_exit_buttons_always": {
-                description: "└ Show the button regardless of the amount of branches in a storylet.",
-                default: false,
             }
         }
     },
     {
-        title: "Fine tuning",
+        title: "Fine-tuning",
         settings: {
             "show_zero_favours": {
                 description: "Show factions with zero Favours.",
@@ -145,6 +141,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                     ["smooth", "Smooth"],
                 ],
             },
+            "top_exit_buttons_always": {
+                description: "Show the button regardless of the number of branches in a storylet.",
+                default: false,
+            }            
         }
     }
 ]
