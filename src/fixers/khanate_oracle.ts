@@ -2,9 +2,7 @@ import {INetworkAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLApiInterceptor} from "../api_interceptor";
 
-const KHANATE_TIME_BRANCHES = [
-    250668,
-]
+const KHANATE_TIME_BRANCHES = [250668];
 
 export class KhanateOracleFixer implements INetworkAware {
     enableKhanateOracle = false;
@@ -49,25 +47,21 @@ export class KhanateOracleFixer implements INetworkAware {
             }
 
             if (response.messages && KHANATE_TIME_BRANCHES.includes(request.branchId)) {
-                const airsOfKhanateMessage = response.messages.find(
-                    (m: any) => m.type == "QualityExplicitlySetMessage" && m.possession.name == "Airs of the Khanate"
-                )
+                const airsOfKhanateMessage = response.messages.find((m: any) => m.type == "QualityExplicitlySetMessage" && m.possession.name == "Airs of the Khanate");
 
                 if (airsOfKhanateMessage) {
                     const prospect = this.determineProspect(airsOfKhanateMessage.possession.level);
                     response.messages.push({
-                        "priority": 2,
-                        "image": "lurkersilhouette",
-                        "message": `<em>Crumpled note from a lookout reaches your table: "${prospect.toUpperCase()}". You nod sagely.</em>`,
-                        "type": "InfoMessage",
-                        "tooltip": "Carpe jugulum!"
-                    })
+                        priority: 2,
+                        image: "lurkersilhouette",
+                        message: `<em>Crumpled note from a lookout reaches your table: "${prospect.toUpperCase()}". You nod sagely.</em>`,
+                        type: "InfoMessage",
+                        tooltip: "Carpe jugulum!",
+                    });
                 }
             }
 
             return response;
         });
     }
-
-
 }

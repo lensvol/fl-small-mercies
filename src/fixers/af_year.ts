@@ -1,7 +1,6 @@
 import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-
 const AF_YEAR_OFFSET = 122;
 
 export class AfterFallYearFixer implements IMutationAwareFixer {
@@ -29,6 +28,6 @@ export class AfterFallYearFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
+        // Do nothing if DOM node is removed.
     }
 }

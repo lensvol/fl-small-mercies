@@ -4,7 +4,7 @@ import {debug} from "../logging.js";
 
 // Adapted from
 // https://stackoverflow.com/questions/123999/how-can-i-tell-if-a-dom-element-is-visible-in-the-current-viewport
-function isElementInViewport (el: Element): boolean {
+function isElementInViewport(el: Element): boolean {
     const rect = el.getBoundingClientRect();
 
     return (
@@ -29,7 +29,7 @@ export class AutoScrollFixer implements IMutationAwareFixer {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        let mediaRoot: Element | null
+        let mediaRoot: Element | null;
         if (node.classList.contains("media--root")) {
             mediaRoot = node;
         } else {
@@ -43,15 +43,14 @@ export class AutoScrollFixer implements IMutationAwareFixer {
             debug("Storylet not visible, scrolling back...");
             const tabList = document.querySelector("ul[role='tablist']");
             if (tabList) {
-                tabList.scrollIntoView({ behavior: this.scrollBehavior as ScrollBehavior });
+                tabList.scrollIntoView({behavior: this.scrollBehavior as ScrollBehavior});
             } else {
-                mediaRoot.scrollIntoView({ behavior: this.scrollBehavior as ScrollBehavior});
+                mediaRoot.scrollIntoView({behavior: this.scrollBehavior as ScrollBehavior});
             }
         }
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
+        // Do nothing if DOM node is removed.
     }
-
 }

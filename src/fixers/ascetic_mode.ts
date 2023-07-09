@@ -1,7 +1,6 @@
 import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-
 export class AsceticModeFixer implements IMutationAwareFixer {
     private removeHeaderAndCandles = false;
     private removeFateCounter = false;
@@ -32,12 +31,12 @@ export class AsceticModeFixer implements IMutationAwareFixer {
             // Shift columns a little to make overall look nicer
             const primaryColumn = node.querySelector("div[class*='col-primary']") as HTMLElement;
             if (primaryColumn) {
-                primaryColumn.style.cssText = "padding-top: 10px;"
+                primaryColumn.style.cssText = "padding-top: 10px;";
             }
 
             const tertiaryColumn = node.querySelector("div[class='col-tertiary']") as HTMLElement;
             if (tertiaryColumn) {
-                tertiaryColumn.style.cssText = "padding-top: 44px;"
+                tertiaryColumn.style.cssText = "padding-top: 44px;";
             }
         }
 
@@ -52,5 +51,4 @@ export class AsceticModeFixer implements IMutationAwareFixer {
     onNodeRemoved(_node: HTMLElement): void {
         // Do nothing if DOM node is removed.
     }
-
 }

@@ -54,21 +54,17 @@ const fixers: IMercyFixer[] = [
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
-    fixers.map((fixer) => fixer.applySettings(settings))
+    fixers.map((fixer) => fixer.applySettings(settings));
 });
 
 const apiInterceptor = new FLApiInterceptor();
 apiInterceptor.install();
-fixers
-    .filter(isNetworkAware)
-    .map((fixer) => fixer.linkNetworkTools(apiInterceptor));
+fixers.filter(isNetworkAware).map((fixer) => fixer.linkNetworkTools(apiInterceptor));
 
 const gameStateController = new GameStateController();
 gameStateController.hookIntoApi(apiInterceptor);
 
-fixers
-    .filter(isStateAware)
-    .map((fixer) => fixer.linkState(gameStateController));
+fixers.filter(isStateAware).map((fixer) => fixer.linkState(gameStateController));
 
 const centralMutationObserver = new MutationObserver((mutations, _observer) => {
     centralMutationObserver.disconnect();
@@ -86,7 +82,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             fixers
                 .filter(isMutationAware)
                 .filter((fixer) => fixer.checkEligibility(node))
-                .map((fixer) => fixer.onNodeAdded(node))
+                .map((fixer) => fixer.onNodeAdded(node));
         }
 
         for (let n = 0; n < mutation.removedNodes.length; n++) {
@@ -99,7 +95,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             fixers
                 .filter(isMutationAware)
                 .filter((fixer) => fixer.checkEligibility(node))
-                .map((fixer) => fixer.onNodeRemoved(node))
+                .map((fixer) => fixer.onNodeRemoved(node));
         }
     }
 

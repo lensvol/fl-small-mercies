@@ -16,8 +16,7 @@ export class JournalUiFixer implements IMutationAwareFixer {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        node.querySelectorAll(CALENDAR_STENCIL_SELECTOR)
-            .forEach((st) => st.setAttribute("stroke", LIGHT_TURQUOISE_RGB));
+        node.querySelectorAll(CALENDAR_STENCIL_SELECTOR).forEach((st) => st.setAttribute("stroke", LIGHT_TURQUOISE_RGB));
 
         const topButtonsContainer = node.querySelector("div[class='journal-entries__header-and-controls']");
         if (topButtonsContainer) {
@@ -39,6 +38,6 @@ export class JournalUiFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
-}
+        // Do nothing if DOM node is removed.
+    }
 }

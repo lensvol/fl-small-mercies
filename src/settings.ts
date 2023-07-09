@@ -4,14 +4,14 @@ import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js"
 
 import Tab = chrome.tabs.Tab;
 
-type MultipleChoices = [string, string][]
-type ToggleSetting = { description: string, default: boolean }
-type MultipleChoiceSetting = { description: string, default: string, choices: MultipleChoices }
-type SettingDescriptor = MultipleChoiceSetting | ToggleSetting
-type SettingGroupDescriptor = { title: string, settings: {[key: string]: SettingDescriptor} }
-type SettingsSchema = SettingGroupDescriptor[]
-type SettingsObject = {[key: string]: boolean | string }
-type SettingsMessage = { action: string, settings?: SettingsObject }
+type MultipleChoices = [string, string][];
+type ToggleSetting = {description: string; default: boolean};
+type MultipleChoiceSetting = {description: string; default: string; choices: MultipleChoices};
+type SettingDescriptor = MultipleChoiceSetting | ToggleSetting;
+type SettingGroupDescriptor = {title: string; settings: {[key: string]: SettingDescriptor}};
+type SettingsSchema = SettingGroupDescriptor[];
+type SettingsObject = {[key: string]: boolean | string};
+type SettingsMessage = {action: string; settings?: SettingsObject};
 
 function createDefaultSettings(schema: SettingsSchema): SettingsObject {
     const defaultSettings: {[key: string]: boolean | string} = {};
@@ -23,8 +23,8 @@ function createDefaultSettings(schema: SettingsSchema): SettingsObject {
     return defaultSettings;
 }
 
-const isToggle = (setting: SettingDescriptor): setting is ToggleSetting => typeof setting.default == "boolean"
-const isMultipleChoice = (setting: SettingDescriptor): setting is MultipleChoiceSetting => "choices" in setting
+const isToggle = (setting: SettingDescriptor): setting is ToggleSetting => typeof setting.default == "boolean";
+const isMultipleChoice = (setting: SettingDescriptor): setting is MultipleChoiceSetting => "choices" in setting;
 
 class FLSettingsFrontend {
     private readonly name: string;
@@ -81,7 +81,7 @@ class FLSettingsFrontend {
         const tabPanel = document.querySelector("div[role='tabpanel']");
         if (!tabPanel) return;
 
-        for (const child of (tabPanel.children as HTMLCollectionOf<HTMLElement>)) {
+        for (const child of tabPanel.children as HTMLCollectionOf<HTMLElement>) {
             if (child.hasAttribute("custom-settings")) {
                 continue;
             }
@@ -97,7 +97,7 @@ class FLSettingsFrontend {
 
         const setForRemoval: Array<HTMLElement> = [];
 
-        for (const child of (tabPanel.children as HTMLCollectionOf<HTMLElement>)) {
+        for (const child of tabPanel.children as HTMLCollectionOf<HTMLElement>) {
             if (child.hasAttribute("custom-settings")) {
                 setForRemoval.push(child);
             } else {
@@ -126,40 +126,40 @@ class FLSettingsFrontend {
     }
 
     createGroupHeader(title: string) {
-        const groupTitle = document.createElement('h2');
-        groupTitle.classList.add('heading', 'heading--3');
+        const groupTitle = document.createElement("h2");
+        groupTitle.classList.add("heading", "heading--3");
         groupTitle.textContent = title;
 
         return groupTitle;
     }
 
     createMultipleChoice(title: string, settingId: string, choices: MultipleChoices) {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         // FIXME: Use proper CSS classes here!
         div.style.cssText = "padding-left: 20px";
 
-        const titleHeader = document.createElement('h2');
+        const titleHeader = document.createElement("h2");
         titleHeader.textContent = title + ":";
 
-        const form = document.createElement('form');
-        form.setAttribute('action', '#');
-        form.setAttribute('id', `choice-${settingId}`);
+        const form = document.createElement("form");
+        form.setAttribute("action", "#");
+        form.setAttribute("id", `choice-${settingId}`);
 
-        const choicesDiv = document.createElement('div');
-        choicesDiv.setAttribute('role', 'group');
+        const choicesDiv = document.createElement("div");
+        choicesDiv.setAttribute("role", "group");
 
         for (const [value, description] of choices) {
             const choiceId = `${settingId}-${value}`;
 
-            const label = document.createElement('label');
-            label.classList.add('radio');
-            label.setAttribute('for', choiceId);
-            label.style.cssText = 'margin-left: 20px;';
+            const label = document.createElement("label");
+            label.classList.add("radio");
+            label.setAttribute("for", choiceId);
+            label.style.cssText = "margin-left: 20px;";
 
-            const choice = document.createElement('input');
-            choice.setAttribute('value', value);
-            choice.setAttribute('name', settingId);
-            choice.setAttribute('type', 'radio');
+            const choice = document.createElement("input");
+            choice.setAttribute("value", value);
+            choice.setAttribute("name", settingId);
+            choice.setAttribute("type", "radio");
 
             label.appendChild(choice);
             label.appendChild(document.createTextNode(description));
@@ -199,7 +199,7 @@ class FLSettingsFrontend {
                     const input = document.createElement("input");
                     input.setAttribute("id", settingId);
                     input.setAttribute("type", "checkbox");
-                    input.checked = (this.settings[settingId] as boolean);
+                    input.checked = this.settings[settingId] as boolean;
                     input.addEventListener("click", (_ev) => this.saveState());
 
                     label.appendChild(input);
@@ -249,8 +249,8 @@ class FLSettingsFrontend {
                             if (!existingExtensionsBtn) {
                                 for (const defaultBtn of accountSections.children) {
                                     defaultBtn.addEventListener("click", (_e: Event) => {
-                                        this.cleanupCustomSettings()
-                                    })
+                                        this.cleanupCustomSettings();
+                                    });
                                 }
 
                                 const customSettingsButton = this.createSettingsButton();
@@ -291,7 +291,7 @@ class FLSettingsFrontend {
         for (const groupDescriptor of this.schema) {
             for (const [settingId, descriptor] of Object.entries(groupDescriptor.settings)) {
                 if (isToggle(descriptor)) {
-                    const toggleInput = rootNode.querySelector(`input[id=${settingId}]`)
+                    const toggleInput = rootNode.querySelector(`input[id=${settingId}]`);
                     this.settings[settingId] = (toggleInput as HTMLInputElement)?.checked;
                 }
 
@@ -324,13 +324,10 @@ class FLSettingsBackend {
 
     private getFallenLondonTabs(): Promise<Array<Tab>> {
         return new Promise((resolve, _) => {
-            chrome.windows.getCurrent(w => {
-                chrome.tabs.query(
-                    {windowId: w.id, url: "*://*.fallenlondon.com/*"},
-                    function (tabs) {
-                        resolve(tabs);
-                    }
-                );
+            chrome.windows.getCurrent((w) => {
+                chrome.tabs.query({windowId: w.id, url: "*://*.fallenlondon.com/*"}, function (tabs) {
+                    resolve(tabs);
+                });
             });
         });
     }
@@ -342,7 +339,7 @@ class FLSettingsBackend {
                 return;
             }
 
-            chrome.tabs.sendMessage(t.id, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state})
+            chrome.tabs.sendMessage(t.id, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state});
         });
     }
 
@@ -352,33 +349,36 @@ class FLSettingsBackend {
 
     handleMessage(message: SettingsMessage) {
         if (message.action === MSG_TYPE_SAVE_SETTINGS) {
-            chrome.storage.local.set({
-                settings: message.settings
-            }, () => {
-                // Send out new state to the FL tabs
-                this.getFallenLondonTabs().then(tabs => {
-                    if (message.settings == null) {
-                        return;
-                    }
+            chrome.storage.local.set(
+                {
+                    settings: message.settings,
+                },
+                () => {
+                    // Send out new state to the FL tabs
+                    this.getFallenLondonTabs().then((tabs) => {
+                        if (message.settings == null) {
+                            return;
+                        }
 
-                    this.sendStateToTabs(tabs, message.settings);
-                });
+                        this.sendStateToTabs(tabs, message.settings);
+                    });
 
-                log("Saved settings to local storage.");
-            });
+                    log("Saved settings to local storage.");
+                }
+            );
         }
 
         if (message.action === MSG_TYPE_CURRENT_SETTINGS) {
-            chrome.storage.local.get(['settings'], (result) => {
+            chrome.storage.local.get(["settings"], (result) => {
                 if (chrome.runtime.lastError) {
-                    debug("Could not load settings from DB, falling back to defaults.")
-                    this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, createDefaultSettings(this.schema)));
+                    debug("Could not load settings from DB, falling back to defaults.");
+                    this.getFallenLondonTabs().then((tabs) => this.sendStateToTabs(tabs, createDefaultSettings(this.schema)));
                 } else {
-                    this.getFallenLondonTabs().then(tabs => this.sendStateToTabs(tabs, result.settings));
+                    this.getFallenLondonTabs().then((tabs) => this.sendStateToTabs(tabs, result.settings));
                 }
             });
         }
     }
 }
 
-export { FLSettingsFrontend, FLSettingsBackend, SettingsObject, SettingsSchema };
+export {FLSettingsFrontend, FLSettingsBackend, SettingsObject, SettingsSchema};

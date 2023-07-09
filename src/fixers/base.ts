@@ -3,27 +3,26 @@ import {GameStateController} from "../game_state";
 import {FLApiInterceptor} from "../api_interceptor";
 
 interface IMercyFixer {
-    applySettings(settings: SettingsObject): void
+    applySettings(settings: SettingsObject): void;
 }
 
-interface IMutationAwareFixer extends IMercyFixer{
-    onNodeAdded(node: HTMLElement): void
-    onNodeRemoved(node: HTMLElement): void
+interface IMutationAwareFixer extends IMercyFixer {
+    onNodeAdded(node: HTMLElement): void;
+    onNodeRemoved(node: HTMLElement): void;
 
-    checkEligibility(node: HTMLElement): boolean
+    checkEligibility(node: HTMLElement): boolean;
 }
 
 interface IStateAware extends IMercyFixer {
-    linkState(state: GameStateController): void
+    linkState(state: GameStateController): void;
 }
-
 
 export interface INetworkAware extends IMercyFixer {
-    linkNetworkTools(interceptor: FLApiInterceptor): void
+    linkNetworkTools(interceptor: FLApiInterceptor): void;
 }
 
-const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAwareFixer => "onNodeAdded" in fixer
-const isStateAware = (fixer: IMercyFixer): fixer is IStateAware => "linkState" in fixer
-const isNetworkAware = (fixer: IMercyFixer): fixer is INetworkAware => "linkNetworkTools" in fixer
+const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAwareFixer => "onNodeAdded" in fixer;
+const isStateAware = (fixer: IMercyFixer): fixer is IStateAware => "linkState" in fixer;
+const isNetworkAware = (fixer: IMercyFixer): fixer is INetworkAware => "linkNetworkTools" in fixer;
 
-export { IMercyFixer, IMutationAwareFixer, IStateAware, isMutationAware, isStateAware, isNetworkAware };
+export {IMercyFixer, IMutationAwareFixer, IStateAware, isMutationAware, isStateAware, isNetworkAware};

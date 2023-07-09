@@ -1,8 +1,8 @@
 function sendToServiceWorker(action: string, detail: object) {
     const event = new CustomEvent(action, {
-        detail: {...detail}
-    })
+        detail: {...detail},
+    });
     window.dispatchEvent(event);
 }
 
-export { sendToServiceWorker }
+export {sendToServiceWorker};

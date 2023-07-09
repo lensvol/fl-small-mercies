@@ -1,18 +1,9 @@
-import { GameStateController } from "../game_state.js";
+import {GameStateController} from "../game_state.js";
 import {SettingsObject} from "../settings.js";
 import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {debug} from "../logging.js";
 
-const DISCRETE_SIDEBAR_QUALITIES = [
-    "Notability",
-    "Influence",
-    "Bizarre",
-    "Dreaded",
-    "Respectable",
-    "Irrigo",
-    "A Turncoat",
-    "Moonlit"
-];
+const DISCRETE_SIDEBAR_QUALITIES = ["Notability", "Influence", "Bizarre", "Dreaded", "Respectable", "Irrigo", "A Turncoat", "Moonlit"];
 
 export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware {
     private removeDiscreteScrollbars = false;
@@ -28,8 +19,10 @@ export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware
                     continue;
                 }
 
-                if ((this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent))
-                    || (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))) {
+                if (
+                    (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
+                    (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
+                ) {
                     this.changeScrollBarVisibility(quality as HTMLElement, true);
 
                     // This is hackish as heck, but still better than misaligned quality names... So be it.

@@ -2,8 +2,8 @@ import {IMutationAwareFixer, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
 
-const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']"
-const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/
+const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";
+const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/;
 
 export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
     private replaceShareButton = false;
@@ -16,14 +16,14 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
             const image = document.querySelector("img[class*='storylet-root__card-image']") as HTMLImageElement;
             const title = document.querySelector("h1[class*='storylet-root__heading']");
             // For some reason event target here is the button itself, not the buttonlet container
-            const icon = (ev.target as HTMLElement);
+            const icon = ev.target as HTMLElement;
 
             const requestData = {
                 contentClass: "EventConclusion",
                 contentKey: this.currentStoryletId,
                 image: "snowflake",
-                message: title?.textContent || "Hello, world!"
-            }
+                message: title?.textContent || "Hello, world!",
+            };
 
             if (image) {
                 const parts = image.src.match(SOURCE_EXTRACTION_REGEX);
@@ -36,18 +36,15 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
             icon?.classList.remove("fa-pencil");
             icon?.classList.add("fa-refresh", "fa-spin");
 
-            fetch(
-                "https://api.fallenlondon.com/api/profile/share",
-                {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${this.authToken}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(requestData)
-                }
-            )
-                .then(r => {
+            fetch("https://api.fallenlondon.com/api/profile/share", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.authToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+            })
+                .then((r) => {
                     // FIXME: Replace direct CSS manipulation with something classier
                     icon?.classList.remove("fa-refresh", "fa-spin");
                     icon?.classList.add("fa-check");
@@ -63,7 +60,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
                         icon.parentElement.style.color = "red";
                     }
                 });
-        }
+        };
     }
 
     applySettings(settings: SettingsObject): void {
@@ -82,7 +79,7 @@ export class QuickShareFixer implements IMutationAwareFixer, IStateAware {
         const shareButton = node.querySelector(SHARE_BUTTON_SELECTOR);
         const shareContainer = shareButton?.parentElement;
         if (shareContainer != null && shareContainer.parentElement != null) {
-            const shareMimic = (shareContainer.cloneNode(true) as HTMLElement);
+            const shareMimic = shareContainer.cloneNode(true) as HTMLElement;
 
             shareMimic.addEventListener("click", this.shareClickListener);
             shareContainer.parentElement.replaceChild(shareMimic, shareContainer);

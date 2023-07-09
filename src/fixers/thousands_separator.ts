@@ -68,8 +68,8 @@ export class ThousandSeparatorFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
-}
+        // Do nothing if DOM node is removed.
+    }
 
     applySettings(settings: SettingsObject): void {
         this.separateThousands = settings.add_thousands_separator as boolean;

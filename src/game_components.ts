@@ -1,4 +1,3 @@
-
 function capitalize(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -18,7 +17,7 @@ class Branch {
     private _qualityLocked = false;
     private _qualityRequirements: any[] = [];
     private _buttonText = "GO";
-    
+
     constructor(branchId: number, name: string) {
         this.branchId = branchId;
         this.name = name;
@@ -72,10 +71,9 @@ class Branch {
             planKey: "1234567890abcdefghijklmnopqrstuv",
             qualityLocked: this._qualityLocked,
             qualityRequirements: this._qualityRequirements,
-        }
+        };
     }
 }
-
 
 class Storylet {
     private _category = "";
@@ -138,7 +136,7 @@ class Storylet {
     }
 
     addBranch(branch: Branch) {
-        this._branches.push(branch)
+        this._branches.push(branch);
         return this;
     }
 
@@ -159,8 +157,8 @@ class Storylet {
             qualityRequirements: [],
             teaser: this._teaser,
             urgency: "Normal",
-        }
+        };
     }
 }
 
-export { Branch, Storylet };
+export {Branch, Storylet};

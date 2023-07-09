@@ -86,9 +86,7 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
                 return;
             }
 
-            const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector(
-                "button > span > i[class*='fa-arrow-left']"
-            );
+            const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector("button > span > i[class*='fa-arrow-left']");
             let mimicButton: HTMLElement;
             [this.mimicPanel, mimicButton] = this.createPerhapsNotMimic();
 
@@ -102,10 +100,7 @@ export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
                     exitBtn.addEventListener("click", () => this.mimicPanel?.remove());
                 }
 
-                const otherButtons =
-                    exitButtonDiv.parentNode?.querySelectorAll(
-                        ".media--branch[data-branch-id] .storylet__buttons .button--primary"
-                    ) || [];
+                const otherButtons = exitButtonDiv.parentNode?.querySelectorAll(".media--branch[data-branch-id] .storylet__buttons .button--primary") || [];
                 for (const otherBtn of otherButtons) {
                     otherBtn.addEventListener("click", () => this.mimicPanel?.remove());
                 }

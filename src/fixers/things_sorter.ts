@@ -23,29 +23,27 @@ const SEAL_ORDER = [141891, 141892, 141893, 141894, 141895, 141896, 141897, 1418
 const SEAL_SELECTOR = SEAL_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
 const DREAM_ORDER = [
-    239,    // HRD: A Game of Chess
+    239, // HRD: A Game of Chess
     142643, // HRD: Betwixt Us and the Sun
-    235,    // HRD: Death by Water
+    235, // HRD: Death by Water
     142642, // HRD: I Shot the Albatross
-    234,    // HRD: Is Someone There?
-    237,    // HRD: The Burial of the Dead
+    234, // HRD: Is Someone There?
+    237, // HRD: The Burial of the Dead
     141026, // Haunted by Stairs
-    238,    // HRD: The Fire Sermon
+    238, // HRD: The Fire Sermon
     141027, // Seeing in Apocyan
-    236,    // HRD: What the Thunder Said
-    774,    // Stormy-Eyed
+    236, // HRD: What the Thunder Said
+    774, // Stormy-Eyed
 ];
 const DREAM_SELECTOR = DREAM_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
-
 function findAndSortIcons(node: Element, selector: string, order: number[]) {
     const icons = node.querySelectorAll(selector) as NodeListOf<HTMLElement>;
-    const things = Array
-        .from(icons)
+    const things = Array.from(icons)
         .sort((i1: HTMLElement, i2: HTMLElement) => {
             const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId || i1.dataset.branchId || "0"));
             const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId || i2.dataset.branchId || "0"));
-            return pos1 - pos2
+            return pos1 - pos2;
         })
         .map((icon) => icon.parentElement);
 
@@ -63,12 +61,12 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
     things
         .slice(1)
         .reverse()
-        .forEach(thing => {
+        .forEach((thing) => {
             if (thing != null) {
                 parent.removeChild(thing);
                 start.after(thing);
             }
-        })
+        });
 }
 
 export class ThingSortFixer implements IMutationAwareFixer {
@@ -76,7 +74,6 @@ export class ThingSortFixer implements IMutationAwareFixer {
     private sortSeals = false;
     private sortDreams = false;
     private sortNeathbow = false;
-
 
     applySettings(settings: SettingsObject): void {
         this.sortCityMysteries = settings.sort_city_mysteries as boolean;
@@ -86,7 +83,7 @@ export class ThingSortFixer implements IMutationAwareFixer {
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow
+        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow;
     }
 
     onNodeAdded(node: HTMLElement): void {
@@ -112,6 +109,6 @@ export class ThingSortFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
+        // Do nothing if DOM node is removed.
     }
 }

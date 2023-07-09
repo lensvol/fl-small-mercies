@@ -17,7 +17,7 @@ const FAVOURS = new Map([
     ["Favours: Revolutionaries", "flames"],
     ["Favours: Rubbery Men", "rubberyman"],
     ["Favours: The Great Game", "pawn"],
-    ["Favours: Tomb-Colonies", "bandagedman"]
+    ["Favours: Tomb-Colonies", "bandagedman"],
 ]);
 const FAVOUR_ORDER = [...FAVOURS.keys()];
 
@@ -64,42 +64,42 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
     }
 
     private createFavourDisplay(title: string, icon: string, initialValue: number): HTMLElement {
-        const li = document.createElement('li');
-        li.classList.add('js-item', 'item', 'sidebar-quality');
-        li.style.cssText = 'text-align: left';
+        const li = document.createElement("li");
+        li.classList.add("js-item", "item", "sidebar-quality");
+        li.style.cssText = "text-align: left";
         li.dataset.favourType = title;
 
-        const div = document.createElement('div');
-        div.classList.add('js-icon', 'icon', 'js-tt', 'icon--circular');
+        const div = document.createElement("div");
+        div.classList.add("js-icon", "icon", "js-tt", "icon--circular");
 
-        const div3 = document.createElement('div');
-        div3.classList.add('item__desc');
+        const div3 = document.createElement("div");
+        div3.classList.add("item__desc");
 
-        const div4 = document.createElement('div');
-        div4.setAttribute('tabindex', '0');
-        div4.setAttribute('role', 'button');
-        div4.setAttribute('aria-label', title);
-        div4.style.cssText = 'outline: 0px; outline-offset: 0px; cursor: default;';
+        const div4 = document.createElement("div");
+        div4.setAttribute("tabindex", "0");
+        div4.setAttribute("role", "button");
+        div4.setAttribute("aria-label", title);
+        div4.style.cssText = "outline: 0px; outline-offset: 0px; cursor: default;";
 
-        const span = document.createElement('span');
-        span.classList.add('js-item-name', 'item__name');
+        const span = document.createElement("span");
+        span.classList.add("js-item-name", "item__name");
         span.textContent = title;
 
-        const span3 = document.createElement('span');
-        span3.classList.add('item__value');
+        const span3 = document.createElement("span");
+        span3.classList.add("item__value");
         span3.textContent = ` ${initialValue} / 7`;
 
-        const div5 = document.createElement('div');
-        div5.classList.add('progress-bar');
+        const div5 = document.createElement("div");
+        div5.classList.add("progress-bar");
 
-        const img = document.createElement('img');
-        img.classList.add('cursor-default');
-        img.setAttribute('alt', `Favours: ${title}`);
-        img.setAttribute('src', `//images.fallenlondon.com/icons/${icon}.png`);
-        img.setAttribute('aria-label', `Favours: ${title}`);
+        const img = document.createElement("img");
+        img.classList.add("cursor-default");
+        img.setAttribute("alt", `Favours: ${title}`);
+        img.setAttribute("src", `//images.fallenlondon.com/icons/${icon}.png`);
+        img.setAttribute("aria-label", `Favours: ${title}`);
 
-        const span4 = document.createElement('span');
-        span4.classList.add('progress-bar__stripe', 'progress-bar__stripe--has-transition');
+        const span4 = document.createElement("span");
+        span4.classList.add("progress-bar__stripe", "progress-bar__stripe--has-transition");
         const percentage = (initialValue / 7) * 100;
         span4.style.cssText = `width: ${percentage}%;`;
 
@@ -143,9 +143,9 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
         let favoursPanel = sidebar?.querySelector("ul[class*='favour_tracker']");
         // Trackers are already created and visible, nothing to do here.
         if (!favoursPanel) {
-            const favoursHeader = document.createElement('p');
-            favoursHeader.classList.add('heading', 'heading--4');
-            favoursHeader.textContent = 'Favours'
+            const favoursHeader = document.createElement("p");
+            favoursHeader.classList.add("heading", "heading--4");
+            favoursHeader.textContent = "Favours";
             sidebar?.appendChild(favoursHeader);
 
             favoursPanel = document.createElement("ul");
@@ -175,9 +175,9 @@ export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
         });
 
         state.onQualityChanged((state, quality, previous, current) => {
-           if (FAVOURS.has(quality.name)) {
-               this.updateOrCreateFavour(quality.name, current);
-           }
+            if (FAVOURS.has(quality.name)) {
+                this.updateOrCreateFavour(quality.name, current);
+            }
         });
     }
 }

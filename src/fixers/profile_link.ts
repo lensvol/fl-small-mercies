@@ -44,10 +44,7 @@ export class ProfileLinkFixer implements IMutationAwareFixer, IStateAware {
             return;
         }
 
-        const profileButton = this.createTabButton(
-            "Profile",
-            `/profile/${encodeURI(this.currentUserName)}`
-        )
+        const profileButton = this.createTabButton("Profile", `/profile/${encodeURI(this.currentUserName)}`);
         tabList.appendChild(profileButton);
     }
 

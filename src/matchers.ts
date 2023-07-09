@@ -1,8 +1,8 @@
 import {GameState, StoryletPhases} from "./game_state.js";
 
 interface StateMatcher {
-    match(state: GameState): boolean
-    describe(): string
+    match(state: GameState): boolean;
+    describe(): string;
 }
 
 class OrPredicate implements StateMatcher {
@@ -81,7 +81,7 @@ class IsInStorylet implements StateMatcher {
     }
 
     describe(): string {
-        return `InStorylet(${this.expectedStoryletId})`
+        return `InStorylet(${this.expectedStoryletId})`;
     }
 
     match(state: GameState): boolean {

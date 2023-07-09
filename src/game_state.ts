@@ -3,21 +3,19 @@ import {FLApiInterceptor} from "./api_interceptor";
 
 export const UNKNOWN = -1;
 
-export class UnknownUser {
-}
+export class UnknownUser {}
 
-export class UnknownCharacter {
-}
+export class UnknownCharacter {}
 
 export enum StoryletPhases {
     Available,
     In,
     End,
-    Unknown
+    Unknown,
 }
 
 enum StateChangeTypes {
-    QualityChanged= "QualityChanged",
+    QualityChanged = "QualityChanged",
     CharacterDataLoaded = "CharacterDataLoaded",
     UserDataLoaded = "UserDataLoaded",
     StoryletPhaseChanged = "StoryletPhaseChanged",
@@ -26,9 +24,9 @@ enum StateChangeTypes {
 }
 
 export class FLUser {
-    userId: number
-    jwtToken: string
-    name: string
+    userId: number;
+    jwtToken: string;
+    name: string;
 
     constructor(userId: number, name: string, jwtToken: string) {
         this.userId = userId;
@@ -38,8 +36,8 @@ export class FLUser {
 }
 
 export class FLCharacter {
-    characterId: number
-    name: string
+    characterId: number;
+    name: string;
 
     constructor(characterId: number, name: string) {
         this.characterId = characterId;
@@ -82,13 +80,13 @@ const UNKNOWN_GEO_SETTING = new GeoSetting(UNKNOWN, "<UNKNOWN SETTING>");
 
 export class Quality {
     qualityId: number;
-    name: string
+    name: string;
     level: number;
     effectiveLevel: number;
     category: string;
     image: string;
     cap: number;
-    nature: string
+    nature: string;
 
     constructor(qualityId: number, category: string, name: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string) {
         this.qualityId = qualityId;
@@ -101,7 +99,6 @@ export class Quality {
         this.nature = nature;
     }
 }
-
 
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
@@ -122,7 +119,7 @@ export class GameState {
             return undefined;
         }
 
-        return existingCategory.get(name)
+        return existingCategory.get(name);
     }
 
     public setQuality(categoryName: string, qualityName: string, quality: Quality) {
@@ -134,29 +131,37 @@ export class GameState {
         category.set(qualityName, quality);
     }
 
-    public* enumerateQualities() {
+    public *enumerateQualities() {
         for (const category of this.qualities.values()) {
             for (const thing of category.values()) {
-                yield thing
+                yield thing;
             }
         }
     }
 }
 
-
 export class GameStateController {
     private state: GameState = new GameState();
 
-    private changeListeners: { [key in StateChangeTypes]: ((...args: any[]) => void)[] } = {
+    private changeListeners: {[key in StateChangeTypes]: ((...args: any[]) => void)[]} = {
         [StateChangeTypes.ActionsCountChanged]: [],
         [StateChangeTypes.QualityChanged]: [],
         [StateChangeTypes.CharacterDataLoaded]: [],
         [StateChangeTypes.UserDataLoaded]: [],
         [StateChangeTypes.StoryletPhaseChanged]: [],
-        [StateChangeTypes.LocationChanged]: []
-    }
+        [StateChangeTypes.LocationChanged]: [],
+    };
 
-    private upsertQuality(qualityId: number, categoryName: string, qualityName: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string): [Quality, number] {
+    private upsertQuality(
+        qualityId: number,
+        categoryName: string,
+        qualityName: string,
+        effectiveLevel: number,
+        level: number,
+        image: string,
+        cap: number,
+        nature: string
+    ): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
         if (existingQuality && existingQuality.level != effectiveLevel) {
@@ -207,10 +212,7 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(
-                    thing.id, thing.category, thing.name, thing.effectiveLevel,
-                    thing.level, thing.image, thing.cap || 0, thing.nature
-                );
+                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
             }
         }
 
@@ -253,14 +255,17 @@ export class GameStateController {
 
     public parseChooseBranchResponse(request: Object, response: Object) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
-        for (const message of (response.messages || [])) {
-            if (message.type === "StandardQualityChangeMessage"
-                || message.type === "PyramidQualityChangeMessage"
-                || message.type === "QualityExplicitlySetMessage") {
+        for (const message of response.messages || []) {
+            if (message.type === "StandardQualityChangeMessage" || message.type === "PyramidQualityChangeMessage" || message.type === "QualityExplicitlySetMessage") {
                 const thing = message.possession;
                 const [quality, previousLevel] = this.upsertQuality(
-                    thing.id, thing.category, thing.name,
-                    thing.effectiveLevel, thing.level, thing.image, thing.cap || 0,
+                    thing.id,
+                    thing.category,
+                    thing.name,
+                    thing.effectiveLevel,
+                    thing.level,
+                    thing.image,
+                    thing.cap || 0,
                     thing.nature
                 );
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
@@ -303,10 +308,7 @@ export class GameStateController {
     public parseEquipResponse(request: Object, response: Object) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const thing of response.changedPossessions) {
-            const [quality, previous] = this.upsertQuality(
-                thing.id, thing.category, thing.name, thing.effectiveLevel,
-                thing.level, thing.image, thing.cap || 0, thing.nature
-            );
+            const [quality, previous] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
 
             if (quality.level != previous) {
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
@@ -353,37 +355,36 @@ export class GameStateController {
         }
     }
 
-
-    public onStoryletPhaseChanged(handler: ((g: GameState) => void)) {
+    public onStoryletPhaseChanged(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.StoryletPhaseChanged].push(handler);
     }
 
-    public onCharacterDataLoaded(handler: ((g: GameState) => void)) {
+    public onCharacterDataLoaded(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.CharacterDataLoaded].push(handler);
     }
 
-    public onUserDataLoaded(handler: ((g: GameState) => void)) {
+    public onUserDataLoaded(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.UserDataLoaded].push(handler);
     }
 
-    public onQualityChanged(handler: ((g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void)) {
+    public onQualityChanged(handler: (g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void) {
         this.changeListeners[StateChangeTypes.QualityChanged].push(handler);
     }
 
-    public onLocationChanged(handler: ((g: GameState, location: FLPlayerLocation) => void)) {
+    public onLocationChanged(handler: (g: GameState, location: FLPlayerLocation) => void) {
         this.changeListeners[StateChangeTypes.LocationChanged].push(handler);
     }
 
-    public onActionsChanged(handler: ((g: GameState, actions: number) => void)) {
+    public onActionsChanged(handler: (g: GameState, actions: number) => void) {
         this.changeListeners[StateChangeTypes.ActionsCountChanged].push(handler);
     }
 
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
         this.changeListeners[changeType].map((handler) => {
             try {
-                handler(this.state,...additionalArgs)
+                handler(this.state, ...additionalArgs);
             } catch (e) {
-                console.error(`Error caught while triggering listeners for "${changeType}":`, e)
+                console.error(`Error caught while triggering listeners for "${changeType}":`, e);
             }
         });
     }
@@ -400,6 +401,5 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/map", this.parseMapResponse.bind(this));
         interceptor.onResponseReceived("/api/map/move", this.parseMapMoveResponse.bind(this));
-
     }
 }

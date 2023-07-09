@@ -2,7 +2,7 @@ import {IMutationAwareFixer} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 export class ShipSaverFixer implements IMutationAwareFixer {
-    private disableSaleOption = false
+    private disableSaleOption = false;
 
     applySettings(settings: SettingsObject): void {
         this.disableSaleOption = settings.ship_saver as boolean;
@@ -31,9 +31,7 @@ export class ShipSaverFixer implements IMutationAwareFixer {
             description.appendChild(labelNode);
 
             shipStorylet.classList.add("media--locked");
-            shipStorylet
-                .querySelectorAll("button")
-                .forEach((b) => b.remove());
+            shipStorylet.querySelectorAll("button").forEach((b) => b.remove());
 
             const actionButton = shipStorylet.querySelector("div[class*='buttons']");
             if (actionButton) {
@@ -43,6 +41,6 @@ export class ShipSaverFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
-}
+        // Do nothing if DOM node is removed.
+    }
 }

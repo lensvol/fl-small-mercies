@@ -38,12 +38,12 @@ class CurrencyDisplay {
     refresh() {
         let currentDisplay = null;
 
-        const currencyList= document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const currencyList = document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) {
             return;
         }
 
-        const currencyNames= currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
+        const currencyNames = currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
         // TODO: Re-implement with .find()
         for (const display of currencyNames) {
             if (display.textContent === this.name || display.textContent === this.title) {
@@ -68,28 +68,28 @@ class CurrencyDisplay {
     }
 
     createMimic() {
-        const li = document.createElement('li');
-        li.classList.add('item');
+        const li = document.createElement("li");
+        li.classList.add("item");
 
-        const container = document.createElement('div');
-        container.classList.add('icon', 'icon--circular');
-        container.style.cssText = 'width: 45px;';
+        const container = document.createElement("div");
+        container.classList.add("icon", "icon--circular");
+        container.style.cssText = "width: 45px;";
 
-        const container2 = document.createElement('div');
-        container2.classList.add('item__desc');
+        const container2 = document.createElement("div");
+        container2.classList.add("item__desc");
 
-        const img = document.createElement('img');
-        img.setAttribute('src', `//images.fallenlondon.com/icons/${this.iconImage}.png`);
+        const img = document.createElement("img");
+        img.setAttribute("src", `//images.fallenlondon.com/icons/${this.iconImage}.png`);
 
-        const textSpan = document.createElement('span');
-        textSpan.classList.add('item__name');
+        const textSpan = document.createElement("span");
+        textSpan.classList.add("item__name");
 
-        const container3 = document.createElement('div');
-        container3.classList.add('item__value', `currency__${this.currencySymbol}`, 'price--inverted');
+        const container3 = document.createElement("div");
+        container3.classList.add("item__value", `currency__${this.currencySymbol}`, "price--inverted");
 
         const text = document.createTextNode(this.title);
 
-        const text2 = document.createTextNode('0');
+        const text2 = document.createTextNode("0");
 
         li.appendChild(container);
         li.appendChild(container2);
@@ -120,13 +120,13 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
             "Assortment of Khaganian Coinage",
             new OrPredicate(
                 new IsInSetting(107955), // Khanate (Inner)
-                new IsInSetting(107959)  // Khanate (Copper Quarter)
+                new IsInSetting(107959) // Khanate (Copper Quarter)
             )
         );
 
         this.currencyToPredicate.set(
             "Rat-Shilling",
-            new IsInSetting(107960),  // Rat-Market
+            new IsInSetting(107960) // Rat-Market
         );
     }
 
@@ -159,7 +159,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
 
         controller.onStoryletPhaseChanged((state) => {
             this.checkVisibilityPredicates(state);
-        })
+        });
     }
 
     private checkVisibilityPredicates(state: GameState) {
@@ -186,7 +186,5 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {
-    }
-
+    onNodeRemoved(node: HTMLElement): void {}
 }

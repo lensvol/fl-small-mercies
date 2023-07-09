@@ -1,19 +1,18 @@
-type AjaxMethod = (method: string, url: string, async: boolean) => any
+type AjaxMethod = (method: string, url: string, async: boolean) => any;
 
 const DONE = 4;
 
 function setFakeXhrResponse(request: any, status: number, response: object) {
-    Object.defineProperty(request, 'responseText', {writable: true});
-    Object.defineProperty(request, 'readyState', {writable: true});
-    Object.defineProperty(request, 'status', {writable: true});
+    Object.defineProperty(request, "responseText", {writable: true});
+    Object.defineProperty(request, "readyState", {writable: true});
+    Object.defineProperty(request, "status", {writable: true});
 
-    request.responseText = JSON.stringify(response)
+    request.responseText = JSON.stringify(response);
     request.readyState = DONE;
     request.status = status;
 
     request.onreadystatechange();
 }
-
 
 export class FLApiInterceptor {
     private responseListeners: Map<string, ((request: any, response: any) => any)[]> = new Map();
@@ -49,7 +48,7 @@ export class FLApiInterceptor {
         }
     }
 
-    public onResponseReceived(uri: string, handler: ((request: any, response: any) => void)) {
+    public onResponseReceived(uri: string, handler: (request: any, response: any) => void) {
         if (!this.responseListeners.has(uri)) {
             this.responseListeners.set(uri, []);
         }
@@ -57,7 +56,7 @@ export class FLApiInterceptor {
         this.responseListeners.get(uri)?.push(handler);
     }
 
-    public onRequestSent(uri: string, handler: ((request: any) => void)) {
+    public onRequestSent(uri: string, handler: (request: any) => void) {
         if (!this.requestListeners.has(uri)) {
             this.requestListeners.set(uri, []);
         }
@@ -109,9 +108,9 @@ export class FLApiInterceptor {
                 if (this.readyState == DONE) {
                     // FIXME: also filter out non-200 responses
                     // @ts-ignore
-                    const responseText = handler(url, this._originalRequest, event.currentTarget.responseText)
+                    const responseText = handler(url, this._originalRequest, event.currentTarget.responseText);
                     // @ts-ignore
-                    Object.defineProperty(this, 'responseText', {writable: true});
+                    Object.defineProperty(this, "responseText", {writable: true});
                     // @ts-ignore
                     this.responseText = responseText;
                 }
@@ -136,7 +135,7 @@ export class FLApiInterceptor {
 
             // FIXME: Only deserialize _changed_ request data
             // @ts-ignore
-            arguments[0] = JSON.stringify(this._requestData)
+            arguments[0] = JSON.stringify(this._requestData);
             // @ts-ignore
             return original_function.apply(this, arguments);
         };

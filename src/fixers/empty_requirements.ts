@@ -15,7 +15,7 @@ export class SocialEmptyReqsFixer implements IMutationAwareFixer {
     onNodeAdded(node: HTMLElement): void {
         const requirementsPanel = node.querySelector("div[class*='act__quality-requirements']") as HTMLElement;
         if (!requirementsPanel) {
-            if (node.classList.contains('act__quality-requirements')) {
+            if (node.classList.contains("act__quality-requirements")) {
                 node.style.cssText = "display: none";
             }
         }

@@ -17,8 +17,8 @@ export class ScripIconFixer implements IMutationAwareFixer {
     }
 
     onNodeRemoved(_node: HTMLElement): void {
-    // Do nothing if DOM node is removed.
-}
+        // Do nothing if DOM node is removed.
+    }
 
     applySettings(settings: SettingsObject): void {
         this.showScripIcon = settings.scrip_icon as boolean;
