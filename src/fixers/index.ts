@@ -18,6 +18,7 @@ import {TopExitButtonsFixer} from "./top_exit_buttons.js";
 import {LocationQualitiesFixer} from "./location_qualities.js";
 import {MoreCurrencyDisplaysFixer} from "./currency_displays.js";
 import {TwoStepConfirmationsFixer} from "./two_step_confirmations.js";
+import { SingleItemIconFixer } from "./single_item_icon.js";
 
 export {
     AutoScrollFixer,
@@ -40,4 +41,5 @@ export {
     LocationQualitiesFixer,
     MoreCurrencyDisplaysFixer,
     TwoStepConfirmationsFixer,
+    SingleItemIconFixer,
 };

@@ -90,6 +90,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             "two_step_confirmations": {
                 description: "Protect certain 'dangerous' branches with a two-step confirmation process.",
                 default: true,
+            },
+            "hide_single_item_icon": {
+                description: "Hide the '1' icon next to single items in your inventory.",
+                default: true,
             }
         }
     },
