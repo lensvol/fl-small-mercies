@@ -121,7 +121,11 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: false,
             },
             "top_exit_buttons": {
-                description: "Move 'Perhaps Not' button to the top in selected storylets.",
+                description: "Show 'Perhaps Not' button at the top in storylets that have 4 branches or more.",
+                default: false,
+            },
+            "top_exit_buttons_always": {
+                description: "└ Show the button regardless of the amount of branches in a storylet.",
                 default: false,
             }
         }
