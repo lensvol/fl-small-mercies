@@ -1,0 +1,9 @@
+**/.git
+**/.github
+**/.idea
+**/.*
+
+src/css/
+README.md
+*.json
+*.html
