@@ -1,6 +1,6 @@
 {
   "bracketSpacing": false,
-  "endOfLine": "crlf",
+  "endOfLine": "lf",
   "printWidth": 120,
   "semi": true,
   "singleQuote": false,
