@@ -94,6 +94,18 @@ const DANGEROUS_BRANCHES = [
     // 7702,  /* Your plant is singing */
 ];
 
+const CHOICE_HAS_BEEN_MADE_TEXT: string = "So be it.<br><br><b>You solemnly swear that you are aware what your " +
+                                            "actions may bring.</b>";
+
+const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" +
+    "<b>You will be returned back to the storylet and will have one more chance to think it over.</b>";
+
+const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
+    "\"Have you thought this through? I mean, chewed down to the bone? You got out once. You dip so much " +
+    "as a pinky back into this pond... you may well find something reaches out... and drags you back " +
+    "into its depths.\"</i><br><br><b>Branch that you chose is known to have very costly consequences, " +
+    "potentially irreversible ones. Please think twice about whether you are really committed to this path.</br>";
+
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
     private showConfirmations: boolean = true;
     private currentStoryletContents: any = {};
@@ -119,11 +131,17 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
         });
 
         interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
-            const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "Have you thought this through?").description("I mean, really chewed it down to the bone?");
+            const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "<i>Book of Wick</i>, John 41:53")
+                .description(JOHN_WICK_QUOTE_TEXT)
+                .image("candleblack");
 
             if (DANGEROUS_BRANCHES.includes(request.branchId)) {
-                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES.").image("well");
-                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No?");
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES.")
+                    .description(CHOICE_HAS_BEEN_MADE_TEXT)
+                    .image("well");
+                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No?")
+                    .description(RAINCHECK_TEXT)
+                    .image("eye");
 
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);
