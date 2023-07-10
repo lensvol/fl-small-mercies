@@ -130,6 +130,10 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
             this.currentStoryletContents = structuredClone(response);
         });
 
+        interceptor.onResponseReceived("/api/storylet", (request, response) => {
+            this.currentStoryletContents = structuredClone(response);
+        });
+
         interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
             const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "<i>Book of Wick</i>, John 41:53")
                 .description(JOHN_WICK_QUOTE_TEXT)
