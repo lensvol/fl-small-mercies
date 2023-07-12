@@ -54,6 +54,11 @@ class Branch {
         return this;
     }
 
+    actionCost(cost: number) {
+        this._actionCost = cost;
+        return this;
+    }
+
     build() {
         return {
             name: this.name,
