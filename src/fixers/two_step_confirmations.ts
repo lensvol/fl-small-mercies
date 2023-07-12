@@ -94,17 +94,16 @@ const DANGEROUS_BRANCHES = [
     // 7702,  /* Your plant is singing */
 ];
 
-const CHOICE_HAS_BEEN_MADE_TEXT: string = "So be it.<br><br><b>You solemnly swear that you are aware what your " +
-                                            "actions may bring.</b>";
+const CHOICE_HAS_BEEN_MADE_TEXT: string = "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
 
 const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" +
-    "<b>You will be returned back to the storylet and will have one more chance to think it over.</b>";
+    "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
 
 const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
     "\"Have you thought this through? I mean, chewed down to the bone? You got out once. You dip so much " +
     "as a pinky back into this pond... you may well find something reaches out... and drags you back " +
-    "into its depths.\"</i><br><br><b>Branch that you chose is known to have very costly consequences, " +
-    "potentially irreversible ones. Please think twice about whether you are really committed to this path.</br>";
+    "into its depths.\"</i><br><br><b><i>Small Mercies have detected that you chose a branch which may cost you " +
+    "actions and/or resources if played unintentionally. Do you really want to do this?</i></b>";
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
     private showConfirmations: boolean = true;
