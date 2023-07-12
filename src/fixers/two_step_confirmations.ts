@@ -136,15 +136,18 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
         interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
             const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "<i>Book of Wick</i>, John 41:53")
                 .description(JOHN_WICK_QUOTE_TEXT)
-                .image("candleblack");
+                .image("candleblack")
+                .category("SinisterZee");
 
             if (DANGEROUS_BRANCHES.includes(request.branchId)) {
-                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES.")
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES!")
                     .description(CHOICE_HAS_BEEN_MADE_TEXT)
-                    .image("well");
-                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No?")
+                    .image("well")
+                    .actionCost(0);
+                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No.")
                     .description(RAINCHECK_TEXT)
-                    .image("eye");
+                    .image("eye")
+                    .actionCost(0);
 
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);
