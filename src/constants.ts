@@ -149,6 +149,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show the button regardless of the number of branches in a storylet.",
                 default: false,
             },
+            display_currencies_everywhere: {
+                description: "Show indicators for additional currencies regardless of location.",
+                default: false,
+            },
         },
     },
 ];

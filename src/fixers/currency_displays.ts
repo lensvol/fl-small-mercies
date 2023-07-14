@@ -109,6 +109,8 @@ class CurrencyDisplay {
 
 export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAware {
     private displayMoreCurrencies = false;
+    private displayCurrenciesEverywhere = false;
+
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
     private currencyToPredicate = new Map<string, StateMatcher>();
 
@@ -132,6 +134,15 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
 
     applySettings(settings: SettingsObject): void {
         this.displayMoreCurrencies = settings.display_more_currencies as boolean;
+        this.displayCurrenciesEverywhere = settings.display_currencies_everywhere as boolean;
+
+        this.currencyToDisplay.forEach((display, _) => {
+            if (this.displayCurrenciesEverywhere) {
+                display.show()
+            } else {
+                display.hide();
+            }
+        });
     }
 
     linkState(controller: GameStateController): void {
@@ -163,6 +174,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     }
 
     private checkVisibilityPredicates(state: GameState) {
+        if (this.displayCurrenciesEverywhere) {
+            return;
+        }
+
         for (const [name, predicate] of this.currencyToPredicate.entries()) {
             const display = this.currencyToDisplay.get(name)!!;
             if (!predicate.match(state)) {
