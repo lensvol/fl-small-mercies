@@ -9,7 +9,6 @@ const FAKE_BRANCH_ID_CEILING = 87_000_000;
 const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
 
 const DANGEROUS_BRANCHES = [
-    9425, // "Doing the decent thing"
     252104, // Dismissing the Grizzled Veteran
     252056, // Abandoning Khaganian Intrigue
 
