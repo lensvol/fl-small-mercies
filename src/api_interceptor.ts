@@ -123,6 +123,12 @@ export class FLApiInterceptor {
     private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: Object) => Object): AjaxMethod {
         return function (body) {
             // @ts-ignore
+            if (!this._targetUrl.includes("api.fallenlondon.com")) {
+                // @ts-ignore
+                return original_function.apply(this, arguments);
+            }
+
+            // @ts-ignore
             this._requestData = JSON.parse(arguments[0]);
 
             // @ts-ignore
