@@ -108,7 +108,7 @@ export class FLApiInterceptor {
                 if (this.readyState == DONE) {
                     // FIXME: also filter out non-200 responses
                     // @ts-ignore
-                    const responseText = handler(url, this._originalRequest, event.currentTarget.responseText);
+                    const responseText = handler(url, this._requestData, event.currentTarget.responseText);
                     // @ts-ignore
                     Object.defineProperty(this, "responseText", {writable: true});
                     // @ts-ignore
