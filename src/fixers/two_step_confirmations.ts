@@ -11,7 +11,7 @@ const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
 const DANGEROUS_BRANCHES = [
     252104, // Dismissing the Grizzled Veteran
     252056, // Abandoning Khaganian Intrigue
-
+    211150,
     // Various storylets concerned with placement of the Tracklayers City
     251105,
     251107,
@@ -101,7 +101,7 @@ const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain che
 const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
     "\"Have you thought this through? I mean, chewed down to the bone? You got out once. You dip so much " +
     "as a pinky back into this pond... you may well find something reaches out... and drags you back " +
-    "into its depths.\"</i><br><br><b><i>Small Mercies have detected that you chose a branch which may cost you " +
+    "into its depths.\"</i><br><br><b><i>\"Small Mercies\" extension has detected that you chose a branch which may cost you " +
     "actions and/or resources if played unintentionally. Do you really want to do this?</i></b>";
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
@@ -133,6 +133,10 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
         });
 
         interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
+            if (!this.showConfirmations) {
+                return null;
+            }
+
             const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "<i>Book of Wick</i>, John 41:53")
                 .description(JOHN_WICK_QUOTE_TEXT)
                 .image("candleblack")
