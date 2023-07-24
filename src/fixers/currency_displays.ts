@@ -117,18 +117,27 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
         this.currencyToDisplay.set("Assortment of Khaganian Coinage", new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage"));
+        this.currencyToDisplay.set("Justificande Coin", new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "khaganian", "Justificande Coin"));
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
             new OrPredicate(
-                new IsInSetting(107955), // Khanate (Inner)
-                new IsInSetting(107959) // Khanate (Copper Quarter)
+                new OrPredicate(
+                    new IsInSetting(107955), // Khanate (Inner)
+                    new IsInSetting(107959) // Khanate (Copper Quarter)
+                ),
+                new IsInSetting(107975) // Irem
             )
         );
 
         this.currencyToPredicate.set(
             "Rat-Shilling",
             new IsInSetting(107960) // Rat-Market
+        );
+
+        this.currencyToPredicate.set(
+            "Justificande Coin",
+            new IsInSetting(107975) // Irem
         );
     }
 
@@ -138,7 +147,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
 
         this.currencyToDisplay.forEach((display, _) => {
             if (this.displayCurrenciesEverywhere) {
-                display.show()
+                display.show();
             } else {
                 display.hide();
             }
