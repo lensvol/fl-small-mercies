@@ -113,11 +113,14 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
 
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
     private currencyToPredicate = new Map<string, StateMatcher>();
+    private isInBazaar: boolean = false;
+    private isInFifthCity: boolean = false;
 
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
         this.currencyToDisplay.set("Assortment of Khaganian Coinage", new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage"));
         this.currencyToDisplay.set("Justificande Coin", new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "khaganian", "Justificande Coin"));
+        this.currencyToDisplay.set("Memory of a Tale", new CurrencyDisplay("Memory of a Tale", "book", "khaganian", "Memory of a Tale"));
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
@@ -174,7 +177,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
         });
 
         controller.onLocationChanged((state, location) => {
+            this.isInFifthCity = location.setting.settingId == 2;
+
             this.checkVisibilityPredicates(state);
+            this.checkSpecialVisibility();
         });
 
         controller.onStoryletPhaseChanged((state) => {
@@ -202,6 +208,17 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     }
 
     onNodeAdded(node: HTMLElement): void {
+        const bazaarTabButton = node.querySelector("li[data-name='bazaar']");
+        if (bazaarTabButton) {
+            const areWeBazaar = bazaarTabButton.classList.contains("active");
+            if (areWeBazaar != this.isInBazaar) {
+                this.isInBazaar = areWeBazaar;
+                this.checkSpecialVisibility();
+            } else {
+                this.isInBazaar = areWeBazaar;
+            }
+        }
+
         const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) return;
 
@@ -211,4 +228,17 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     }
 
     onNodeRemoved(node: HTMLElement): void {}
+
+    private checkSpecialVisibility() {
+        const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale")!!;
+        if (this.displayCurrenciesEverywhere) {
+            return;
+        }
+
+        if (this.isInFifthCity && this.isInBazaar) {
+            memoryTaleDisplay.show();
+        } else {
+            memoryTaleDisplay.hide();
+        }
+    }
 }
