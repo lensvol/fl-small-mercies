@@ -113,8 +113,15 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
 
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
     private currencyToPredicate = new Map<string, StateMatcher>();
-    private isInBazaar: boolean = false;
-    private isInFifthCity: boolean = false;
+    private isInLostAndFound: boolean = false;
+
+    private shopButtonObserver: MutationObserver = new MutationObserver((mutations, _observer) => {
+        mutations.forEach((mutation) => {
+            const button = mutation.target as HTMLButtonElement;
+            this.isInLostAndFound = button.classList.contains("menu-item--active");
+            this.checkSpecialVisibility();
+        });
+    });
 
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
@@ -177,10 +184,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
         });
 
         controller.onLocationChanged((state, location) => {
-            this.isInFifthCity = location.setting.settingId == 2;
-
             this.checkVisibilityPredicates(state);
-            this.checkSpecialVisibility();
         });
 
         controller.onStoryletPhaseChanged((state) => {
@@ -208,16 +212,19 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const bazaarTabButton = node.querySelector("li[data-name='bazaar']");
-        if (bazaarTabButton) {
-            const areWeBazaar = bazaarTabButton.classList.contains("active");
-            if (areWeBazaar != this.isInBazaar) {
-                this.isInBazaar = areWeBazaar;
+        const shopButtons = node.querySelectorAll("li[class='nav__item'] > button[class*='nav__button']");
+        shopButtons.forEach((button) => {
+            if (button.textContent === "Mr Chimes' Lost & Found") {
+                this.shopButtonObserver.disconnect();
+                this.shopButtonObserver.observe(
+                  button,
+                  {attributes: true, attributeFilter: ["class"]},
+                )
+
+                this.isInLostAndFound = button.classList.contains("menu-item--active");
                 this.checkSpecialVisibility();
-            } else {
-                this.isInBazaar = areWeBazaar;
             }
-        }
+        });
 
         const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) return;
@@ -227,7 +234,16 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(node: HTMLElement): void {
+        const shopButtons = node.querySelectorAll("li[class='nav__item'] > button[class*='nav__button']");
+        shopButtons.forEach((button) => {
+            if (button.textContent === "Mr Chimes' Lost & Found") {
+                this.shopButtonObserver.disconnect();
+            }
+            this.isInLostAndFound = false;
+            this.checkSpecialVisibility();
+        });
+    }
 
     private checkSpecialVisibility() {
         const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale")!!;
@@ -235,7 +251,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
             return;
         }
 
-        if (this.isInFifthCity && this.isInBazaar) {
+        if (this.isInLostAndFound) {
             memoryTaleDisplay.show();
         } else {
             memoryTaleDisplay.hide();
