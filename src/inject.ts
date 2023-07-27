@@ -22,6 +22,7 @@ import {
     MoreCurrencyDisplaysFixer,
     TwoStepConfirmationsFixer,
     SingleItemIconFixer,
+    ShopTransactionFixer,
 } from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
@@ -49,6 +50,7 @@ const fixers: IMercyFixer[] = [
     new MoreCurrencyDisplaysFixer(),
     new TwoStepConfirmationsFixer(),
     new SingleItemIconFixer(),
+    new ShopTransactionFixer(),
 ];
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);

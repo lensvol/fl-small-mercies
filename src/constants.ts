@@ -50,6 +50,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Hide qualities not appropriate for the current location.",
                 default: true,
             },
+            track_shop_transactions: {
+                description: "Update relevant currencies on shop transactions.",
+                default: true,
+            }
         },
     },
     {
