@@ -355,6 +355,29 @@ export class GameStateController {
         }
     }
 
+    private parseShopResponse(request: Object, response: IShopResponse) {
+        if (!response.isSuccess) {
+            return;
+        }
+
+        response.possessionsChanged.forEach((changed) => {
+            const [quality, previous] = this.upsertQuality(
+              changed.id,
+              changed.category,
+              changed.name,
+              changed.effectiveLevel,
+              changed.level,
+              changed.image,
+              changed.cap || 0,
+              changed.nature
+            );
+
+            if (quality.level != previous) {
+                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
+            }
+        });
+    }
+
     public onStoryletPhaseChanged(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.StoryletPhaseChanged].push(handler);
     }
@@ -401,5 +424,7 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
         interceptor.onResponseReceived("/api/map", this.parseMapResponse.bind(this));
         interceptor.onResponseReceived("/api/map/move", this.parseMapMoveResponse.bind(this));
+        interceptor.onResponseReceived("/api/exchange/sell", this.parseShopResponse.bind(this));
+        interceptor.onResponseReceived("/api/exchange/buy", this.parseShopResponse.bind(this));
     }
 }
