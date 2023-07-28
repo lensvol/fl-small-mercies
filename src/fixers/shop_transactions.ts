@@ -21,16 +21,16 @@ export class ShopTransactionFixer implements IStateAware {
     linkState(state: GameStateController): void {
         state.onQualityChanged((state, quality, previous, current) => {
             if (quality.qualityId === PENNY_QUALITY_ID) {
-                const echoesIndicator = document.querySelector("li[class*='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']");
+                const echoesIndicator = document.querySelector("li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']");
                 if (echoesIndicator) {
                     echoesIndicator.textContent = numberWithCommas((quality.level / 100).toString());
                 }
             }
 
             if (quality.qualityId === SCRIP_QUALITY_ID) {
-                const echoesIndicator = document.querySelector("li[class*='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']");
-                if (echoesIndicator) {
-                    echoesIndicator.textContent = numberWithCommas((quality.level / 100).toString());
+                const scripIndicator = document.querySelector("li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='scrip']");
+                if (scripIndicator) {
+                    scripIndicator.textContent = numberWithCommas((quality.level / 100).toString());
                 }
             }
         });
