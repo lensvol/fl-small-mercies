@@ -1,6 +1,5 @@
-import { INetworkAware, IStateAware } from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {FLApiInterceptor} from "../api_interceptor";
+import { IStateAware } from "./base.js";
+import { SettingsObject } from "../settings.js";
 import { GameStateController } from "../game_state";
 
 const PENNY_QUALITY_ID: number = 22390;
@@ -10,6 +9,9 @@ function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
 }
+
+const ECHO_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']";
+const SCRIP_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='scrip']";
 
 export class ShopTransactionFixer implements IStateAware {
     trackShopTransactions = true;
@@ -26,18 +28,32 @@ export class ShopTransactionFixer implements IStateAware {
                 return;
             }
 
+            let quantity = 0;
+            let selector = null;
+
             if (quality.qualityId === PENNY_QUALITY_ID) {
-                const echoesIndicator = document.querySelector("li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']");
-                if (echoesIndicator) {
-                    echoesIndicator.textContent = numberWithCommas((quality.level / 100).toString());
-                }
+                selector = ECHO_DISPLAY_SELECTOR;
+                quantity = (quality.level / 100);
             }
 
-            if (quality.qualityId === SCRIP_QUALITY_ID) {
-                const scripIndicator = document.querySelector("li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='scrip']");
-                if (scripIndicator) {
-                    scripIndicator.textContent = numberWithCommas((quality.level / 100).toString());
-                }
+            if (quality.level === SCRIP_QUALITY_ID) {
+                selector = SCRIP_DISPLAY_SELECTOR;
+                quantity = quality.level;
+            }
+
+            if (!selector) {
+                return;
+            }
+
+            const display = document.querySelector(selector);
+            if (!display) {
+                return;
+            }
+
+            if (this.shouldSeparateThousands) {
+                display.textContent = numberWithCommas(quantity.toString());
+            } else {
+                display.textContent = quantity.toString();
             }
         });
     }
