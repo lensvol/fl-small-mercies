@@ -1,4 +1,4 @@
-import { IStateAware } from "./base.js";
+import { IMutationAwareFixer, IStateAware } from "./base.js";
 import { SettingsObject } from "../settings.js";
 import { GameStateController } from "../game_state";
 
@@ -11,11 +11,13 @@ function numberWithCommas(x: string): string {
 }
 
 const ECHO_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']";
-const SCRIP_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='scrip']";
+const SCRIP_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class*='scrip']";
 
-export class ShopTransactionFixer implements IStateAware {
-    trackShopTransactions = true;
+export class ShopTransactionFixer implements IStateAware, IMutationAwareFixer {
+    private trackShopTransactions = true;
     private shouldSeparateThousands = false;
+    private echoesDisplay: Element | null = null;
+    private scripDisplay: Element | null = null;
 
     applySettings(settings: SettingsObject): void {
         this.trackShopTransactions = settings.track_shop_transactions as boolean;
@@ -29,32 +31,53 @@ export class ShopTransactionFixer implements IStateAware {
             }
 
             let quantity = 0;
-            let selector = null;
+            let actualDisplay = null;
 
-            if (quality.qualityId === PENNY_QUALITY_ID) {
-                selector = ECHO_DISPLAY_SELECTOR;
+            if (quality.qualityId === PENNY_QUALITY_ID && this.echoesDisplay) {
+                actualDisplay = this.echoesDisplay;
                 quantity = (quality.level / 100);
             }
 
-            if (quality.level === SCRIP_QUALITY_ID) {
-                selector = SCRIP_DISPLAY_SELECTOR;
+            if (quality.level === SCRIP_QUALITY_ID && this.scripDisplay) {
+                actualDisplay = this.scripDisplay;
                 quantity = quality.level;
             }
 
-            if (!selector) {
-                return;
-            }
-
-            const display = document.querySelector(selector);
-            if (!display) {
+            if (!actualDisplay) {
                 return;
             }
 
             if (this.shouldSeparateThousands) {
-                display.textContent = numberWithCommas(quantity.toString());
+                actualDisplay.textContent = numberWithCommas(quantity.toString());
             } else {
-                display.textContent = quantity.toString();
+                actualDisplay.textContent = quantity.toString();
             }
         });
+    }
+
+    checkEligibility(node: HTMLElement): boolean {
+        return true;
+    }
+
+    onNodeAdded(node: HTMLElement): void {
+        const echoesCandidate = node.querySelector(ECHO_DISPLAY_SELECTOR);
+        if (echoesCandidate) {
+            this.echoesDisplay = echoesCandidate;
+        }
+
+        const scripCandidate = node.querySelector(SCRIP_DISPLAY_SELECTOR);
+        if (scripCandidate) {
+            this.scripDisplay = scripCandidate;
+        }
+    }
+
+    onNodeRemoved(node: HTMLElement): void {
+        if (node.contains(this.echoesDisplay)) {
+            this.echoesDisplay = null;
+        }
+
+        if (node.contains(this.scripDisplay)) {
+            this.scripDisplay = null;
+        }
     }
 }
