@@ -13,13 +13,19 @@ function numberWithCommas(x: string): string {
 
 export class ShopTransactionFixer implements IStateAware {
     trackShopTransactions = true;
+    private shouldSeparateThousands = false;
 
     applySettings(settings: SettingsObject): void {
         this.trackShopTransactions = settings.track_shop_transactions as boolean;
+        this.shouldSeparateThousands = settings.add_thousands_separator as boolean;
     }
 
     linkState(state: GameStateController): void {
         state.onQualityChanged((state, quality, previous, current) => {
+            if (!this.trackShopTransactions) {
+                return;
+            }
+
             if (quality.qualityId === PENNY_QUALITY_ID) {
                 const echoesIndicator = document.querySelector("li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']");
                 if (echoesIndicator) {
