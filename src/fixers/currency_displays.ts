@@ -3,6 +3,11 @@ import {IMutationAwareFixer, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state.js";
 import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
 
+function numberWithCommas(x: string): string {
+    const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
+    return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
+}
+
 class CurrencyDisplay {
     private readonly name: string;
     private readonly iconImage: string;
@@ -11,6 +16,7 @@ class CurrencyDisplay {
 
     private quantity: number = 0;
     private hidden: boolean = false;
+    private separateThousands: boolean = false;
 
     constructor(fullName: string, icon: string, symbol: string, title?: string) {
         this.name = fullName;
@@ -18,6 +24,10 @@ class CurrencyDisplay {
         this.currencySymbol = symbol;
 
         this.title = typeof title != "undefined" ? title : fullName;
+    }
+
+    setThousandsFlag(flag: boolean) {
+        this.separateThousands = flag;
     }
 
     setQuantity(quantity: number) {
@@ -63,7 +73,12 @@ class CurrencyDisplay {
 
         const valueIndicator = currentDisplay?.querySelector("div[class*='item__value']");
         if (valueIndicator) {
-            valueIndicator.textContent = this.quantity.toString();
+            let quantityAsText = this.quantity.toString();
+            if (this.separateThousands) {
+                quantityAsText = numberWithCommas(quantityAsText);
+            }
+
+            valueIndicator.textContent = quantityAsText;
         }
     }
 
@@ -114,6 +129,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
     private currencyToPredicate = new Map<string, StateMatcher>();
     private isInLostAndFound: boolean = false;
+    private separateThousands: boolean = false;
 
     private shopButtonObserver: MutationObserver = new MutationObserver((mutations, _observer) => {
         mutations.forEach((mutation) => {
@@ -154,8 +170,11 @@ export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAwa
     applySettings(settings: SettingsObject): void {
         this.displayMoreCurrencies = settings.display_more_currencies as boolean;
         this.displayCurrenciesEverywhere = settings.display_currencies_everywhere as boolean;
+        this.separateThousands = settings.add_thousands_separator as boolean;
 
         this.currencyToDisplay.forEach((display, _) => {
+            display.setThousandsFlag(this.separateThousands);
+
             if (this.displayCurrenciesEverywhere) {
                 display.show();
             } else {
