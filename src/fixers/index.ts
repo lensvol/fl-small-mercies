@@ -21,7 +21,7 @@ import {TwoStepConfirmationsFixer} from "./two_step_confirmations.js";
 import {SingleItemIconFixer} from "./single_item_icon.js";
 import {ShopTransactionFixer} from "./shop_transactions.js";
 
-export {
+export default [
     AutoScrollFixer,
     JournalUiFixer,
     ThousandSeparatorFixer,
@@ -44,4 +44,4 @@ export {
     TwoStepConfirmationsFixer,
     SingleItemIconFixer,
     ShopTransactionFixer,
-};
+];

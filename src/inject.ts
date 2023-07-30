@@ -1,57 +1,11 @@
 import {FLSettingsFrontend} from "./settings.js";
 import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants.js";
-import {
-    AutoScrollFixer,
-    JournalUiFixer,
-    ThousandSeparatorFixer,
-    DiscreteScrollbarsFixer,
-    ScripIconFixer,
-    ShipSaverFixer,
-    RightSidebarFixer,
-    PlanButtonsFixer,
-    ProfileLinkFixer,
-    ThingSortFixer,
-    QuickShareFixer,
-    AsceticModeFixer,
-    FavourTrackerFixer,
-    SocialEmptyReqsFixer,
-    AfterFallYearFixer,
-    KhanateOracleFixer,
-    TopExitButtonsFixer,
-    LocationQualitiesFixer,
-    MoreCurrencyDisplaysFixer,
-    TwoStepConfirmationsFixer,
-    SingleItemIconFixer,
-    ShopTransactionFixer,
-} from "./fixers/index.js";
+import AVAILABLE_FIXERS from "./fixers/index.js";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
 import {GameStateController} from "./game_state.js";
 import {FLApiInterceptor} from "./api_interceptor.js";
 
-const fixers: IMercyFixer[] = [
-    new JournalUiFixer(),
-    new ThousandSeparatorFixer(),
-    new AutoScrollFixer(),
-    new DiscreteScrollbarsFixer(),
-    new RightSidebarFixer(),
-    new ScripIconFixer(),
-    new ShipSaverFixer(),
-    new PlanButtonsFixer(),
-    new ProfileLinkFixer(),
-    new ThingSortFixer(),
-    new QuickShareFixer(),
-    new AsceticModeFixer(),
-    new FavourTrackerFixer(),
-    new SocialEmptyReqsFixer(),
-    new AfterFallYearFixer(),
-    new KhanateOracleFixer(),
-    new TopExitButtonsFixer(),
-    new LocationQualitiesFixer(),
-    new MoreCurrencyDisplaysFixer(),
-    new TwoStepConfirmationsFixer(),
-    new SingleItemIconFixer(),
-    new ShopTransactionFixer(),
-];
+const fixers: IMercyFixer[] = AVAILABLE_FIXERS.map((fixer) => new fixer());
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
