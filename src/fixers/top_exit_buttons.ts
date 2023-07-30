@@ -1,8 +1,8 @@
-import {IMutationAwareFixer, IStateAware} from "./base.js";
+import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController, StoryletPhases} from "../game_state.js";
 
-export class TopExitButtonsFixer implements IMutationAwareFixer, IStateAware {
+export class TopExitButtonsFixer implements IMutationAware, IStateAware {
     private moveExitButtonsToTop = false;
     private ignoreBranchAmount = false;
     private inStorylet = false;

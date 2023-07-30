@@ -1,7 +1,7 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-export class AsceticModeFixer implements IMutationAwareFixer {
+export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
     private removeFateCounter = false;
 

@@ -1,7 +1,7 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-export class SocialEmptyReqsFixer implements IMutationAwareFixer {
+export class SocialEmptyReqsFixer implements IMutationAware {
     private fixEmptyRequirements = false;
 
     applySettings(settings: SettingsObject): void {

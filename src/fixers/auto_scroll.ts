@@ -1,4 +1,4 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {debug} from "../logging.js";
 
@@ -15,7 +15,7 @@ function isElementInViewport(el: Element): boolean {
     );
 }
 
-export class AutoScrollFixer implements IMutationAwareFixer {
+export class AutoScrollFixer implements IMutationAware {
     private enableAutoScrollBack = false;
     private scrollBehavior = "auto";
 

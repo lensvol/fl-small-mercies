@@ -1,11 +1,11 @@
 import {GameStateController} from "../game_state.js";
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer, IStateAware} from "./base.js";
+import {IMutationAware, IStateAware} from "./base.js";
 import {debug} from "../logging.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = ["Notability", "Influence", "Bizarre", "Dreaded", "Respectable", "Irrigo", "A Turncoat", "Moonlit"];
 
-export class DiscreteScrollbarsFixer implements IMutationAwareFixer, IStateAware {
+export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
     private removeDiscreteScrollbars = false;
     private removeMaxedOutScrollbars = false;
     private maxedOutQualities: Set<string> = new Set();

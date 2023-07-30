@@ -1,4 +1,4 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const MYSTERIES_ORDER = [143188, 143189, 143190, 143191, 143192];
@@ -69,7 +69,7 @@ function findAndSortIcons(node: Element, selector: string, order: number[]) {
         });
 }
 
-export class ThingSortFixer implements IMutationAwareFixer {
+export class ThingSortFixer implements IMutationAware {
     private sortCityMysteries = false;
     private sortSeals = false;
     private sortDreams = false;

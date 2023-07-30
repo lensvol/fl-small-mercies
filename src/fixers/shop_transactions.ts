@@ -1,4 +1,4 @@
-import { IMutationAwareFixer, IStateAware } from "./base.js";
+import { IMutationAware, IStateAware } from "./base.js";
 import { SettingsObject } from "../settings.js";
 import { GameStateController } from "../game_state";
 
@@ -13,7 +13,7 @@ function numberWithCommas(x: string): string {
 const ECHO_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']";
 const SCRIP_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class*='scrip']";
 
-export class ShopTransactionFixer implements IStateAware, IMutationAwareFixer {
+export class ShopTransactionFixer implements IStateAware, IMutationAware {
     private trackShopTransactions = true;
     private shouldSeparateThousands = false;
     private echoesDisplay: Element | null = null;

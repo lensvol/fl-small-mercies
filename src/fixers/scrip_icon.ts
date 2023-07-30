@@ -1,7 +1,7 @@
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 
-export class ScripIconFixer implements IMutationAwareFixer {
+export class ScripIconFixer implements IMutationAware {
     private showScripIcon = false;
 
     onNodeAdded(node: HTMLElement): void {

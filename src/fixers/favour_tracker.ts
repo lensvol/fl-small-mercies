@@ -1,4 +1,4 @@
-import {IMutationAwareFixer, IStateAware} from "./base.js";
+import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController} from "../game_state.js";
 import {error} from "../logging.js";
@@ -21,7 +21,7 @@ const FAVOURS = new Map([
 ]);
 const FAVOUR_ORDER = [...FAVOURS.keys()];
 
-export class FavourTrackerFixer implements IMutationAwareFixer, IStateAware {
+export class FavourTrackerFixer implements IMutationAware, IStateAware {
     private displayFavourTracker = false;
     private showZeroFavours = false;
     private favourValues: Map<string, number> = new Map();

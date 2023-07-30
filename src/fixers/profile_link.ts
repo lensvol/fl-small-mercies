@@ -1,8 +1,8 @@
-import {IMutationAwareFixer, IStateAware} from "./base.js";
+import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLCharacter, GameState, GameStateController} from "../game_state.js";
 
-export class ProfileLinkFixer implements IMutationAwareFixer, IStateAware {
+export class ProfileLinkFixer implements IMutationAware, IStateAware {
     private addProfileLink = false;
     private currentUserName: string | null = null;
 

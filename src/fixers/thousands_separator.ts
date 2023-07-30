@@ -1,5 +1,5 @@
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 
 // Shamelessly taken from https://stackoverflow.com/a/2901298
 function numberWithCommas(x: string): string {
@@ -7,7 +7,7 @@ function numberWithCommas(x: string): string {
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
 }
 
-export class ThousandSeparatorFixer implements IMutationAwareFixer {
+export class ThousandSeparatorFixer implements IMutationAware {
     private separateThousands = false;
     private currencyObserver: MutationObserver;
     private shopPriceObserver: MutationObserver;

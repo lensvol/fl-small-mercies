@@ -1,10 +1,10 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const CALENDAR_STENCIL_SELECTOR = "svg[class*='react-date-picker__button__icon']";
 const LIGHT_TURQUOISE_RGB = "#92d1d5";
 
-export class JournalUiFixer implements IMutationAwareFixer {
+export class JournalUiFixer implements IMutationAware {
     private fixJournalUI = false;
 
     applySettings(settings: SettingsObject): void {

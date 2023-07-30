@@ -1,7 +1,7 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
-export class SingleItemIconFixer implements IMutationAwareFixer {
+export class SingleItemIconFixer implements IMutationAware {
     private hideSingleItemIcon: boolean = false;
 
     applySettings(settings: SettingsObject): void {

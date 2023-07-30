@@ -1,5 +1,5 @@
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer, IStateAware} from "./base";
+import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state.js";
 import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
 
@@ -122,7 +122,7 @@ class CurrencyDisplay {
     }
 }
 
-export class MoreCurrencyDisplaysFixer implements IMutationAwareFixer, IStateAware {
+export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     private displayMoreCurrencies = false;
     private displayCurrenciesEverywhere = false;
 

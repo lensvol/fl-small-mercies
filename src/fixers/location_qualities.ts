@@ -1,5 +1,5 @@
 import {SettingsObject} from "../settings.js";
-import {IMutationAwareFixer, IStateAware} from "./base";
+import {IMutationAware, IStateAware} from "./base";
 import {FLPlayerLocation, GameState, GameStateController} from "../game_state.js";
 
 type LocationPredicate = (location: FLPlayerLocation) => boolean;
@@ -18,7 +18,7 @@ QUALITIY_LOCATION_PREDICATES.set("Taimen's Attention", isSetting("Khanate (Inner
 QUALITIY_LOCATION_PREDICATES.set("A Turncoat", isArea("Spite"));
 QUALITIY_LOCATION_PREDICATES.set("Disgruntlement among the Students", isSetting("Science Laboratory"));
 
-export class LocationQualitiesFixer implements IMutationAwareFixer, IStateAware {
+export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     private hideNonlocalQualities = false;
     private currentLocation: FLPlayerLocation | null = null;
 

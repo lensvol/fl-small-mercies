@@ -1,9 +1,9 @@
-import {IMutationAwareFixer} from "./base.js";
+import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const AF_YEAR_OFFSET = 122;
 
-export class AfterFallYearFixer implements IMutationAwareFixer {
+export class AfterFallYearFixer implements IMutationAware {
     private showAfYear = false;
 
     applySettings(settings: SettingsObject): void {
