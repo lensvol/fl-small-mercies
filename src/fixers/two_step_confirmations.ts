@@ -11,7 +11,7 @@ const CONFIRMATION_BRANCH_ID = FAKE_BRANCH_ID_THRESHOLD - 1;
 const DANGEROUS_BRANCHES = [
     252104, // Dismissing the Grizzled Veteran
     252056, // Abandoning Khaganian Intrigue
-    211150,
+
     // Various storylets concerned with placement of the Tracklayers City
     251105,
     251107,
