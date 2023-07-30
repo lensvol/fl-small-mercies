@@ -99,6 +99,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Hide the '1' icon next to single items in your inventory.",
                 default: true,
             },
+            shop_price_totals: {
+                description: "Display total value when hovering over 'Sell' button.",
+                default: true,
+            }
         },
     },
     {
