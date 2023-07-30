@@ -56,7 +56,7 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return true;
+        return this.trackShopTransactions;
     }
 
     onNodeAdded(node: HTMLElement): void {
