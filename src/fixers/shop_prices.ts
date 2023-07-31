@@ -42,6 +42,7 @@ export class ShopPricesFixer implements IMutationAware {
                     }
                 });
             });
+
         });
     }
 
@@ -93,7 +94,7 @@ export class ShopPricesFixer implements IMutationAware {
         const shopPanel = node.querySelector("div[class*='shop']");
         if (shopPanel) {
             this.shopPriceObserver.disconnect();
-            this.shopPriceObserver.observe(shopPanel, {childList: true, subtree: true});
+            this.shopPriceObserver.observe(shopPanel, {childList: true});
         }
     }
 
