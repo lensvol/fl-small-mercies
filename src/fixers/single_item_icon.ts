@@ -13,12 +13,13 @@ export class SingleItemIconFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const itemCounters = node.querySelectorAll("li > div > span[class*='js-item-value']");
-        itemCounters.forEach((counter) => {
-            if (counter.textContent == "1") {
-                counter.remove();
+        const itemCounters = node.getElementsByClassName("js-item-value");
+        for (let i = 0; i < itemCounters.length; i++) {
+            const counter = itemCounters[i] as HTMLElement;
+            if (counter.nodeName.toLowerCase() === "span" && counter.textContent == "1") {
+                counter.style.cssText = "display: none;";
             }
-        });
+        }
     }
 
     onNodeRemoved(node: HTMLElement): void {}
