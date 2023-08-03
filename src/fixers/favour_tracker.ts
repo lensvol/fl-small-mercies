@@ -26,6 +26,12 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
     private showZeroFavours = false;
     private favourValues: Map<string, number> = new Map();
 
+    constructor() {
+        for (const favour of FAVOURS.keys()) {
+            this.favourValues.set(favour, 0);
+        }
+    }
+
     private updateOrCreateFavour(title: string, value: number) {
         const icon = FAVOURS.get(title) || "question";
         title = title.replace("Favours: ", "");
