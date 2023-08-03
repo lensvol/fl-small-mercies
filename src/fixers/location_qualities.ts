@@ -21,6 +21,7 @@ QUALITIY_LOCATION_PREDICATES.set("Disgruntlement among the Students", isSetting(
 export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     private hideNonlocalQualities = false;
     private currentLocation: FLPlayerLocation | null = null;
+    private relevantQualities: Map<string, HTMLElement> = new Map();
 
     applySettings(settings: SettingsObject): void {
         this.hideNonlocalQualities = settings.hide_nonlocal_qualities as boolean;
@@ -36,14 +37,11 @@ export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     }
 
     private processSidebarQualities(location: FLPlayerLocation) {
-        const sidebarQualities = document.querySelectorAll("div[class*='sidebar'] ul[class*='items--list'] li[class*='sidebar-quality']") as NodeListOf<HTMLElement>;
-        for (const quality of sidebarQualities) {
-            const qualityName = quality.querySelector("span[class*='item__name']");
-            if (!qualityName) continue;
-
-            const is_visible_at = QUALITIY_LOCATION_PREDICATES.get(qualityName.textContent || "");
+        for (const [name, quality] of this.relevantQualities.entries()) {
+            const is_visible_at = QUALITIY_LOCATION_PREDICATES.get(name);
             if (!is_visible_at) continue;
 
+            // FIXME: Replace with 'fl-sm-hidden' class usage.
             if (is_visible_at(location)) {
                 quality.style.cssText = "";
             } else {
@@ -57,10 +55,40 @@ export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        if (this.currentLocation) {
+        if (!this.currentLocation) {
+            return;
+        }
+
+        const candidates = node.getElementsByClassName("sidebar-quality");
+        if (candidates.length > 0) {
+            for (const element of candidates) {
+                const quality = element as HTMLElement;
+
+                // Check if the quality has a name node.
+                const nameCandidates = quality.getElementsByClassName("item__name");
+                if (nameCandidates.length == 0) {
+                    continue;
+                }
+
+                // Check if the quality is one of the location-gated ones.
+                const qualityName = (nameCandidates[0] as HTMLElement).textContent || "";
+                if (QUALITIY_LOCATION_PREDICATES.has(qualityName)) {
+                    this.relevantQualities.set(qualityName, quality as HTMLElement);
+                }
+            }
+
             this.processSidebarQualities(this.currentLocation);
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(node: HTMLElement): void {
+        const keys = [...this.relevantQualities.keys()];
+        for (const key of keys) {
+            const quality = this.relevantQualities.get(key);
+            // If the quality is no longer in the DOM, remove it from the map.
+            if (quality && !node.isConnected) {
+                this.relevantQualities.delete(key);
+            }
+        }
+    }
 }
