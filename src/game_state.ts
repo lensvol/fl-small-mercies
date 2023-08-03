@@ -178,22 +178,22 @@ export class GameStateController {
     }
 
     public parseUserResponse(request: Object, response: Object) {
-        if (!("user" in response)) return;
-
-        // @ts-ignore: There is hell and then there is writing types for external APIs
-        this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
-
-        // @ts-ignore: There is hell and then there is writing types for external APIs
-        if ("area" in response.user) {
+        if ("user" in response && "jwt" in response) {
             // @ts-ignore: There is hell and then there is writing types for external APIs
-            const currentArea = new Area(response.user.area.id, response.user.area.name);
+            this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
+
+            this.triggerListeners(StateChangeTypes.UserDataLoaded);
+        }
+
+        // @ts-ignore: There is hell and then there is writing types for external APIs
+        if ("area" in response) {
+            // @ts-ignore: There is hell and then there is writing types for external APIs
+            const currentArea = new Area(response.area.id, response.area.name);
             if (currentArea !== this.state.location.area) {
                 this.state.location.area = currentArea;
                 this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
             }
         }
-
-        this.triggerListeners(StateChangeTypes.UserDataLoaded);
     }
 
     public parseMyselfResponse(request: Object, response: Object) {
