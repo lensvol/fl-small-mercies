@@ -2,7 +2,6 @@ import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 
 const MYSTERIES_ORDER = [143188, 143189, 143190, 143191, 143192];
-const MYSTERIES_SELECTOR = MYSTERIES_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
 /*
  The following order is confirmed to be canonical by Bruno himself:
@@ -17,10 +16,8 @@ const NEATHBOW_ORDER = [
     142711, // Irrigo
     142712, // Gant
 ];
-const NEATHBOW_SELECTOR = NEATHBOW_ORDER.map((i) => `div[data-quality-id='${i}']`).join(", ");
 
 const SEAL_ORDER = [141891, 141892, 141893, 141894, 141895, 141896, 141897, 141898, 142381];
-const SEAL_SELECTOR = SEAL_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
 const DREAM_ORDER = [
     239, // HRD: A Game of Chess
@@ -35,14 +32,22 @@ const DREAM_ORDER = [
     236, // HRD: What the Thunder Said
     774, // Stormy-Eyed
 ];
-const DREAM_SELECTOR = DREAM_ORDER.map((i) => `div[data-branch-id='${i}']`).join(", ");
 
-function findAndSortIcons(node: Element, selector: string, order: number[]) {
-    const icons = node.querySelectorAll(selector) as NodeListOf<HTMLElement>;
-    const things = Array.from(icons)
-        .sort((i1: HTMLElement, i2: HTMLElement) => {
-            const pos1 = order.findIndex((objId) => objId == parseInt(i1.dataset.qualityId || i1.dataset.branchId || "0"));
-            const pos2 = order.findIndex((objId) => objId == parseInt(i2.dataset.qualityId || i2.dataset.branchId || "0"));
+function findAndSortIcons(node: Element, order: number[]) {
+    const allIcons = node.getElementsByClassName("icon");
+    const icons = Array.from(allIcons).filter((icon) => {
+        const element = icon as HTMLElement;
+        const iconId = element.dataset.branchId || element.dataset.qualityId;
+        return order.includes(parseInt(iconId || "0"))
+    });
+
+    const things = icons
+        .sort((i1: Element, i2: Element) => {
+            const obj1 = i1 as HTMLElement;
+            const obj2 = i2 as HTMLElement;
+
+            const pos1 = order.findIndex((objId) => objId == parseInt(obj1.dataset.qualityId || obj1.dataset.branchId || "0"));
+            const pos2 = order.findIndex((objId) => objId == parseInt(obj2.dataset.qualityId || obj2.dataset.branchId || "0"));
             return pos1 - pos2;
         })
         .map((icon) => icon.parentElement);
@@ -87,24 +92,35 @@ export class ThingSortFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const accomplishments = node.querySelectorAll("div[data-group-name='Accomplishments']");
+        //div[data-group-name='Accomplishments']
+        const qualityGroups = node.getElementsByClassName("quality-group");
         // if found, we are on the "Myself" tab
-        if (accomplishments.length > 0) {
-            if (this.sortCityMysteries) {
-                findAndSortIcons(node, MYSTERIES_SELECTOR, MYSTERIES_ORDER);
-            }
+        if (qualityGroups.length > 0) {
+            for (const element of qualityGroups) {
+                const group = element as HTMLElement;
+                if (group.dataset.groupName == "Accomplishments" && this.sortCityMysteries) {
+                    findAndSortIcons(group, MYSTERIES_ORDER);
+                }
 
-            if (this.sortSeals) {
-                findAndSortIcons(node, SEAL_SELECTOR, SEAL_ORDER);
-            }
+                if (group.dataset.groupName == "Stories" && this.sortSeals) {
+                    findAndSortIcons(group, SEAL_ORDER);
+                }
 
-            if (this.sortDreams) {
-                findAndSortIcons(node, DREAM_SELECTOR, DREAM_ORDER);
+                if (group.dataset.groupName == "Dreams" && this.sortDreams) {
+                    findAndSortIcons(group, DREAM_ORDER);
+                }
             }
-        }
-
-        if (this.sortNeathbow) {
-            findAndSortIcons(node, NEATHBOW_SELECTOR, NEATHBOW_ORDER);
+        } else {
+            const equipmentGroups = node.getElementsByClassName("inventory-group");
+            if (equipmentGroups.length > 0 && this.sortNeathbow) {
+                for (const element of equipmentGroups) {
+                    const group = element as HTMLElement;
+                    if (group.dataset.groupName === "Contraband") {
+                        findAndSortIcons(group, NEATHBOW_ORDER);
+                        break;
+                    }
+                }
+            }
         }
     }
 
