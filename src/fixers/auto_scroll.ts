@@ -1,5 +1,7 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+
+import {getSingletonByClassName} from "../utils.js";
 import {debug} from "../logging.js";
 
 // Adapted from
@@ -24,28 +26,33 @@ export class AutoScrollFixer implements IMutationAware {
         this.scrollBehavior = settings.scroll_back_behavior as string;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.enableAutoScrollBack;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.enableAutoScrollBack) {
+            return false;
+        }
+
+        if (node.classList.contains("media--root")) {
+            return true;
+        }
+
+        return node.getElementsByClassName("media--root").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        let mediaRoot: Element | null;
-        if (node.classList.contains("media--root")) {
-            mediaRoot = node;
-        } else {
-            mediaRoot = node.querySelector("div[class*='media--root']");
-        }
+        let mediaRoot = getSingletonByClassName(node,"media--root");
         if (!mediaRoot) {
             return;
         }
 
         if (!isElementInViewport(mediaRoot)) {
-            debug("Storylet not visible, scrolling back...");
-            const tabList = document.querySelector("ul[role='tablist']");
-            if (tabList) {
-                tabList.scrollIntoView({behavior: this.scrollBehavior as ScrollBehavior});
+            const args = {behavior: this.scrollBehavior as ScrollBehavior};
+
+            const candidates = document.getElementsByClassName("nav--tabs--main");
+            if (candidates.length == 0) {
+                debug("No tabs found, scrolling to media root.");
+                mediaRoot.scrollIntoView(args);
             } else {
-                mediaRoot.scrollIntoView({behavior: this.scrollBehavior as ScrollBehavior});
+                (candidates[0] as HTMLElement).scrollIntoView(args);
             }
         }
     }
