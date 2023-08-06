@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
@@ -10,8 +11,12 @@ export class AsceticModeFixer implements IMutationAware {
         this.removeFateCounter = settings.remove_fate_counter as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removeHeaderAndCandles || this.removeFateCounter;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.removeHeaderAndCandles && !this.removeFateCounter) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "sidebar") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {

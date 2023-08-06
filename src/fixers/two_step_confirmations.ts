@@ -113,10 +113,6 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
         this.showConfirmations = settings.two_step_confirmations as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.showConfirmations;
-    }
-
     linkState(state: GameStateController): void {
         state.onActionsChanged((state, actions) => {
             this.currentActions = actions;

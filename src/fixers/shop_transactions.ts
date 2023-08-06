@@ -1,6 +1,7 @@
 import { IMutationAware, IStateAware } from "./base.js";
 import { SettingsObject } from "../settings.js";
 import { GameStateController } from "../game_state";
+import { getSingletonByClassName } from "../utils.js";
 
 const PENNY_QUALITY_ID: number = 22390;
 const SCRIP_QUALITY_ID: number = 125025;
@@ -56,7 +57,11 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.trackShopTransactions;
+        if (!this.trackShopTransactions) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "sidebar") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {

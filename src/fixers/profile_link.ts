@@ -26,7 +26,11 @@ export class ProfileLinkFixer implements IMutationAware, IStateAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.addProfileLink;
+        if (!this.addProfileLink) {
+            return false;
+        }
+
+        return node.getElementsByClassName("nav--tabs--main").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

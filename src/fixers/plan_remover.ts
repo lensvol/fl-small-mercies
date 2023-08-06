@@ -12,8 +12,12 @@ export class PlanButtonsFixer implements IMutationAware {
         this.removePlanButtons = settings.remove_plan_buttons as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removePlanButtons;
+    checkEligibility(node: HTMLElement): boolean {
+        if(!this.removePlanButtons) {
+            return false;
+        }
+
+        return node.getElementsByClassName("branch__plan-buttonlet").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

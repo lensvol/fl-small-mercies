@@ -1,6 +1,7 @@
 import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController, StoryletPhases} from "../game_state.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class TopExitButtonsFixer implements IMutationAware, IStateAware {
     private moveExitButtonsToTop = false;
@@ -13,8 +14,16 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
         this.ignoreBranchAmount = settings.top_exit_buttons_always as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.moveExitButtonsToTop && this.inStorylet;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.moveExitButtonsToTop) {
+            return false;
+        }
+
+        if (!this.inStorylet) {
+            return false;
+        }
+
+        return getSingletonByClassName(node,"media--root") != null;
     }
 
     findNodeWithClass(container: HTMLElement, className: string): HTMLElement | null {

@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class SingleItemIconFixer implements IMutationAware {
     private hideSingleItemIcon: boolean = false;
@@ -8,8 +9,12 @@ export class SingleItemIconFixer implements IMutationAware {
         this.hideSingleItemIcon = settings.hide_single_item_icon as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.hideSingleItemIcon;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.hideSingleItemIcon) {
+            return false;
+        }
+
+        return getSingletonByClassName(node,"possessions") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {

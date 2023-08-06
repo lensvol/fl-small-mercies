@@ -51,7 +51,15 @@ export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.hideNonlocalQualities;
+        if (!this.hideNonlocalQualities) {
+            return false;
+        }
+
+        if (!this.currentLocation) {
+            return false;
+        }
+
+        return node.getElementsByClassName("sidebar-quality").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

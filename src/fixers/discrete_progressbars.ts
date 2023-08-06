@@ -12,26 +12,28 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
 
     onNodeAdded(node: HTMLElement): void {
         const sidebarQualities = node.querySelectorAll("li[class*='sidebar-quality'] div[class='item__desc']");
-        if (sidebarQualities.length > 0) {
-            for (const quality of sidebarQualities) {
-                const qualityName = quality.querySelector("span[class*='item__name']");
-                if (!qualityName || !qualityName.textContent) {
-                    continue;
-                }
+        if (sidebarQualities.length <= 0) {
+            return;
+        }
 
-                if (
-                    (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
-                    (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
-                ) {
-                    this.changeScrollBarVisibility(quality as HTMLElement, true);
+        for (const quality of sidebarQualities) {
+            const qualityName = quality.querySelector("span[class*='item__name']");
+            if (!qualityName || !qualityName.textContent) {
+                continue;
+            }
 
-                    // This is hackish as heck, but still better than misaligned quality names... So be it.
-                    // (although "Monstrous Anatomy" will still fail the check and be misaligned)
-                    if (qualityName.textContent.length < 16) {
-                        (quality as HTMLElement).style.cssText = "padding-top: 7px";
-                    } else {
-                        (quality as HTMLElement).style.cssText = "margin-top: -4px";
-                    }
+            if (
+              (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
+              (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
+            ) {
+                this.changeScrollBarVisibility(quality as HTMLElement, true);
+
+                // This is hackish as heck, but still better than misaligned quality names... So be it.
+                // (although "Monstrous Anatomy" will still fail the check and be misaligned)
+                if (qualityName.textContent.length < 16) {
+                    (quality as HTMLElement).style.cssText = "padding-top: 7px";
+                } else {
+                    (quality as HTMLElement).style.cssText = "margin-top: -4px";
                 }
             }
         }
@@ -46,8 +48,12 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
         this.removeMaxedOutScrollbars = settings.maxed_out_scrollbars as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removeDiscreteScrollbars || this.removeMaxedOutScrollbars;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.removeDiscreteScrollbars && !this.removeMaxedOutScrollbars) {
+            return false;
+        }
+
+        return node.getElementsByClassName("sidebar-quality").length > 0;
     }
 
     changeScrollBarVisibility(node: HTMLElement, hidden: boolean) {

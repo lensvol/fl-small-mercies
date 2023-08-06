@@ -2,6 +2,7 @@ import {SettingsObject} from "../settings.js";
 import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state.js";
 import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
+import { getSingletonByClassName } from "../utils.js";
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -227,7 +228,14 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.displayMoreCurrencies;
+        if (!this.displayMoreCurrencies) {
+            return false;
+        }
+
+        const isInBazaar = getSingletonByClassName(node, "nav__list") !== null;
+        const isSidebarVisible = getSingletonByClassName(node, "sidebar") !== null;
+
+        return isInBazaar || isSidebarVisible;
     }
 
     onNodeAdded(node: HTMLElement): void {

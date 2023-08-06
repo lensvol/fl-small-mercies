@@ -10,12 +10,16 @@ export class AfterFallYearFixer implements IMutationAware {
         this.showAfYear = settings.show_af_year as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.showAfYear;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.showAfYear) {
+            return false;
+        }
+
+        return node.getElementsByClassName("journal-entry__date").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const dateSpans = node.querySelectorAll("span[class='journal-entry__date']");
+        const dateSpans = node.getElementsByClassName("journal-entry__date");
         for (const span of dateSpans) {
             if (!span.textContent) {
                 continue;

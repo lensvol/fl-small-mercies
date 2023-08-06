@@ -87,8 +87,17 @@ export class ThingSortFixer implements IMutationAware {
         this.sortNeathbow = settings.sort_neathbow_boxes as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow;
+    checkEligibility(node: HTMLElement): boolean {
+        const needToSortAnything = this.sortCityMysteries || this.sortSeals || this.sortDreams || this.sortNeathbow;
+        if (!needToSortAnything) {
+            return false;
+        }
+
+        if (this.sortNeathbow && node.getElementsByClassName("inventory-group").length > 0) {
+            return true;
+        }
+
+        return node.getElementsByClassName("quality-group").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

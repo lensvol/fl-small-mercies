@@ -12,7 +12,11 @@ export class JournalUiFixer implements IMutationAware {
     }
 
     checkEligibility(_node: HTMLElement): boolean {
-        return this.fixJournalUI;
+        if (!this.fixJournalUI) {
+            return false;
+        }
+
+        return document.getElementsByClassName("react-date-picker__button__icon").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

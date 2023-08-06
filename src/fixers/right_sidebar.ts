@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 const MASK_ROSE_BANNER_SELECTOR = "div[class='travel'] a[target='_blank'][rel='noopener noreferrer'] img";
 const SNIPPET_CONTAINER_SELECTOR = "div[class='snippet']";
@@ -29,7 +30,11 @@ export class RightSidebarFixer implements IMutationAware {
         // Do nothing if DOM node is removed.
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removeMaskBanner || !this.removeSnippets;
+    checkEligibility(node: HTMLElement): boolean {
+        if(!this.removeMaskBanner && !this.removeSnippets) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "travel") != null;
     }
 }
