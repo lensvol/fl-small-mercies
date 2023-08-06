@@ -23,15 +23,11 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"media--root") != null;
-    }
-
-    findNodeWithClass(container: HTMLElement, className: string): HTMLElement | null {
-        if (container.classList.contains(className)) {
-            return container;
+        if (!node.parentElement) {
+            return false;
         }
 
-        return container.querySelector(`div[class*='${className}']`);
+        return getSingletonByClassName(node,"media--root") != null;
     }
 
     createPerhapsNotMimic(): [HTMLElement, HTMLElement] {
@@ -70,57 +66,58 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
          * When navigating nested storylets (branch leads into more branches), default exit buttons aren't deleted.
          * This means that we can't reliably use exit buttons to track when we need to insert mimic.
          */
-        let mediaRoot: ParentNode | undefined | null;
+        let mediaRoot: HTMLElement | null;
 
-        if (node.classList.contains("media--branch")) {
-            // track branches after the page is loaded
-            mediaRoot = node.parentNode?.querySelector(".media--root");
-        } else {
-            // track anything that contains media root when the page initially loads
-            mediaRoot = node.querySelector(".media--root");
-        }
+        // track anything that contains media root when the page initially loads
+        mediaRoot = getSingletonByClassName(node, "media--root");
 
-        if (!mediaRoot) {
+        if (!mediaRoot || !mediaRoot.parentNode) {
             return;
         }
 
+        const root = mediaRoot.parentNode as HTMLElement;
+
+        const branches = root.getElementsByClassName("media--branch");
         // don't show unless storylet has more than a 4 or more branches
-        if (!this.ignoreBranchAmount && (mediaRoot.parentNode?.querySelectorAll(".media--branch").length ?? 0) < 4) {
+        if (!this.ignoreBranchAmount && branches.length < 4) {
             return;
         }
 
-        const exitButtonDiv = mediaRoot.parentNode?.querySelector(".buttons--storylet-exit-options");
-        if (exitButtonDiv) {
-            if (exitButtonDiv.classList.contains("mimic-perhaps-not")) {
-                return;
-            }
-
-            const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector("button > span > i[class*='fa-arrow-left']");
-            let mimicButton: HTMLElement;
-            [this.mimicPanel, mimicButton] = this.createPerhapsNotMimic();
-
-            if (originalPerhapsNot && mimicButton) {
-                mimicButton.addEventListener("click", () => {
-                    this.mimicPanel?.remove();
-                    originalPerhapsNot.click();
-                });
-
-                for (const exitBtn of exitButtonDiv.querySelectorAll("button")) {
-                    exitBtn.addEventListener("click", () => this.mimicPanel?.remove());
-                }
-
-                const otherButtons = exitButtonDiv.parentNode?.querySelectorAll(".media--branch[data-branch-id] .storylet__buttons .button--primary") || [];
-                for (const otherBtn of otherButtons) {
-                    otherBtn.addEventListener("click", () => this.mimicPanel?.remove());
-                }
-
-                mediaRoot.parentNode?.insertBefore(this.mimicPanel, mediaRoot.nextSibling);
-            }
+        const exitButtonDiv = getSingletonByClassName(root, "buttons--storylet-exit-options");
+        if (!exitButtonDiv) {
+            return;
         }
+
+        if (exitButtonDiv.classList.contains("mimic-perhaps-not")) {
+            return;
+        }
+
+        const originalPerhapsNot: HTMLElement | null = exitButtonDiv.querySelector("button > span > i[class*='fa-arrow-left']");
+        if (!originalPerhapsNot) {
+            return;
+        }
+
+        let mimicButton: HTMLElement;
+        [this.mimicPanel, mimicButton] = this.createPerhapsNotMimic();
+
+        mimicButton.addEventListener("click", () => {
+            this.mimicPanel?.remove();
+            originalPerhapsNot.click();
+        });
+
+        for (const exitBtn of exitButtonDiv.getElementsByTagName("button")) {
+            exitBtn.addEventListener("click", () => this.mimicPanel?.remove());
+        }
+
+        const otherButtons = exitButtonDiv.parentNode?.querySelectorAll(".media--branch[data-branch-id] .storylet__buttons .button--primary") || [];
+        for (const otherBtn of otherButtons) {
+            otherBtn.addEventListener("click", () => this.mimicPanel?.remove());
+        }
+
+        root.insertBefore(this.mimicPanel, mediaRoot.nextSibling);
     }
 
     onNodeRemoved(node: HTMLElement): void {
-        // fix: When we switch equipment loadouts delete the mimic
         if (node.matches("div[class*='media--root']")) {
             this.mimicPanel?.remove();
         }
