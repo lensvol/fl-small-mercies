@@ -13,11 +13,15 @@ export class SocialEmptyReqsFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const requirementsPanel = node.querySelector("div[class*='act__quality-requirements']") as HTMLElement;
+        let requirementsPanel = node.querySelector("div[class*='act__quality-requirements']") as HTMLElement;
         if (!requirementsPanel) {
             if (node.classList.contains("act__quality-requirements")) {
-                node.style.cssText = "display: none";
+                requirementsPanel = node;
             }
+        }
+
+        if (requirementsPanel && requirementsPanel.childElementCount == 0) {
+            requirementsPanel.style.cssText = "display: none";
         }
     }
 
