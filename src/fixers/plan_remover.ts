@@ -17,7 +17,21 @@ export class PlanButtonsFixer implements IMutationAware {
             return false;
         }
 
-        return node.getElementsByClassName("branch__plan-buttonlet").length > 0;
+        const planButtonlets = node.getElementsByClassName("branch__plan-buttonlet");
+        const navButtons = node.getElementsByClassName("nav__item");
+
+        if (planButtonlets.length > 0) {
+            return true;
+        }
+
+        for (const buttonElement of navButtons) {
+            const button = buttonElement as HTMLElement;
+            if (button.dataset.name === "plans") {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     onNodeAdded(node: HTMLElement): void {
