@@ -84,9 +84,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             const name = entry[0];
             const time = entry[1];
 
-            if (time > 0) {
-                console.debug(`${name} took ${time.toFixed(2)} ms.`);
-            }
+            console.debug(`${name} took ${time.toFixed(2)} ms.`);
         });
         console.groupEnd();
 
@@ -95,9 +93,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             const name = entry[0];
             const count = entry[1];
 
-            if (count > 0) {
-                console.debug(`${name} was called ${count} times.`);
-            }
+            console.debug(`${name} was called ${count} times.`);
         });
         console.groupEnd();
 
