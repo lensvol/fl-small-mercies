@@ -15,13 +15,21 @@ Current features:
 * Fix color and alignment of the navigation buttons in Journal.
 * Add comma after thousands in the currency indicators.
 * Auto-scroll to the storylet after choosing branch.
-* Remove progress bars from discrete sidebar qualities.
+* Remove progress bars from discrete and maxed-out sidebar qualities.
 * Add Hinterlands Scrip Icon to a sidebar indicator.
 * Disable storylet that lets you sell your Ship.
 * Remove various UI elements (MotR banner, candles, Fate counter etc.)
 * Remove empty requirements bar from social storylets.
 * Sort various in-game things according to canonical order.
 * Add "Profile" button to the top bar.
+* Hide sidebar qualities not appropriate for the current location.
+* Update relevant currencies on shop transactions.
+* More currencies are displayed in the left sidebar.
+* Two-step confirmation for certain _dangerous_ actions.
+* Hide "1" indicator on single items in your inventory.
+* Show "After Fall" years on Journal snippets.
+* Show prospects for recruitment when cycling _Airs of Khanate_.
+* Show _"Perhaps Not"_ button at the top in storylets that have 4 branches or more.
 
 _NB: This extension is **not** (yet) whitelisted by Failbetter Games. Use at your own risk!_
 
