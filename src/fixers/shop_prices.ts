@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 function numberWithCommas(x: string): string {
     return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -86,8 +87,12 @@ export class ShopPricesFixer implements IMutationAware {
         }
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.separateThousands || this.displayPriceTotals;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.separateThousands && !this.displayPriceTotals) {
+            return false;
+        }
+
+        return getSingletonByClassName(node,"shop") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {

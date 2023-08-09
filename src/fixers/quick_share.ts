@@ -1,6 +1,7 @@
 import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
+import { getSingletonByClassName } from "../utils.js";
 
 const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";
 const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/;
@@ -68,14 +69,18 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.replaceShareButton;
+        if (!this.replaceShareButton) {
+            return false;
+        }
+
+        if (this.currentStoryletId == null || this.authToken == null) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "media--root") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        if (this.currentStoryletId == null || this.authToken == null) {
-            return;
-        }
-
         const shareButton = node.querySelector(SHARE_BUTTON_SELECTOR);
         const shareContainer = shareButton?.parentElement;
         if (shareContainer != null && shareContainer.parentElement != null) {

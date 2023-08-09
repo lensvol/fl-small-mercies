@@ -2,6 +2,7 @@ import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController} from "../game_state.js";
 import {error} from "../logging.js";
+import { getSingletonByClassName } from "../utils.js";
 
 // Mapping of favour name to its respective image
 const FAVOURS = new Map([
@@ -19,7 +20,6 @@ const FAVOURS = new Map([
     ["Favours: The Great Game", "pawn"],
     ["Favours: Tomb-Colonies", "bandagedman"],
 ]);
-const FAVOUR_ORDER = [...FAVOURS.keys()];
 
 export class FavourTrackerFixer implements IMutationAware, IStateAware {
     private displayFavourTracker = false;
@@ -32,46 +32,89 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
         }
     }
 
-    private updateOrCreateFavour(title: string, value: number) {
+    applySettings(settings: SettingsObject): void {
+        this.displayFavourTracker = settings.display_favour_tracker as boolean;
+        this.showZeroFavours = settings.show_zero_favours as boolean;
+    }
+
+    linkState(state: GameStateController): void {
+        state.onCharacterDataLoaded((g) => {
+            for (const favourName of FAVOURS.keys()) {
+                const quality = g.getQuality("Contacts", favourName);
+                if (quality) {
+                    this.favourValues.set(favourName, quality.level);
+                } else {
+                    this.favourValues.set(favourName, 0);
+                }
+            }
+        });
+
+        state.onQualityChanged((state, quality, previous, current) => {
+            if (FAVOURS.has(quality.name)) {
+                this.favourValues.set(quality.name, current);
+                this.updateFavour(quality.name, current);
+            }
+        });
+    }
+
+    private createFavour(title: string, value: number): HTMLElement {
         const icon = FAVOURS.get(title) || "question";
         title = title.replace("Favours: ", "");
 
-        const favourTracker = document.querySelector("ul[class*='favour_tracker']");
+        const newDisplay = this.createFavourDisplay(title, icon + "small", value);
+        if (value == 0 && !this.showZeroFavours) {
+            newDisplay.style.cssText = "display: none";
+        }
+
+        return newDisplay;
+    }
+
+    private updateFavour(title: string, value: number) {
+        const icon = FAVOURS.get(title) || "question";
+        title = title.replace("Favours: ", "");
+
+        const favourTracker = document.getElementById("favour-tracker");
         if (!favourTracker) {
-            error("Favour tracker not found!");
             return;
         }
 
-        const qualityDisplay = favourTracker.querySelector(`li[data-favour-type='${title}']`) as HTMLElement;
-        if (qualityDisplay) {
-            if (value == 0 && !this.showZeroFavours) {
-                // TODO: Use classes.
-                qualityDisplay.style.cssText = "display: none";
-            } else {
-                qualityDisplay.style.cssText = "text-align: left";
+        let qualityDisplay = null;
+        const existingDisplays = favourTracker.getElementsByClassName("tracked-favour");
+        for (const display of existingDisplays) {
+            const displayTitle = (display as HTMLElement).dataset.favourType;
+            if (displayTitle == title) {
+                qualityDisplay = display as HTMLElement;
+                break;
+            }
+        }
 
-                const valueSpan = qualityDisplay.querySelector("span[class='item__value']");
-                if (valueSpan) {
-                    valueSpan.textContent = ` ${value} / 7`;
-                }
-                const progressBarSpan = qualityDisplay.querySelector("span[class*='progress-bar__stripe']") as HTMLElement;
-                if (progressBarSpan) {
-                    const percentage = (value / 7) * 100;
-                    progressBarSpan.style.cssText = `width: ${percentage}%;`;
-                }
-            }
+        if (!qualityDisplay) {
+            return;
+        }
+
+        const valueSpan = getSingletonByClassName(qualityDisplay, "item__value");
+        if (valueSpan) {
+            valueSpan.textContent = ` ${value} / 7`;
+        }
+
+        const progressBarSpan = getSingletonByClassName(qualityDisplay, "progress-bar__stripe") as HTMLElement;
+        if (progressBarSpan) {
+            const percentage = (value / 7) * 100;
+            progressBarSpan.style.cssText = `width: ${percentage}%;`;
+        }
+
+        if (value == 0 && !this.showZeroFavours) {
+            // TODO: Use classes.
+            qualityDisplay.style.cssText = "display: none";
         } else {
-            const newDisplay = this.createFavourDisplay(title, icon + "small", value);
-            favourTracker.appendChild(newDisplay);
-            if (value == 0 && !this.showZeroFavours) {
-                newDisplay.style.cssText = "display: none";
-            }
+            qualityDisplay.style.cssText = "text-align: left";
         }
     }
 
+
     private createFavourDisplay(title: string, icon: string, initialValue: number): HTMLElement {
         const li = document.createElement("li");
-        li.classList.add("js-item", "item", "sidebar-quality");
+        li.classList.add("js-item", "item", "sidebar-quality", "tracked-favour");
         li.style.cssText = "text-align: left";
         li.dataset.favourType = title;
 
@@ -120,70 +163,63 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
         return li;
     }
 
-    applySettings(settings: SettingsObject): void {
-        this.displayFavourTracker = settings.display_favour_tracker as boolean;
-        this.showZeroFavours = settings.show_zero_favours as boolean;
-    }
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.displayFavourTracker) {
+            return false;
+        }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.displayFavourTracker;
+        if (node.getElementsByClassName("travel").length == 0) {
+            return false;
+        }
+
+        return document.getElementById("favour-tracker") == null;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const travelColumn = node.querySelector("div[class='travel']");
+        const travelColumn = getSingletonByClassName(node, "travel");
         if (!travelColumn) return;
 
-        let sidebar = travelColumn.querySelector("div[id='right-sidebar']");
+        let sidebar = document.getElementById("right-sidebar");
         if (!sidebar) {
             sidebar = document.createElement("div");
-            sidebar.id = "right-sidebar";
+            sidebar.setAttribute("id", "right-sidebar");
             sidebar.classList.add("sidebar");
 
             if (travelColumn.querySelector("div[class='snippet']")) {
                 // Give some clearance in case snippets are not disabled.
                 (sidebar as HTMLElement).style.cssText = "margin-top: 30px";
             }
-            travelColumn.appendChild(sidebar);
         }
 
-        let favoursPanel = sidebar?.querySelector("ul[class*='favour_tracker']");
+        let favoursPanel = document.getElementById("favour-tracker");
         // Trackers are already created and visible, nothing to do here.
         if (!favoursPanel) {
+            const fragment = document.createDocumentFragment();
+
             const favoursHeader = document.createElement("p");
             favoursHeader.classList.add("heading", "heading--4");
             favoursHeader.textContent = "Favours";
-            sidebar?.appendChild(favoursHeader);
+            fragment.appendChild(favoursHeader);
 
             favoursPanel = document.createElement("ul");
-            favoursPanel.classList.add("items", "items--list", "favour_tracker");
-            sidebar?.appendChild(favoursPanel);
+            favoursPanel.setAttribute("id", "favour-tracker");
+            favoursPanel.classList.add("items", "items--list");
+            fragment.appendChild(favoursPanel);
+
+            for (const [favourName, level] of this.favourValues.entries()) {
+                const favourDisplay = this.createFavour(favourName, level);
+                favoursPanel.appendChild(favourDisplay);
+            }
+
+            sidebar.appendChild(fragment);
         }
 
-        for (const [favourName, level] of this.favourValues.entries()) {
-            this.updateOrCreateFavour(favourName, level);
+        if (!travelColumn.contains(sidebar)) {
+            travelColumn.appendChild(sidebar);
         }
     }
 
     onNodeRemoved(_node: HTMLElement): void {
         // Do nothing if DOM node is removed.
-    }
-
-    linkState(state: GameStateController): void {
-        state.onCharacterDataLoaded((g) => {
-            for (const favourName of FAVOURS.keys()) {
-                const quality = g.getQuality("Contacts", favourName);
-                if (quality) {
-                    this.favourValues.set(favourName, quality.level);
-                } else {
-                    this.favourValues.set(favourName, 0);
-                }
-            }
-        });
-
-        state.onQualityChanged((state, quality, previous, current) => {
-            if (FAVOURS.has(quality.name)) {
-                this.updateOrCreateFavour(quality.name, current);
-            }
-        });
     }
 }

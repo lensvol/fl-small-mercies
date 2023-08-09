@@ -8,8 +8,12 @@ export class ShipSaverFixer implements IMutationAware {
         this.disableSaleOption = settings.ship_saver as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.disableSaleOption;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.disableSaleOption) {
+            return false;
+        }
+
+        return node.getElementsByClassName("branch").length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {

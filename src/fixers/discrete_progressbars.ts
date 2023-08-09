@@ -1,7 +1,7 @@
 import {GameStateController} from "../game_state.js";
 import {SettingsObject} from "../settings.js";
 import {IMutationAware, IStateAware} from "./base.js";
-import {debug} from "../logging.js";
+import { getSingletonByClassName } from "../utils.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = ["Notability", "Influence", "Bizarre", "Dreaded", "Respectable", "Irrigo", "A Turncoat", "Moonlit"];
 
@@ -9,36 +9,46 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
     private removeDiscreteScrollbars = false;
     private removeMaxedOutScrollbars = false;
     private maxedOutQualities: Set<string> = new Set();
+    private qualityDisplays: Map<string, HTMLElement> = new Map();
 
     onNodeAdded(node: HTMLElement): void {
-        const sidebarQualities = node.querySelectorAll("li[class*='sidebar-quality'] div[class='item__desc']");
-        if (sidebarQualities.length > 0) {
-            for (const quality of sidebarQualities) {
-                const qualityName = quality.querySelector("span[class*='item__name']");
-                if (!qualityName || !qualityName.textContent) {
-                    continue;
-                }
+        const sidebarQualities = node.getElementsByClassName("sidebar-quality");
+        if (sidebarQualities.length <= 0) {
+            return;
+        }
 
-                if (
-                    (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
-                    (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
-                ) {
-                    this.changeScrollBarVisibility(quality as HTMLElement, true);
+        for (const quality of sidebarQualities) {
+            const qualityName = getSingletonByClassName(quality as HTMLElement, "item__name");
+            if (!qualityName || !qualityName.textContent) {
+                continue;
+            }
 
-                    // This is hackish as heck, but still better than misaligned quality names... So be it.
-                    // (although "Monstrous Anatomy" will still fail the check and be misaligned)
-                    if (qualityName.textContent.length < 16) {
-                        (quality as HTMLElement).style.cssText = "padding-top: 7px";
-                    } else {
-                        (quality as HTMLElement).style.cssText = "margin-top: -4px";
-                    }
+            this.qualityDisplays.set(qualityName.textContent, quality as HTMLElement);
+
+            if (
+              (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
+              (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
+            ) {
+                this.changeScrollBarVisibility(quality as HTMLElement, true);
+
+                // This is hackish as heck, but still better than misaligned quality names... So be it.
+                // (although "Monstrous Anatomy" will still fail the check and be misaligned)
+                if (qualityName.textContent.length < 16) {
+                    (quality as HTMLElement).style.cssText = "padding-top: 7px";
+                } else {
+                    (quality as HTMLElement).style.cssText = "margin-top: -4px";
                 }
             }
         }
     }
 
-    onNodeRemoved(_node: HTMLElement): void {
-        // Do nothing if DOM node is removed.
+    onNodeRemoved(node: HTMLElement): void {
+        for (const key of this.qualityDisplays.keys()) {
+            const display = this.qualityDisplays.get(key);
+            if (display && node.contains(display)) {
+                this.qualityDisplays.delete(key);
+            }
+        }
     }
 
     applySettings(settings: SettingsObject): void {
@@ -46,12 +56,16 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
         this.removeMaxedOutScrollbars = settings.maxed_out_scrollbars as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removeDiscreteScrollbars || this.removeMaxedOutScrollbars;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.removeDiscreteScrollbars && !this.removeMaxedOutScrollbars) {
+            return false;
+        }
+
+        return node.getElementsByClassName("sidebar-quality").length > 0;
     }
 
     changeScrollBarVisibility(node: HTMLElement, hidden: boolean) {
-        const scrollBar = node.parentElement?.querySelector("div[class='progress-bar']") as HTMLElement;
+        const scrollBar = getSingletonByClassName(node, "progress-bar");
         if (scrollBar) {
             scrollBar.style.cssText = hidden ? "display: none;" : "";
         }
@@ -75,21 +89,10 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
                 this.maxedOutQualities.add(quality.name);
             }
 
-            const sidebarIndicatior = this.findSidebarQuality(quality.name);
-            if (sidebarIndicatior) {
-                this.changeScrollBarVisibility(sidebarIndicatior, this.maxedOutQualities.has(quality.name));
+            const qualityDisplay = this.qualityDisplays.get(quality.name);
+            if (qualityDisplay) {
+                this.changeScrollBarVisibility(qualityDisplay, this.maxedOutQualities.has(quality.name));
             }
         });
-    }
-
-    private findSidebarQuality(qualityName: string): HTMLElement | null {
-        const sideBarLabels = document.querySelectorAll(`li[class*='sidebar-quality'] span[class*='item__name']`);
-        for (const label of sideBarLabels) {
-            if (label.textContent == qualityName) {
-                return label as HTMLElement;
-            }
-        }
-
-        return null;
     }
 }

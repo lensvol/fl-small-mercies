@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class SocialEmptyReqsFixer implements IMutationAware {
     private fixEmptyRequirements = false;
@@ -8,8 +9,12 @@ export class SocialEmptyReqsFixer implements IMutationAware {
         this.fixEmptyRequirements = settings.fix_empty_requirements as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.fixEmptyRequirements;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.fixEmptyRequirements) {
+            return false;
+        }
+
+        return getSingletonByClassName(node,"act__quality-requirements") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {

@@ -1,5 +1,6 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAware} from "./base.js";
+import { getSingletonByClassName } from "../utils.js";
 
 // Shamelessly taken from https://stackoverflow.com/a/2901298
 function numberWithCommas(x: string): string {
@@ -55,7 +56,11 @@ export class ThousandSeparatorFixer implements IMutationAware {
         }
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.separateThousands;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.separateThousands) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "sidebar") != null;
     }
 }

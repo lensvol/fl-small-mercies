@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
@@ -10,38 +11,42 @@ export class AsceticModeFixer implements IMutationAware {
         this.removeFateCounter = settings.remove_fate_counter as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removeHeaderAndCandles || this.removeFateCounter;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.removeHeaderAndCandles && !this.removeFateCounter) {
+            return false;
+        }
+
+        return getSingletonByClassName(node, "sidebar") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const banner = node.querySelector("div[class*='banner--lg-up']") as HTMLElement;
-
         if (this.removeHeaderAndCandles) {
+            const banner = getSingletonByClassName(node,"banner--lg-up");
+
             if (banner) {
                 const parentDiv = banner?.parentElement?.parentElement;
                 parentDiv?.classList.add("u-visually-hidden");
             }
 
-            const candleContainer = node.querySelector("div[class='candle-container']") as HTMLElement;
+            const candleContainer = getSingletonByClassName(node,"candle-container");
             if (candleContainer) {
                 candleContainer.classList.add("u-visually-hidden");
             }
 
             // Shift columns a little to make overall look nicer
-            const primaryColumn = node.querySelector("div[class*='col-primary']") as HTMLElement;
+            const primaryColumn = getSingletonByClassName(node,"col-primary");
             if (primaryColumn) {
                 primaryColumn.style.cssText = "padding-top: 10px;";
             }
 
-            const tertiaryColumn = node.querySelector("div[class='col-tertiary']") as HTMLElement;
+            const tertiaryColumn = getSingletonByClassName(node,"col-tertiary");
             if (tertiaryColumn) {
                 tertiaryColumn.style.cssText = "padding-top: 44px;";
             }
         }
 
         if (this.removeFateCounter) {
-            const fateButton = node.querySelector("button[class*='sidebar__fate-button']");
+            const fateButton = getSingletonByClassName(node, "sidebar__fate-button");
             const fateItem = fateButton?.parentElement;
             fateItem?.classList.remove("item");
             fateItem?.classList.add("u-visually-hidden");

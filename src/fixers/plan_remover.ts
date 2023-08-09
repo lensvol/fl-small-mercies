@@ -12,8 +12,26 @@ export class PlanButtonsFixer implements IMutationAware {
         this.removePlanButtons = settings.remove_plan_buttons as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.removePlanButtons;
+    checkEligibility(node: HTMLElement): boolean {
+        if(!this.removePlanButtons) {
+            return false;
+        }
+
+        const planButtonlets = node.getElementsByClassName("branch__plan-buttonlet");
+        const navButtons = node.getElementsByClassName("nav__item");
+
+        if (planButtonlets.length > 0) {
+            return true;
+        }
+
+        for (const buttonElement of navButtons) {
+            const button = buttonElement as HTMLElement;
+            if (button.dataset.name === "plans") {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     onNodeAdded(node: HTMLElement): void {

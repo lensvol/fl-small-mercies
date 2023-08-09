@@ -1,5 +1,6 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAware} from "./base.js";
+import { getSingletonByClassName } from "../utils.js";
 
 export class ScripIconFixer implements IMutationAware {
     private showScripIcon = false;
@@ -24,7 +25,11 @@ export class ScripIconFixer implements IMutationAware {
         this.showScripIcon = settings.scrip_icon as boolean;
     }
 
-    checkEligibility(_node: HTMLElement): boolean {
-        return this.showScripIcon;
+    checkEligibility(node: HTMLElement): boolean {
+        if (!this.showScripIcon) {
+            return false;
+        }
+
+        return getSingletonByClassName(node,"sidebar") != null;
     }
 }

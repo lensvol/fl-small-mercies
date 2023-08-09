@@ -2,6 +2,7 @@ import {SettingsObject} from "../settings.js";
 import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state.js";
 import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
+import { getSingletonByClassName } from "../utils.js";
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -227,25 +228,37 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return this.displayMoreCurrencies;
+        if (!this.displayMoreCurrencies) {
+            return false;
+        }
+
+        const isInBazaar = getSingletonByClassName(node, "nav__list") !== null;
+        const isSidebarVisible = getSingletonByClassName(node, "sidebar") !== null;
+
+        return isInBazaar || isSidebarVisible;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const shopButtons = node.querySelectorAll("li[class='nav__item'] > button[class*='nav__button']");
-        shopButtons.forEach((button) => {
-            if (button.textContent === "Mr Chimes' Lost & Found") {
+        const shopButtons = node.getElementsByClassName("nav__button");
+        for (const candidate of shopButtons) {
+            if (candidate.nodeName !== "button") {
+                continue;
+            }
+
+            if (candidate.textContent === "Mr Chimes' Lost & Found") {
                 this.shopButtonObserver.disconnect();
                 this.shopButtonObserver.observe(
-                  button,
+                  candidate,
                   {attributes: true, attributeFilter: ["class"]},
                 )
 
-                this.isInLostAndFound = button.classList.contains("menu-item--active");
+                this.isInLostAndFound = candidate.classList.contains("menu-item--active");
                 this.checkSpecialVisibility();
             }
-        });
+        }
 
-        const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const leftSidebar = getSingletonByClassName(node, "col-secondary");
+        const currencyList = leftSidebar?.getElementsByClassName("items--list");
         if (!currencyList) return;
 
         for (const display of this.currencyToDisplay.values()) {
