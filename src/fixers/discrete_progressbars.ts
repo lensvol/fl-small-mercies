@@ -72,17 +72,20 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
     }
 
     linkState(state: GameStateController): void {
-        // FIXME: Take into account that qualities can be affected as a result of the branch!!
         state.onCharacterDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
                 if (quality.cap > 0 && quality.level >= quality.cap) {
                     this.maxedOutQualities.add(quality.name);
                 }
+
+                const qualityDisplay = this.qualityDisplays.get(quality.name);
+                if (qualityDisplay) {
+                    this.changeScrollBarVisibility(qualityDisplay, this.maxedOutQualities.has(quality.name));
+                }
             }
         });
 
         state.onQualityChanged((state, quality, _before, _after) => {
-            // FIXME: Optimize by looking at "before"
             if (quality.level < quality.cap) {
                 this.maxedOutQualities.delete(quality.name);
             } else {

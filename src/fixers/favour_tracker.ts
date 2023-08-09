@@ -46,6 +46,8 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
                 } else {
                     this.favourValues.set(favourName, 0);
                 }
+
+                this.updateFavour(favourName, quality?.level || 0);
             }
         });
 

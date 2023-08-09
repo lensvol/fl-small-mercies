@@ -190,6 +190,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 const quality = state.getQuality("Currency", name);
                 if (quality) {
                     display.setQuantity(quality.level);
+                    display.refresh();
                 }
             }
         });
