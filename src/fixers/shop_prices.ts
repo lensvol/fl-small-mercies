@@ -25,7 +25,11 @@ export class ShopPricesFixer implements IMutationAware {
                         return;
                     }
 
-                    const priceField = element.querySelector("div[class*='item__price']");
+                    let priceField = element.querySelector("div[class*='item__price']");
+                    if (!priceField || priceField.textContent === null) {
+                        priceField = element.querySelector("div[class*='item__desc'] > div > span");
+                    }
+
                     if (!priceField || priceField.textContent === null) {
                         return;
                     }
@@ -62,15 +66,37 @@ export class ShopPricesFixer implements IMutationAware {
             }
 
             const originalText = priceField.textContent || "0";
-            const price = parseFloat(priceField.textContent?.replace(/,/, "") || "0");
-
             const quantityValue = parseInt(quantityDisplay.textContent ?? "0");
-            let totalPrice = (price * quantityValue).toFixed(2);
+            const isQuality = originalText.includes(" x ");
+
+            let totalPrice: string;
+            let priceText: string;
+            if (isQuality) {
+                const parts = originalText.split(" x ");
+                if (parts.length != 2) {
+                    // Something is clearly wrong, so we just abort.
+                    return;
+                }
+
+                priceText = parts[0];
+                const price = parseFloat(priceText.replace(/,/, "") || "0");
+
+                // Price in items is always an integer, so we can just multiply
+                // it without caring for fractions.
+                totalPrice = (price * quantityValue).toString();
+            } else {
+                priceText = originalText;
+                const price = parseFloat(priceText.replace(/,/, "") || "0");
+
+                totalPrice = (price * quantityValue).toFixed(2);
+            }
+
             if (this.separateThousands) {
                 totalPrice = numberWithCommas(totalPrice);
             }
 
-            priceField.textContent = `${originalText} × ${quantityValue} = ${totalPrice}`;
+            priceField.textContent = `${priceText} × ${quantityValue} = ${totalPrice}`;
+
             sellButton.addEventListener("mouseout", () => {
                 priceField.textContent = originalText;
             }, { once: true });
