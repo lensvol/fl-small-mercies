@@ -17,30 +17,36 @@ export class ShipSaverFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        let shipStorylet = node.querySelector("div[data-branch-id='251811']");
-        if (!shipStorylet && node.hasAttribute("data-branch-id")) {
-            const branchId = node.attributes.getNamedItem("data-branch-id");
-            if (branchId && branchId.value === "251811") {
-                shipStorylet = node;
+        const candidates = node.getElementsByClassName("branch__title");
+        let shipStorylet = null;
+        for (const candidate of candidates) {
+            if (candidate.textContent !== "Get rid of your current ship") {
+                continue;
             }
+
+            let parent = candidate.parentNode as HTMLElement;
+            while (!parent.hasAttribute("data-branch-id")) {
+                parent = parent.parentNode as HTMLElement;
+            }
+            shipStorylet = parent;
+            break;
         }
 
-        if (shipStorylet) {
-            const description = shipStorylet.querySelector("div[class='media__body branch__body'] > div > p") as HTMLElement;
-            const labelNode = document.createElement("b");
-            labelNode.innerText = "This branch was disabled for your own good.";
+        if (!shipStorylet) {
+            return;
+        }
 
-            description.appendChild(document.createElement("br"));
-            description.appendChild(document.createElement("br"));
-            description.appendChild(labelNode);
-
-            shipStorylet.classList.add("media--locked");
-            shipStorylet.querySelectorAll("button").forEach((b) => b.remove());
-
-            const actionButton = shipStorylet.querySelector("div[class*='buttons']");
-            if (actionButton) {
-                actionButton.remove();
-            }
+        const description = shipStorylet.querySelector("div[class='media__body branch__body'] > div > p") as HTMLElement;
+        const labelNode = document.createElement("b");
+        labelNode.innerText = "This branch was disabled for your own good.";
+        description.appendChild(document.createElement("br"));
+        description.appendChild(document.createElement("br"));
+        description.appendChild(labelNode);
+        shipStorylet.classList.add("media--locked");
+        shipStorylet.querySelectorAll("button").forEach((b) => b.remove());
+        const actionButton = shipStorylet.querySelector("div[class*='buttons']");
+        if (actionButton) {
+            actionButton.remove();
         }
     }
 
