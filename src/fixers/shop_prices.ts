@@ -66,8 +66,17 @@ export class ShopPricesFixer implements IMutationAware {
             }
 
             const originalText = priceField.textContent || "0";
-            const quantityValue = parseInt(quantityDisplay.textContent ?? "0");
             const isQuality = originalText.includes(" x ");
+            let quantityValue = parseInt(quantityDisplay.textContent ?? "0");
+            let reservedAmount = 0;
+
+            const flgf_container = getSingletonByClassName(parent, "flgf__reserve-display");
+            if (flgf_container) {
+                reservedAmount = parseInt(flgf_container.textContent?.substring(9) || "0")
+                if (reservedAmount > quantityValue) {
+                    reservedAmount = quantityValue;
+                }
+            }
 
             let totalPrice: string;
             let priceText: string;
@@ -83,19 +92,23 @@ export class ShopPricesFixer implements IMutationAware {
 
                 // Price in items is always an integer, so we can just multiply
                 // it without caring for fractions.
-                totalPrice = (price * quantityValue).toString();
+                totalPrice = (price * (quantityValue - reservedAmount)).toString();
             } else {
                 priceText = originalText;
                 const price = parseFloat(priceText.replace(/,/, "") || "0");
 
-                totalPrice = (price * quantityValue).toFixed(2);
+                totalPrice = (price * (quantityValue - reservedAmount)).toFixed(2);
             }
 
             if (this.separateThousands) {
                 totalPrice = numberWithCommas(totalPrice);
             }
 
-            priceField.textContent = `${priceText} × ${quantityValue} = ${totalPrice}`;
+            if (reservedAmount == 0) {
+                priceField.textContent = `${priceText} × ${quantityValue} = ${totalPrice}`;
+            } else {
+                priceField.textContent = `${priceText} × (${quantityValue} - ${reservedAmount}) = ${totalPrice}`;
+            }
 
             sellButton.addEventListener("mouseout", () => {
                 priceField.textContent = originalText;
