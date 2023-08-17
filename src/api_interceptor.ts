@@ -100,57 +100,57 @@ export class FLApiInterceptor {
 
     private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, request: any, responseText: string) => any): AjaxMethod {
         return function (method, url, async) {
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             this._targetUrl = url;
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             this.addEventListener("readystatechange", (event) => {
-                // @ts-ignore
+                // @ts-ignore: There is hell and then there is typing other people's API.
                 if (this.readyState == DONE) {
                     // FIXME: also filter out non-200 responses
-                    // @ts-ignore
+                    // @ts-ignore: There is hell and then there is typing other people's API.
                     const responseText = handler(url, this._requestData, event.currentTarget.responseText);
-                    // @ts-ignore
+                    // @ts-ignore: There is hell and then there is typing other people's API.
                     Object.defineProperty(this, "responseText", {writable: true});
-                    // @ts-ignore
+                    // @ts-ignore: There is hell and then there is typing other people's API.
                     this.responseText = responseText;
                 }
             });
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             return original_function.apply(this, arguments);
         };
     }
 
     private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: Object) => Object): AjaxMethod {
         return function (body) {
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             if (!this._targetUrl.includes("api.fallenlondon.com")) {
-                // @ts-ignore
+                // @ts-ignore: There is hell and then there is typing other people's API.
                 return original_function.apply(this, arguments);
             }
 
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             this._requestData = JSON.parse(arguments[0]);
 
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             const preparedResponse = handler(this._targetUrl, this._requestData);
             if (preparedResponse) {
-                // @ts-ignore
+                // @ts-ignore: There is hell and then there is typing other people's API.
                 setFakeXhrResponse(this, 200, preparedResponse);
                 return;
             }
 
             // FIXME: Only deserialize _changed_ request data
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             arguments[0] = JSON.stringify(this._requestData);
-            // @ts-ignore
+            // @ts-ignore: There is hell and then there is typing other people's API.
             return original_function.apply(this, arguments);
         };
     }
 
     public install() {
-        // @ts-ignore
+        // @ts-ignore: There is hell and then there is typing other people's API.
         XMLHttpRequest.prototype.open = this.installOpenBypass(XMLHttpRequest.prototype.open, this.processResponse.bind(this));
-        // @ts-ignore
+        // @ts-ignore: There is hell and then there is typing other people's API.
         XMLHttpRequest.prototype.send = this.installSendBypass(XMLHttpRequest.prototype.send, this.processRequest.bind(this));
     }
 }

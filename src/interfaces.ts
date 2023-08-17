@@ -14,7 +14,7 @@ interface IQuality {
   image: string;
 }
 
-interface IShopResponse extends IApiResponse {
+export interface IShopResponse extends IApiResponse {
     possessionsChanged: IQuality[];
     message: string;
 }

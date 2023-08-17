@@ -1,7 +1,6 @@
-import {debug, log, error} from "./logging.js";
-import {sendToServiceWorker} from "./comms.js";
-import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants.js";
-
+import { debug, log } from "./logging.js";
+import { sendToServiceWorker } from "./comms.js";
+import { MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS } from "./constants.js";
 import Tab = chrome.tabs.Tab;
 
 type MultipleChoices = [string, string][];

@@ -66,10 +66,7 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
          * When navigating nested storylets (branch leads into more branches), default exit buttons aren't deleted.
          * This means that we can't reliably use exit buttons to track when we need to insert mimic.
          */
-        let mediaRoot: HTMLElement | null;
-
-        // track anything that contains media root when the page initially loads
-        mediaRoot = getSingletonByClassName(node, "media--root");
+        const mediaRoot: HTMLElement | null = getSingletonByClassName(node, "media--root");
 
         if (!mediaRoot || !mediaRoot.parentNode) {
             return;

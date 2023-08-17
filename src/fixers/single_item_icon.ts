@@ -27,5 +27,5 @@ export class SingleItemIconFixer implements IMutationAware {
         }
     }
 
-    onNodeRemoved(node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {}
 }

@@ -1,5 +1,6 @@
 // @ts-nocheck: There is hell and then there is typing other people's API.
-import {FLApiInterceptor} from "./api_interceptor";
+import { FLApiInterceptor } from "./api_interceptor.js";
+import { IShopResponse } from "./interfaces.js";
 
 export const UNKNOWN = -1;
 
@@ -177,7 +178,7 @@ export class GameStateController {
         }
     }
 
-    public parseUserResponse(request: Object, response: Object) {
+    public parseUserResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         if ("user" in response && "jwt" in response) {
             // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
@@ -196,7 +197,7 @@ export class GameStateController {
         }
     }
 
-    public parseMyselfResponse(request: Object, response: Object) {
+    public parseMyselfResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         if (!("character" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -226,7 +227,7 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
     }
 
-    public parseActionsResponse(request: Object, response: Object) {
+    public parseActionsResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         if (!("actions" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -253,7 +254,7 @@ export class GameStateController {
         return StoryletPhases.Unknown;
     }
 
-    public parseChooseBranchResponse(request: Object, response: Object) {
+    public parseChooseBranchResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of response.messages || []) {
             if (message.type === "StandardQualityChangeMessage" || message.type === "PyramidQualityChangeMessage" || message.type === "QualityExplicitlySetMessage") {
@@ -305,7 +306,7 @@ export class GameStateController {
         }
     }
 
-    public parseEquipResponse(request: Object, response: Object) {
+    public parseEquipResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const thing of response.changedPossessions) {
             const [quality, previous] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
@@ -316,7 +317,7 @@ export class GameStateController {
         }
     }
 
-    public parseStoryletResponse(request: Object, response: Object) {
+    public parseStoryletResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         if (!("phase" in response)) return;
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.storyletPhase = this.decodePhase(response.phase);
@@ -331,7 +332,7 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
     }
 
-    public parseMapResponse(request: Object, response: Object) {
+    public parseMapResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         if (!response.isSuccess) return;
 
@@ -343,7 +344,7 @@ export class GameStateController {
         }
     }
 
-    public parseMapMoveResponse(request: Object, response: Object) {
+    public parseMapMoveResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         if (!response.isSuccess) return;
 
@@ -355,7 +356,7 @@ export class GameStateController {
         }
     }
 
-    private parseShopResponse(request: Object, response: IShopResponse) {
+    private parseShopResponse(request: Record<string, unknown>, response: IShopResponse) {
         if (!response.isSuccess) {
             return;
         }
