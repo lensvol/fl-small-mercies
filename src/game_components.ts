@@ -112,7 +112,7 @@ class Storylet {
     }
 
     canGoBack(boolean_value: boolean) {
-        this._canGoBack = true;
+        this._canGoBack = boolean_value;
     }
 
     isLocked(boolean_value: boolean) {
