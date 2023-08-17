@@ -237,7 +237,7 @@ export class GameStateController {
         }
     }
 
-    private decodePhase(phase: String): StoryletPhases {
+    private decodePhase(phase: string): StoryletPhases {
         if (phase == "Available") {
             return StoryletPhases.Available;
         }

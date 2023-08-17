@@ -3,7 +3,7 @@ import {SettingsObject} from "../settings.js";
 import { getSingletonByClassName } from "../utils.js";
 
 export class SingleItemIconFixer implements IMutationAware {
-    private hideSingleItemIcon: boolean = false;
+    private hideSingleItemIcon = false;
 
     applySettings(settings: SettingsObject): void {
         this.hideSingleItemIcon = settings.hide_single_item_icon as boolean;

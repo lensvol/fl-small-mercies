@@ -3,8 +3,8 @@ import { SettingsObject } from "../settings.js";
 import { GameStateController } from "../game_state";
 import { getSingletonByClassName } from "../utils.js";
 
-const PENNY_QUALITY_ID: number = 22390;
-const SCRIP_QUALITY_ID: number = 125025;
+const PENNY_QUALITY_ID = 22390;
+const SCRIP_QUALITY_ID = 125025;
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();

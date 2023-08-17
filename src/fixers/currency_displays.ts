@@ -15,9 +15,9 @@ class CurrencyDisplay {
     private readonly title: string;
     private readonly currencySymbol: string;
 
-    private quantity: number = 0;
-    private hidden: boolean = false;
-    private separateThousands: boolean = false;
+    private quantity = 0;
+    private hidden = false;
+    private separateThousands = false;
 
     constructor(fullName: string, icon: string, symbol: string, title?: string) {
         this.name = fullName;
@@ -129,8 +129,8 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
     private currencyToDisplay = new Map<string, CurrencyDisplay>();
     private currencyToPredicate = new Map<string, StateMatcher>();
-    private isInLostAndFound: boolean = false;
-    private separateThousands: boolean = false;
+    private isInLostAndFound = false;
+    private separateThousands = false;
 
     private shopButtonObserver: MutationObserver = new MutationObserver((mutations, _observer) => {
         mutations.forEach((mutation) => {
@@ -219,7 +219,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         }
 
         for (const [name, predicate] of this.currencyToPredicate.entries()) {
-            const display = this.currencyToDisplay.get(name)!!;
+            const display = this.currencyToDisplay.get(name)!;
             if (!predicate.match(state)) {
                 display.hide();
             } else {
@@ -279,7 +279,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     }
 
     private checkSpecialVisibility() {
-        const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale")!!;
+        const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale")!;
         if (this.displayCurrenciesEverywhere) {
             return;
         }

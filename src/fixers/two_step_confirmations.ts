@@ -93,7 +93,7 @@ const DANGEROUS_BRANCHES = [
     // 7702,  /* Your plant is singing */
 ];
 
-const CHOICE_HAS_BEEN_MADE_TEXT: string = "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
+const CHOICE_HAS_BEEN_MADE_TEXT = "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
 
 const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" +
     "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
@@ -105,9 +105,9 @@ const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
     "actions and/or resources if played unintentionally. Do you really want to do this?</i></b>";
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
-    private showConfirmations: boolean = true;
+    private showConfirmations = true;
     private currentStoryletContents: any = {};
-    private currentActions: number = 0;
+    private currentActions = 0;
 
     applySettings(settings: SettingsObject): void {
         this.showConfirmations = settings.two_step_confirmations as boolean;
