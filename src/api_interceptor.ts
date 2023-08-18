@@ -1,5 +1,12 @@
 type AjaxMethod = (method: string, url: string, async: boolean) => any;
 
+interface IModifiedAjax {
+    _requestData: Record<string, unknown>,
+    _targetUrl: string,
+}
+
+type AugmentedXMLHttpRequest = XMLHttpRequest & IModifiedAjax;
+
 const DONE = 4;
 
 function setFakeXhrResponse(request: any, status: number, response: object) {
@@ -99,7 +106,7 @@ export class FLApiInterceptor {
     }
 
     private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, request: any, responseText: string) => any): AjaxMethod {
-        return function (method, url, async) {
+        return function (this: AugmentedXMLHttpRequest, _method, url, _async) {
             // @ts-ignore: There is hell and then there is typing other people's API.
             this._targetUrl = url;
             // @ts-ignore: There is hell and then there is typing other people's API.
@@ -112,38 +119,33 @@ export class FLApiInterceptor {
                     // @ts-ignore: There is hell and then there is typing other people's API.
                     Object.defineProperty(this, "responseText", {writable: true});
                     // @ts-ignore: There is hell and then there is typing other people's API.
+                    // noinspection JSConstantReassignment
                     this.responseText = responseText;
                 }
             });
-            // @ts-ignore: There is hell and then there is typing other people's API.
-            return original_function.apply(this, arguments);
+            return original_function.apply(this, [_method, url, _async]);
         };
     }
 
-    private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: Object) => Object): AjaxMethod {
-        return function (body) {
-            // @ts-ignore: There is hell and then there is typing other people's API.
+    private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: Record<string, unknown>) => Record<string, unknown>): AjaxMethod {
+        return function (this: AugmentedXMLHttpRequest,...args) {
             if (!this._targetUrl.includes("api.fallenlondon.com")) {
-                // @ts-ignore: There is hell and then there is typing other people's API.
-                return original_function.apply(this, arguments);
+                return original_function.apply(this, args);
             }
 
-            // @ts-ignore: There is hell and then there is typing other people's API.
-            this._requestData = JSON.parse(arguments[0]);
+            this._requestData = JSON.parse(args[0] ?? null);
 
-            // @ts-ignore: There is hell and then there is typing other people's API.
             const preparedResponse = handler(this._targetUrl, this._requestData);
             if (preparedResponse) {
-                // @ts-ignore: There is hell and then there is typing other people's API.
                 setFakeXhrResponse(this, 200, preparedResponse);
                 return;
             }
 
             // FIXME: Only deserialize _changed_ request data
-            // @ts-ignore: There is hell and then there is typing other people's API.
-            arguments[0] = JSON.stringify(this._requestData);
-            // @ts-ignore: There is hell and then there is typing other people's API.
-            return original_function.apply(this, arguments);
+            if (this._requestData != null) {
+                args[0] = JSON.stringify(this._requestData);
+            }
+            return original_function.apply(this, args);
         };
     }
 

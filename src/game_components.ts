@@ -145,7 +145,7 @@ class Storylet {
         return this;
     }
 
-    build(): Object {
+    build(): Record<string, unknown> {
         return {
             category: this._category,
             buttonText: this._buttonText,

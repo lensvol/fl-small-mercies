@@ -1,7 +1,6 @@
-import {IMutationAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {GameStateController} from "../game_state.js";
-import {error} from "../logging.js";
+import { IMutationAware, IStateAware } from "./base.js";
+import { SettingsObject } from "../settings.js";
+import { GameStateController } from "../game_state.js";
 import { getSingletonByClassName } from "../utils.js";
 
 // Mapping of favour name to its respective image
@@ -51,7 +50,7 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
             }
         });
 
-        state.onQualityChanged((state, quality, previous, current) => {
+        state.onQualityChanged((state, quality, _previous, current) => {
             if (FAVOURS.has(quality.name)) {
                 this.favourValues.set(quality.name, current);
                 this.updateFavour(quality.name, current);
@@ -72,7 +71,6 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
     }
 
     private updateFavour(title: string, value: number) {
-        const icon = FAVOURS.get(title) || "question";
         title = title.replace("Favours: ", "");
 
         const favourTracker = document.getElementById("favour-tracker");

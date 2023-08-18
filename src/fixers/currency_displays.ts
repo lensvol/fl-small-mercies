@@ -195,16 +195,16 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             }
         });
 
-        controller.onQualityChanged((state: GameState, quality, previous, current) => {
+        controller.onQualityChanged((_state: GameState, quality, _previous, current) => {
             if (quality.category !== "Currency") return;
 
             const display = this.currencyToDisplay.get(quality.name);
             if (display) {
-                display.setQuantity(quality.level);
+                display.setQuantity(current);
             }
         });
 
-        controller.onLocationChanged((state, location) => {
+        controller.onLocationChanged((state, _location) => {
             this.checkVisibilityPredicates(state);
         });
 
@@ -219,7 +219,11 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         }
 
         for (const [name, predicate] of this.currencyToPredicate.entries()) {
-            const display = this.currencyToDisplay.get(name)!;
+            const display = this.currencyToDisplay.get(name);
+            if(!display) {
+                continue;
+            }
+
             if (!predicate.match(state)) {
                 display.hide();
             } else {
@@ -279,8 +283,12 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     }
 
     private checkSpecialVisibility() {
-        const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale")!;
         if (this.displayCurrenciesEverywhere) {
+            return;
+        }
+
+        const memoryTaleDisplay = this.currencyToDisplay.get("Memory of a Tale");
+        if (!memoryTaleDisplay) {
             return;
         }
 

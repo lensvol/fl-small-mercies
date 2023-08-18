@@ -45,7 +45,7 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
                 },
                 body: JSON.stringify(requestData),
             })
-                .then((r) => {
+                .then((_r) => {
                     // FIXME: Replace direct CSS manipulation with something classier
                     icon?.classList.remove("fa-refresh", "fa-spin");
                     icon?.classList.add("fa-check");

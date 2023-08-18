@@ -27,5 +27,7 @@ export class SingleItemIconFixer implements IMutationAware {
         }
     }
 
-    onNodeRemoved(_node: HTMLElement): void {}
+    onNodeRemoved(_node: HTMLElement): void {
+        // We do not care about counters being removed.
+    }
 }
