@@ -1,3 +1,5 @@
+import { IQuality } from "./interfaces.js";
+
 function capitalize(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -15,7 +17,7 @@ class Branch {
     private _isLocked = false;
     private _ordering = 0;
     private _qualityLocked = false;
-    private _qualityRequirements: any[] = [];
+    private _qualityRequirements: IQuality[] = [];
     private _buttonText = "GO";
 
     constructor(branchId: number, name: string) {
@@ -39,7 +41,7 @@ class Branch {
         return this;
     }
 
-    qualityRequirement(req: any) {
+    qualityRequirement(req: IQuality) {
         this._qualityRequirements.push(req);
         return this;
     }

@@ -106,7 +106,7 @@ const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
     private showConfirmations = true;
-    private currentStoryletContents: any = {};
+    private currentStoryletContents: Record<string, unknown> = {};
     private currentActions = 0;
 
     applySettings(settings: SettingsObject): void {

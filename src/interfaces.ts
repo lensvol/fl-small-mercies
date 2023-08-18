@@ -2,7 +2,7 @@ interface IApiResponse {
     isSuccess: boolean;
 }
 
-interface IQuality {
+export interface IQuality {
   id: number;
   level: number;
   name: string;
