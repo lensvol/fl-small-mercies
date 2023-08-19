@@ -146,6 +146,18 @@ export class GameState {
 }
 
 export class GameStateController {
+    private static instance: GameStateController;
+
+    private constructor() { }
+
+    public static getInstance(): GameStateController {
+        if (!GameStateController.instance) {
+            GameStateController.instance = new GameStateController();
+        }
+
+        return GameStateController.instance;
+    }
+
     private state: GameState = new GameState();
 
     private changeListeners: {[key in StateChangeTypes]: ((...args: any[]) => void)[]} = {

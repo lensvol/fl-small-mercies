@@ -24,6 +24,19 @@ function setFakeXhrResponse(request: any, status: number, response: object) {
 }
 
 export class FLApiInterceptor {
+    private static instance: FLApiInterceptor;
+
+    private constructor() { }
+
+    public static getInstance(): FLApiInterceptor {
+        if (!FLApiInterceptor.instance) {
+            FLApiInterceptor.instance = new FLApiInterceptor();
+        }
+
+        return FLApiInterceptor.instance;
+    }
+
+
     private currentToken = "";
 
     private responseListeners: Map<string, ((request: any, response: any) => any)[]> = new Map();

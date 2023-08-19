@@ -13,13 +13,13 @@ settingsFrontend.registerUpdateHandler((settings) => {
     fixers.map((fixer) => fixer.applySettings(settings));
 });
 
-const apiInterceptor = new FLApiInterceptor();
-apiInterceptor.install();
-fixers.filter(isNetworkAware).map((fixer) => fixer.linkNetworkTools(apiInterceptor));
+const apiInterceptor = FLApiInterceptor.getInstance();
+const gameStateController = GameStateController.getInstance();
 
-const gameStateController = new GameStateController();
 gameStateController.hookIntoApi(apiInterceptor);
+apiInterceptor.install();
 
+fixers.filter(isNetworkAware).map((fixer) => fixer.linkNetworkTools(apiInterceptor));
 fixers.filter(isStateAware).map((fixer) => fixer.linkState(gameStateController));
 
 const centralMutationObserver = new MutationObserver((mutations, _observer) => {
