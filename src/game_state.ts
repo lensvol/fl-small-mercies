@@ -114,6 +114,10 @@ export class GameState {
 
     private qualities: Map<string, Map<string, Quality>> = new Map();
 
+    public resetQualities() {
+        this.qualities.clear();
+    }
+
     public getQuality(category: string, name: string): Quality | undefined {
         const existingCategory = this.qualities.get(category);
         if (existingCategory == undefined) {
@@ -210,6 +214,7 @@ export class GameStateController {
             this.triggerListeners(StateChangeTypes.LocationChanged, this.state.location);
         }
 
+        this.state.resetQualities();
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
