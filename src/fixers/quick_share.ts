@@ -2,6 +2,7 @@ import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
 import { getSingletonByClassName } from "../utils.js";
+import { FLApiClient } from "../api_client.js";
 
 const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";
 const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/;
@@ -12,24 +13,27 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
     private authToken: string | null = null;
     private shareClickListener: EventListener;
 
+    private apiClient: FLApiClient;
+
     constructor() {
+        this.apiClient = new FLApiClient();
+
         this.shareClickListener = (ev) => {
+            if (!this.currentStoryletId) {
+                return;
+            }
+
             const image = document.querySelector("img[class*='storylet-root__card-image']") as HTMLImageElement;
             const title = document.querySelector("h1[class*='storylet-root__heading']");
             // For some reason event target here is the button itself, not the buttonlet container
             const icon = ev.target as HTMLElement;
 
-            const requestData = {
-                contentClass: "EventConclusion",
-                contentKey: this.currentStoryletId,
-                image: "snowflake",
-                message: title?.textContent || "Hello, world!",
-            };
+            let imageCode = "";
 
             if (image) {
                 const parts = image.src.match(SOURCE_EXTRACTION_REGEX);
                 if (parts) {
-                    requestData["image"] = parts[1];
+                    imageCode = parts[1];
                 }
             }
 
@@ -37,14 +41,7 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
             icon?.classList.remove("fa-pencil");
             icon?.classList.add("fa-refresh", "fa-spin");
 
-            fetch("https://api.fallenlondon.com/api/profile/share", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${this.authToken}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestData),
-            })
+            this.apiClient.shareToProfile(this.currentStoryletId, imageCode)
                 .then((_r) => {
                     // FIXME: Replace direct CSS manipulation with something classier
                     icon?.classList.remove("fa-refresh", "fa-spin");
