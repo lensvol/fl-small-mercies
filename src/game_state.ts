@@ -1,5 +1,7 @@
 import { FLApiInterceptor } from "./api_interceptor.js";
 import { IShopResponse, IUserResponse } from "./interfaces.js";
+import { FLApiClient } from "./api_client.js";
+import { debug } from "./logging.js";
 
 export const UNKNOWN = -1;
 
@@ -158,6 +160,8 @@ export class GameStateController {
     }
 
     private state: GameState = new GameState();
+    private myselfReceived = false;
+    private apiClient = new FLApiClient();
 
     private changeListeners: {[key in StateChangeTypes]: ((...args: any[]) => void)[]} = {
         [StateChangeTypes.ActionsCountChanged]: [],
@@ -211,6 +215,8 @@ export class GameStateController {
 
     public parseMyselfResponse(response: Record<string, unknown>) {
         if (!("character" in response)) return;
+
+        this.myselfReceived = true;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.character = new FLCharacter(response.character.id, response.character.name);
@@ -441,5 +447,13 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/map/move", (_, response) => this.parseMapMoveResponse(response));
         interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
+        interceptor.onResponseReceived("/api/settings/authmethods", (_req, _resp) => {
+            if (this.myselfReceived) return;
+
+            debug("Missed initial /character/myself response, requesting again.");
+            this.apiClient.myself().then((response) => {
+                this.parseMyselfResponse(response);
+            });
+        })
     }
 }

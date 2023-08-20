@@ -42,4 +42,8 @@ export class FLApiClient {
             message: "Hello, world!",
         })
     }
+
+    public myself() {
+        return this.callApi("GET", "/character/myself", {})
+    }
 }
