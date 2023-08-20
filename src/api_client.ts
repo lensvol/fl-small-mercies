@@ -14,16 +14,24 @@ export class FLApiClient {
     }
 
     private callApi(method: string, uri: string, requestData: any): Promise<any> {
-        const promise = fetch(`${API_ROOT_URL}${uri}`, {
+        const args = {
             method: method,
             headers: {
                 Authorization: `Bearer ${this.authToken}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(requestData),
-        });
+        }
 
-        return promise.then((response) => response.json())
+        if (method === "POST") {
+            // @ts-ignore: I don't know how to make TS happy here
+            args.body = JSON.stringify(requestData);
+        }
+
+        const promise = fetch(`${API_ROOT_URL}${uri}`, args);
+
+        return promise.then((response) => {
+            return response.json()
+        })
     }
 
     public shareToProfile(contentKey: number, image?: string): Promise<any> {
