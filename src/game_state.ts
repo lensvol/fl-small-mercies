@@ -1,5 +1,5 @@
 import { FLApiInterceptor } from "./api_interceptor.js";
-import { IShopResponse } from "./interfaces.js";
+import { IShopResponse, IUserResponse } from "./interfaces.js";
 
 export const UNKNOWN = -1;
 
@@ -193,17 +193,14 @@ export class GameStateController {
         }
     }
 
-    public parseUserResponse(response: Record<string, unknown>) {
+    public parseUserResponse(response: IUserResponse) {
         if ("user" in response && "jwt" in response) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
 
             this.triggerListeners(StateChangeTypes.UserDataLoaded);
         }
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         if ("area" in response) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             const currentArea = new Area(response.area.id, response.area.name);
             if (currentArea !== this.state.location.area) {
                 this.state.location.area = currentArea;
@@ -430,6 +427,7 @@ export class GameStateController {
     }
 
     public hookIntoApi(interceptor: FLApiInterceptor) {
+        interceptor.onResponseReceived("/api/login", (_, response) => { this.parseUserResponse(response) });
         interceptor.onResponseReceived("/api/login/user", (_, response) => { this.parseUserResponse(response) });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));

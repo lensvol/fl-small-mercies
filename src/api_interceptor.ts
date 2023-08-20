@@ -1,5 +1,3 @@
-import { IUserResponse } from "./interfaces.js";
-
 type AjaxMethod = (method: string, url: string, async: boolean) => any;
 
 interface IModifiedAjax {
@@ -36,12 +34,8 @@ export class FLApiInterceptor {
         return FLApiInterceptor.instance;
     }
 
-
-    private currentToken = "";
-
     private responseListeners: Map<string, ((request: any, response: any) => any)[]> = new Map();
     private requestListeners: Map<string, ((request: any) => any)[]> = new Map();
-    private tokenChangeListeners: ((oldToken: string, newToken: string) => void)[] = [];
 
     private processRequest(fullUrl: string, originalRequest: any): any | null {
         const url = new URL(fullUrl);
@@ -89,10 +83,6 @@ export class FLApiInterceptor {
         this.requestListeners.get(uri)?.push(handler);
     }
 
-    public onTokenChanged(handler: (oldToken: string, newToken: string) => void) {
-        this.tokenChangeListeners.push(handler);
-    }
-
     private triggerRequestListeners(uri: string, request: any): any {
         let fakeResponse = null;
 
@@ -125,12 +115,6 @@ export class FLApiInterceptor {
             return response;
         }
         return resultingResponse;
-    }
-
-    private triggerTokenChangeListeners(oldToken: string, newToken: string) {
-        for (const handler of this.tokenChangeListeners) {
-            handler(oldToken, newToken);
-        }
     }
 
     private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, request: any, responseText: string) => any): AjaxMethod {
@@ -182,22 +166,5 @@ export class FLApiInterceptor {
         XMLHttpRequest.prototype.open = this.installOpenBypass(XMLHttpRequest.prototype.open, this.processResponse.bind(this));
         // @ts-ignore: There is hell and then there is typing other people's API.
         XMLHttpRequest.prototype.send = this.installSendBypass(XMLHttpRequest.prototype.send, this.processRequest.bind(this));
-
-        // Acquire token stored by FL UI itself
-        this.currentToken = localStorage.access_token || sessionStorage.access_token || "";
-
-        this.onResponseReceived("/api/login/user", this.refreshUserToken.bind(this));
-        this.onResponseReceived("/api/login", this.refreshUserToken.bind(this));
-    }
-
-    private refreshUserToken(_request: any, response: IUserResponse): IUserResponse {
-        if (this.currentToken !== response.jwt) {
-            const oldToken = this.currentToken;
-            this.currentToken = response.jwt;
-
-            this.triggerTokenChangeListeners(oldToken, this.currentToken);
-        }
-
-        return response;
     }
 }
