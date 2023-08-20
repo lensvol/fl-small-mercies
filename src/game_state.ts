@@ -1,4 +1,3 @@
-// @ts-nocheck: There is hell and then there is typing other people's API.
 import { FLApiInterceptor } from "./api_interceptor.js";
 import { IShopResponse } from "./interfaces.js";
 
@@ -194,7 +193,7 @@ export class GameStateController {
         }
     }
 
-    public parseUserResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseUserResponse(response: Record<string, unknown>) {
         if ("user" in response && "jwt" in response) {
             // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.user = new FLUser(response.user.id, response.user.name, response.jwt);
@@ -213,7 +212,7 @@ export class GameStateController {
         }
     }
 
-    public parseMyselfResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseMyselfResponse(response: Record<string, unknown>) {
         if (!("character" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -244,7 +243,7 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
     }
 
-    public parseActionsResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseActionsResponse(response: Record<string, unknown>) {
         if (!("actions" in response)) return;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
@@ -271,7 +270,7 @@ export class GameStateController {
         return StoryletPhases.Unknown;
     }
 
-    public parseChooseBranchResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseChooseBranchResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of response.messages || []) {
             if (message.type === "StandardQualityChangeMessage" || message.type === "PyramidQualityChangeMessage" || message.type === "QualityExplicitlySetMessage") {
@@ -323,7 +322,7 @@ export class GameStateController {
         }
     }
 
-    public parseEquipResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseEquipResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const thing of response.changedPossessions) {
             const [quality, previous] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
@@ -334,7 +333,7 @@ export class GameStateController {
         }
     }
 
-    public parseStoryletResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseStoryletResponse(response: Record<string, unknown>) {
         if (!("phase" in response)) return;
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.storyletPhase = this.decodePhase(response.phase);
@@ -349,7 +348,7 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
     }
 
-    public parseMapResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseMapResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         if (!response.isSuccess) return;
 
@@ -361,7 +360,7 @@ export class GameStateController {
         }
     }
 
-    public parseMapMoveResponse(request: Record<string, unknown>, response: Record<string, unknown>) {
+    public parseMapMoveResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         if (!response.isSuccess) return;
 
@@ -373,7 +372,7 @@ export class GameStateController {
         }
     }
 
-    private parseShopResponse(request: Record<string, unknown>, response: IShopResponse) {
+    private parseShopResponse(response: IShopResponse) {
         if (!response.isSuccess) {
             return;
         }
@@ -431,18 +430,18 @@ export class GameStateController {
     }
 
     public hookIntoApi(interceptor: FLApiInterceptor) {
-        interceptor.onResponseReceived("/api/login/user", this.parseUserResponse.bind(this));
-        interceptor.onResponseReceived("/api/character/myself", this.parseMyselfResponse.bind(this));
-        interceptor.onResponseReceived("/api/character/actions", this.parseActionsResponse.bind(this));
-        interceptor.onResponseReceived("/api/outfit/equip", this.parseEquipResponse.bind(this));
-        interceptor.onResponseReceived("/api/outfit/unequip", this.parseEquipResponse.bind(this));
-        interceptor.onResponseReceived("/api/storylet/choosebranch", this.parseChooseBranchResponse.bind(this));
-        interceptor.onResponseReceived("/api/storylet", this.parseStoryletResponse.bind(this));
-        interceptor.onResponseReceived("/api/storylet/begin", this.parseStoryletResponse.bind(this));
-        interceptor.onResponseReceived("/api/storylet/goback", this.parseStoryletResponse.bind(this));
-        interceptor.onResponseReceived("/api/map", this.parseMapResponse.bind(this));
-        interceptor.onResponseReceived("/api/map/move", this.parseMapMoveResponse.bind(this));
-        interceptor.onResponseReceived("/api/exchange/sell", this.parseShopResponse.bind(this));
-        interceptor.onResponseReceived("/api/exchange/buy", this.parseShopResponse.bind(this));
+        interceptor.onResponseReceived("/api/login/user", (_, response) => { this.parseUserResponse(response) });
+        interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
+        interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
+        interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipResponse(response));
+        interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipResponse(response));
+        interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) => this.parseChooseBranchResponse(response));
+        interceptor.onResponseReceived("/api/storylet", (_, response) => this.parseStoryletResponse(response));
+        interceptor.onResponseReceived("/api/storylet/begin", (_, response) => this.parseStoryletResponse(response));
+        interceptor.onResponseReceived("/api/storylet/goback", (_, response) => this.parseStoryletResponse(response));
+        interceptor.onResponseReceived("/api/map", (_, response) => this.parseMapResponse(response));
+        interceptor.onResponseReceived("/api/map/move", (_, response) => this.parseMapMoveResponse(response));
+        interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
+        interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
     }
 }
