@@ -1,20 +1,15 @@
-import {GameStateController, UnknownUser} from "./game_state.js";
+import { FLApiInterceptor } from "./api_interceptor.js";
 
 const API_ROOT_URL = "https://api.fallenlondon.com/api";
 
 export class FLApiClient {
     private authToken: string = "";
-    private gameStateController = GameStateController.getInstance();
+    private apiInterceptor = FLApiInterceptor.getInstance();
 
     constructor() {
         this.authToken = localStorage.access_token || sessionStorage.access_token || "";
-
-        this.gameStateController.onUserDataLoaded((g) => {
-            if (g.user instanceof UnknownUser) {
-                return;
-            }
-
-            this.authToken = g.user.jwtToken;
+        this.apiInterceptor.onTokenChanged((_, newToken) => {
+            this.authToken = newToken;
         });
     }
 
