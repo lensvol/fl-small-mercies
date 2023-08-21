@@ -447,7 +447,22 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/map/move", (_, response) => this.parseMapMoveResponse(response));
         interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
+
+        /*
+        Since our content script is being executed in a context separate from where FL UI code lives,
+        we cannot intercept network requests from it. To work around this, our code is being injected
+        via an artificial "script" tag pointing to our payload holding actual business logic for the
+        extension.
+
+        Unfortunately, that introduces a bit of a lag between FL UI starting sending requests and
+        API interceptor code hooking into XMLHttpRequest. This leads to a high chance of our extension
+        missing two initial API calls (`categories` and `myself`) and not having consistent data when
+        the page is displayed for the first time.
+
+        Thus, the following hack is born.
+         */
         interceptor.onResponseReceived("/api/settings/authmethods", (_req, _resp) => {
+            // Do not do anything with this response, we already got initial data.
             if (this.myselfReceived) return;
 
             debug("Missed initial /character/myself response, requesting again.");
