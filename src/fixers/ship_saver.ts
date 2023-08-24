@@ -52,6 +52,10 @@ export class ShipSaverFixer implements INetworkAware {
                 return null;
             }
 
+            if (response.phase != "In") {
+                return null;
+            }
+
             if (response.storylet.id !== SHIP_SALE_STORYLET_ID) {
                 return null;
             }
