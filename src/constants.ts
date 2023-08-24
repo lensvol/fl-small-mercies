@@ -111,6 +111,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: 'Move gold-framed storylets into "Fifth City Stories".',
                 default: false,
             },
+            shortcut_specific_branches: {
+                description: "Shortcut travel between Laboratory / Port / Bone Market.",
+                default: false,
+            },
         },
     },
     {
