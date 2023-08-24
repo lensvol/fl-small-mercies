@@ -41,3 +41,7 @@ export interface IChooseBranchRequest {
     branchId: number;
     secondChanceIds: number[];
 }
+
+export interface IBeginStoryletRequest {
+    eventId: number;
+}

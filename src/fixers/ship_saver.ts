@@ -1,56 +1,68 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import { INetworkAware } from "./base.js";
+import { SettingsObject } from "../settings.js";
+import { FLApiInterceptor } from "../api_interceptor.js";
+import { IBeginStoryletRequest } from "../interfaces.js";
 
-export class ShipSaverFixer implements IMutationAware {
+const SHIP_SALE_STORYLET_ID = 340703;
+
+export class ShipSaverFixer implements INetworkAware {
     private disableSaleOption = false;
+    // FIXME: Re-implement using QualityRequirement component
+    private SMALL_MERCIES_LOCKED_QUALITY = {
+        "allowedOn": "Character",
+        "qualityId": 777_777_777,
+        "qualityName": "Abundance of Caution",
+        "tooltip": "It is locked for your own good.",
+        "availableAtMessage": "You can re-enable this branch in the \"Small Mercies\" settings screen.",
+        "category": "Extension",
+        "nature": "Status",
+        "status": "Locked",
+        "isCost": false,
+        "image": "mercy",
+        "id": SHIP_SALE_STORYLET_ID,
+    };
 
     applySettings(settings: SettingsObject): void {
         this.disableSaleOption = settings.ship_saver as boolean;
     }
 
-    checkEligibility(node: HTMLElement): boolean {
-        if (!this.disableSaleOption) {
-            return false;
-        }
-
-        return node.getElementsByClassName("branch").length > 0;
-    }
-
-    onNodeAdded(node: HTMLElement): void {
-        const candidates = node.getElementsByClassName("branch__title");
-        let shipStorylet = null;
-        for (const candidate of candidates) {
-            if (candidate.textContent !== "Get rid of your current ship") {
-                continue;
+    // FIXME: De-duplicate using single handler and discriminate by type.
+    linkNetworkTools(interceptor: FLApiInterceptor): void {
+        interceptor.onResponseReceived("/api/storylet/begin", (request, response) => {
+            if (!this.disableSaleOption) {
+                return null;
             }
 
-            let parent = candidate.parentNode as HTMLElement;
-            while (!parent.hasAttribute("data-branch-id")) {
-                parent = parent.parentNode as HTMLElement;
+            const beginRequest = request as unknown as IBeginStoryletRequest;
+            if (beginRequest.eventId !== SHIP_SALE_STORYLET_ID) {
+                return null;
             }
-            shipStorylet = parent;
-            break;
-        }
 
-        if (!shipStorylet) {
-            return;
-        }
+            for (const branch of response.storylet.childBranches) {
+                if (branch.name === "Get rid of your current ship") {
+                    branch.qualityLocked = true;
+                    branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
+                    break;
+                }
+            }
+        });
 
-        const description = shipStorylet.querySelector("div[class='media__body branch__body'] > div > p") as HTMLElement;
-        const labelNode = document.createElement("b");
-        labelNode.innerText = "This branch was disabled for your own good.";
-        description.appendChild(document.createElement("br"));
-        description.appendChild(document.createElement("br"));
-        description.appendChild(labelNode);
-        shipStorylet.classList.add("media--locked");
-        shipStorylet.querySelectorAll("button").forEach((b) => b.remove());
-        const actionButton = shipStorylet.querySelector("div[class*='buttons']");
-        if (actionButton) {
-            actionButton.remove();
-        }
-    }
+        interceptor.onResponseReceived("/api/storylet", (_request, response) => {
+            if (!this.disableSaleOption) {
+                return null;
+            }
 
-    onNodeRemoved(_node: HTMLElement): void {
-        // Do nothing if DOM node is removed.
+            if (response.storylet.id !== SHIP_SALE_STORYLET_ID) {
+                return null;
+            }
+
+            for (const branch of response.storylet.childBranches) {
+                if (branch.name === "Get rid of your current ship") {
+                    branch.qualityLocked = true;
+                    branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
+                    break;
+                }
+            }
+        });
     }
 }
