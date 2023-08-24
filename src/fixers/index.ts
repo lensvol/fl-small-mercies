@@ -23,6 +23,7 @@ import {ShopTransactionFixer} from "./shop_transactions.js";
 import {ShopPricesFixer} from "./shop_prices.js";
 import {AnotherTimeFixer} from "./another_time.js";
 import {PersistentPremiumFixer} from "./persistent_premium.js";
+import {SpaceShortcutFixer} from "./space_shortcuts.js";
 
 export default [
     AutoScrollFixer,
@@ -50,4 +51,5 @@ export default [
     ShopPricesFixer,
     AnotherTimeFixer,
     PersistentPremiumFixer,
+    SpaceShortcutFixer,
 ];
