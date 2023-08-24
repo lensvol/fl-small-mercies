@@ -3,7 +3,7 @@ import { SettingsObject } from "../settings.js";
 import { FLApiInterceptor } from "../api_interceptor.js";
 import { IBeginStoryletRequest } from "../interfaces.js";
 
-const SHIP_SALE_STORYLET_ID = 340703;
+const PUT_TO_ZEE_STORYLET_ID = 335704;
 
 export class ShipSaverFixer implements INetworkAware {
     private disableSaleOption = false;
@@ -19,7 +19,7 @@ export class ShipSaverFixer implements INetworkAware {
         "status": "Locked",
         "isCost": false,
         "image": "mercy",
-        "id": SHIP_SALE_STORYLET_ID,
+        "id": 777_777_777,
     };
 
     applySettings(settings: SettingsObject): void {
@@ -34,7 +34,7 @@ export class ShipSaverFixer implements INetworkAware {
             }
 
             const beginRequest = request as unknown as IBeginStoryletRequest;
-            if (beginRequest.eventId !== SHIP_SALE_STORYLET_ID) {
+            if (beginRequest.eventId !== PUT_TO_ZEE_STORYLET_ID) {
                 return null;
             }
 
@@ -56,15 +56,16 @@ export class ShipSaverFixer implements INetworkAware {
                 return null;
             }
 
-            if (response.storylet.id !== SHIP_SALE_STORYLET_ID) {
+            if (response.storylet.id !== PUT_TO_ZEE_STORYLET_ID) {
                 return null;
             }
 
-            for (const branch of response.storylet.childBranches) {
+            const clonedResponse = structuredClone(response);
+            for (const branch of clonedResponse.storylet.childBranches) {
                 if (branch.name === "Get rid of your current ship") {
                     branch.qualityLocked = true;
                     branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
-                    break;
+                    return clonedResponse;
                 }
             }
         });
