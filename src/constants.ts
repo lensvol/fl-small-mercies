@@ -102,6 +102,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             shop_price_totals: {
                 description: "Display total value when hovering over 'Sell' button.",
                 default: true,
+            },
+            shortcut_another_time: {
+                description: "Shortcut 'Another time' branch in Labyrinth of Tigers.",
+                default: true,
             }
         },
     },

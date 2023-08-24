@@ -21,6 +21,7 @@ import {TwoStepConfirmationsFixer} from "./two_step_confirmations.js";
 import {SingleItemIconFixer} from "./single_item_icon.js";
 import {ShopTransactionFixer} from "./shop_transactions.js";
 import { ShopPricesFixer } from "./shop_prices.js";
+import { AnotherTimeFixer } from "./another_time.js";
 
 export default [
     AutoScrollFixer,
@@ -46,4 +47,5 @@ export default [
     SingleItemIconFixer,
     ShopTransactionFixer,
     ShopPricesFixer,
+    AnotherTimeFixer,
 ];

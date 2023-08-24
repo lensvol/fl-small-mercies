@@ -46,4 +46,9 @@ export class FLApiClient {
     public myself() {
         return this.callApi("GET", "/character/myself", {})
     }
+
+    public goBack() {
+        return this.callApi("POST", "/storylet/goback", {})
+    }
+
 }

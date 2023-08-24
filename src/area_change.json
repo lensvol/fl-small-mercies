@@ -1,0 +1,190 @@
+{
+  "canChangeOutfit": true,
+  "actions": 1,
+  "phase": "End",
+  "endStorylet": {
+    "rootEventId": 19598,
+    "event": {
+      "name": "&quot;I look forward to our paths crossing again.&quot;",
+      "description": "He's under-secretary for something convoluted and innocuous. Which means, of course, that he's embedded in the very heart of government. His handshake is firm and sincere, and he makes it clear he hopes to meet you again at another event. Promising. Very promising indeed.",
+      "isInEventUseTree": false,
+      "frequency": "Always",
+      "image": "oldman2",
+      "id": 19600
+    },
+    "isLinkingEvent": false,
+    "isDirectLinkingEvent": false,
+    "canGoAgain": false
+  },
+  "messages": [
+    {
+      "area": {
+        "name": "Your Lodgings",
+        "id": 2,
+        "childAreas": [
+          {
+            "name": "Your Activities",
+            "id": 111080,
+            "childAreas": [],
+            "description": "Perhaps it's a hobby, perhaps it's a means of earning a crust. But even a Londoner of Leisure has profitable ways to pass the time.",
+            "image": "lodgings",
+            "moveMessage": "You have moved to a new area.",
+            "hideName": false,
+            "showOps": true,
+            "premiumSubRequired": false,
+            "canChangeOutfit": true,
+            "canMoveTo": true,
+            "discovered": false,
+            "unlocked": false,
+            "parentAreaKey": "77d4f589a674b970790dbf1be6eacdc0",
+            "type": "District",
+            "jsonInfo": {
+              "labelX": 1,
+              "labelY": 1,
+              "spriteTopLeftX": 0,
+              "spriteTopLeftY": 0,
+              "selectionSpriteTopLeftX": 0,
+              "selectionSpriteTopLeftY": 0,
+              "mainDestinationSpriteTopLeftX": 0,
+              "mainDestinationSpriteTopLeftY": 0,
+              "zIndex": 0
+            }
+          },
+          {
+            "name": "Your Social Engagements",
+            "id": 111083,
+            "childAreas": [],
+            "description": "A Londoner's life is filled with an almost unendurable parade of social obligations and other dubious pleasures. But what would you do with your evenings otherwise?",
+            "image": "lodgings",
+            "moveMessage": "You have moved to a new area.",
+            "hideName": false,
+            "showOps": true,
+            "premiumSubRequired": false,
+            "canChangeOutfit": true,
+            "canMoveTo": true,
+            "discovered": false,
+            "unlocked": false,
+            "parentAreaKey": "77d4f589a674b970790dbf1be6eacdc0",
+            "type": "District",
+            "jsonInfo": {
+              "labelX": 1,
+              "labelY": 1,
+              "spriteTopLeftX": 0,
+              "spriteTopLeftY": 0,
+              "selectionSpriteTopLeftX": 0,
+              "selectionSpriteTopLeftY": 0,
+              "mainDestinationSpriteTopLeftX": 0,
+              "mainDestinationSpriteTopLeftY": 0,
+              "zIndex": 0
+            }
+          }
+        ],
+        "description": "Your lodgings: safety, sanctuary and mystery, as a wise man once said.",
+        "image": "lodgings",
+        "moveMessage": "You have moved to a new area: your Lodgings",
+        "hideName": false,
+        "showOps": true,
+        "premiumSubRequired": false,
+        "canChangeOutfit": true,
+        "canMoveTo": true,
+        "discovered": false,
+        "unlocked": false,
+        "parentAreaKey": "6037b99e5daf6b53b3257f8920b575fd",
+        "type": "District",
+        "jsonInfo": {
+          "labelX": 1,
+          "labelY": 1,
+          "spriteTopLeftX": 0,
+          "spriteTopLeftY": 0,
+          "selectionSpriteTopLeftX": 0,
+          "selectionSpriteTopLeftY": 0,
+          "mainDestinationSpriteTopLeftX": 0,
+          "mainDestinationSpriteTopLeftY": 0,
+          "zIndex": 0
+        }
+      },
+      "type": "AreaChangeMessage",
+      "message": "You have moved to a new area: your Lodgings",
+      "image": "lodgings",
+      "tooltip": "You have moved to a new area: your Lodgings"
+    },
+    {
+      "setting": {
+        "mapRootArea": {
+          "areaKey": "6037b99e5daf6b53b3257f8920b575fd"
+        },
+        "name": "The Fifth City",
+        "canChangeOutfit": true,
+        "canOpenMap": true,
+        "canTravel": true,
+        "itemsUsableHere": true,
+        "isInfiniteDraw": false,
+        "id": 2
+      },
+      "type": "SettingChangeMessage",
+      "message": "You moved to a new setting: The Fifth City."
+    },
+    {
+      "possession": {
+        "enhancements": [],
+        "qualityPossessedId": 76903090,
+        "name": "Making Waves",
+        "nameAndLevel": "Making Waves 16",
+        "description": "You have a reputation! Now be sure to keep your name before the public. <span class=\"descriptive\">Making Waves will drop over time. It is merely a distraction until you've achieved Person of Some Importance status.</span>",
+        "nature": "Status",
+        "category": "SidebarAbility",
+        "effectiveLevel": 16,
+        "level": 16,
+        "himbleLevel": 0,
+        "availableAt": "You can gain Making Waves in a wide variety of places, including publishing Short Stories; using items like Incendiary Gossip; and inviting friends to social events in your Lodgings.",
+        "equippable": false,
+        "progressAsPercentage": 41,
+        "allowedOn": "Character",
+        "image": "sidebarmakingwaves",
+        "id": 545
+      },
+      "progressBar": {
+        "type": "Pyramid",
+        "leftScore": 15,
+        "rightScore": 16,
+        "startPercentage": 0.0,
+        "endPercentage": 100.0
+      },
+      "changeType": "Decreased",
+      "priority": 2,
+      "isSidebar": true,
+      "type": "PyramidQualityChangeMessage",
+      "message": "<span class='quality-name'>Making Waves</span> has increased to 16!",
+      "image": "sidebarmakingwaves",
+      "tooltip": "7 change points, 10 more needed to reach level 17"
+    },
+    {
+      "possession": {
+        "enhancements": [],
+        "cap": 7,
+        "qualityPossessedId": 114720762,
+        "name": "Favours: Society",
+        "nameAndLevel": "Favours: Society 3/7",
+        "description": "You've done somebody a good turn. Now, they're in your debt.",
+        "nature": "Status",
+        "category": "Contacts",
+        "effectiveLevel": 3,
+        "level": 3,
+        "himbleLevel": 0,
+        "equippable": false,
+        "progressAsPercentage": 0,
+        "allowedOn": "Character",
+        "image": "salon2",
+        "id": 133833
+      },
+      "changeType": "Decreased",
+      "priority": 2,
+      "isSidebar": false,
+      "type": "StandardQualityChangeMessage",
+      "message": "You've gained 1 x Favours: Society (new total 3). ",
+      "image": "salon2",
+      "tooltip": "You've done somebody a good turn. Now, they're in your debt."
+    }
+  ],
+  "isSuccess": true
+}
