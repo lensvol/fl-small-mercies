@@ -1,8 +1,9 @@
-import {SettingsObject} from "../settings.js";
-import {INetworkAware, IStateAware} from "./base.js";
-import {FLApiInterceptor} from "../api_interceptor.js";
-import {Branch, Storylet} from "../game_components.js";
-import {GameStateController} from "../game_state.js";
+import { SettingsObject } from "../settings.js";
+import { INetworkAware, IStateAware } from "./base.js";
+import { DO_NOT_CARE, FLApiInterceptor, OverridenResponse } from "../api_interceptor.js";
+import { Branch, Storylet } from "../game_components.js";
+import { GameStateController } from "../game_state.js";
+import { IChooseBranchRequest } from "../interfaces.js";
 
 const FAKE_BRANCH_ID_THRESHOLD = 77_000_000;
 const FAKE_BRANCH_ID_CEILING = 87_000_000;
@@ -128,18 +129,20 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
             this.currentStoryletContents = structuredClone(response);
         });
 
-        interceptor.onRequestSent("/api/storylet/choosebranch", (request) => {
+        interceptor.onRequestSent("/api/storylet/choosebranch", (request, data) => {
             if (!this.showConfirmations) {
-                return null;
+                return DO_NOT_CARE;
             }
+
+            const branchRequest = data as unknown as IChooseBranchRequest;
 
             const confirmationStorylet = new Storylet(CONFIRMATION_BRANCH_ID, "<i>Book of Wick</i>, John 41:53")
                 .description(JOHN_WICK_QUOTE_TEXT)
                 .image("candleblack")
                 .category("SinisterZee");
 
-            if (DANGEROUS_BRANCHES.includes(request.branchId)) {
-                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + request.branchId, "YES!")
+            if (DANGEROUS_BRANCHES.includes(branchRequest.branchId)) {
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + branchRequest.branchId, "YES!")
                     .description(CHOICE_HAS_BEEN_MADE_TEXT)
                     .image("well")
                     .actionCost(0);
@@ -151,22 +154,22 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);
 
-                return {
+                return new OverridenResponse({
                     actions: this.currentActions,
                     canChangeOutfit: true,
                     isSuccess: true,
                     phase: "In",
                     storylet: confirmationStorylet.build(),
-                };
+                });
             }
 
-            if (request.branchId === CONFIRMATION_BRANCH_ID) {
-                return this.currentStoryletContents;
+            if (branchRequest.branchId === CONFIRMATION_BRANCH_ID) {
+                return new OverridenResponse(this.currentStoryletContents);
             }
 
-            if (request.branchId > FAKE_BRANCH_ID_THRESHOLD && request.branchId < FAKE_BRANCH_ID_CEILING) {
-                request.branchId -= FAKE_BRANCH_ID_THRESHOLD;
-                return null;
+            if (branchRequest.branchId > FAKE_BRANCH_ID_THRESHOLD && branchRequest.branchId < FAKE_BRANCH_ID_CEILING) {
+                branchRequest.branchId -= FAKE_BRANCH_ID_THRESHOLD;
+                return DO_NOT_CARE;
             }
         });
     }

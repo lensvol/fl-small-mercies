@@ -11,16 +11,40 @@ type AugmentedXMLHttpRequest = XMLHttpRequest & IModifiedAjax;
 
 const DONE = 4;
 
-function setFakeXhrResponse(request: any, status: number, response: object) {
+export class OverridenResponse {
+    public readonly status: number;
+    public readonly response: object;
+
+    constructor(response: object, status: number = 200) {
+        this.response = response;
+        this.status = status;
+    }
+}
+
+export const DO_NOT_CARE = 1;
+export const SPECIAL_HANDLING = 2;
+
+type HandlerResult = OverridenResponse | typeof DO_NOT_CARE | typeof SPECIAL_HANDLING;
+
+// FIXME: Properly type AJAX requests
+export function setFakeXhrResponse(request: XMLHttpRequest | IModifiedAjax, status: number, response: object) {
     Object.defineProperty(request, "responseText", {writable: true});
     Object.defineProperty(request, "readyState", {writable: true});
     Object.defineProperty(request, "status", {writable: true});
 
+    // @ts-ignore: We explicitly set this property to writable above
+    // noinspection JSConstantReassignment
     request.responseText = JSON.stringify(response);
+    // @ts-ignore: We explicitly set these property to writable above
+    // noinspection JSConstantReassignment
     request.readyState = DONE;
+    // @ts-ignore: We explicitly set these property to writable above
+    // noinspection JSConstantReassignment
     request.status = status;
 
-    request.onreadystatechange();
+    if ("onreadystatechange" in request && request.onreadystatechange != null) {
+        request.onreadystatechange(new Event("readystatechange"));
+    }
 }
 
 export class FLApiInterceptor {
@@ -38,15 +62,15 @@ export class FLApiInterceptor {
 
     private currentToken = "";
     private responseListeners: Map<string, ((request: any, response: any) => any)[]> = new Map();
-    private requestListeners: Map<string, ((request: any) => any)[]> = new Map();
+    private requestListeners: Map<string, ((request: IModifiedAjax, data: Record<string, unknown>) => any)[]> = new Map();
     private tokenChangeListeners: ((oldToken: string, newToken: string) => void)[] = [];
 
-    private processRequest(fullUrl: string, originalRequest: any): any | null {
+    private processRequest(fullUrl: string, originalRequest: IModifiedAjax, requestData: Record<string, unknown>): any | null {
         const url = new URL(fullUrl);
 
         if (this.requestListeners.has(url.pathname)) {
             // Do not waste time deserializing things no one asked us to
-            return this.triggerRequestListeners(url.pathname, originalRequest);
+            return this.triggerRequestListeners(url.pathname, originalRequest, requestData);
         }
 
         return null;
@@ -79,7 +103,7 @@ export class FLApiInterceptor {
         this.responseListeners.get(uri)?.push(handler);
     }
 
-    public onRequestSent(uri: string, handler: (request: any) => void) {
+    public onRequestSent(uri: string, handler: (request: IModifiedAjax, data: Record<string, unknown>) => void) {
         if (!this.requestListeners.has(uri)) {
             this.requestListeners.set(uri, []);
         }
@@ -91,13 +115,13 @@ export class FLApiInterceptor {
         this.tokenChangeListeners.push(handler);
     }
 
-    private triggerRequestListeners(uri: string, request: any): any {
+    private triggerRequestListeners(uri: string, request: IModifiedAjax, data: Record<string, unknown>): any {
         let fakeResponse = null;
 
         try {
             const listeners = this.requestListeners.get(uri) || [];
             for (const handler of listeners) {
-                fakeResponse = handler(request);
+                fakeResponse = handler(request, data);
                 // Short-circuit if a listener returns a response
                 if (fakeResponse) {
                     break;
@@ -133,9 +157,7 @@ export class FLApiInterceptor {
 
     private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, request: any, responseText: string) => any): AjaxMethod {
         return function (this: AugmentedXMLHttpRequest, _method, url, _async) {
-            // @ts-ignore: There is hell and then there is typing other people's API.
             this._targetUrl = url;
-            // @ts-ignore: There is hell and then there is typing other people's API.
             this.addEventListener("readystatechange", (event) => {
                 // @ts-ignore: There is hell and then there is typing other people's API.
                 if (this.readyState == DONE) {
@@ -153,7 +175,7 @@ export class FLApiInterceptor {
         };
     }
 
-    private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: Record<string, unknown>) => Record<string, unknown>): AjaxMethod {
+    private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: IModifiedAjax, data: Record<string, unknown>) => HandlerResult): AjaxMethod {
         return function (this: AugmentedXMLHttpRequest,...args) {
             if (!this._targetUrl.includes("api.fallenlondon.com")) {
                 return original_function.apply(this, args);
@@ -161,9 +183,13 @@ export class FLApiInterceptor {
 
             this._requestData = JSON.parse(args[0] ?? null);
 
-            const preparedResponse = handler(this._targetUrl, this._requestData);
-            if (preparedResponse) {
-                setFakeXhrResponse(this, 200, preparedResponse);
+            const result = handler(this._targetUrl, this, this._requestData);
+            if (result instanceof OverridenResponse) {
+                setFakeXhrResponse(this, 200, result.response);
+                return;
+            }
+
+            if  (result == SPECIAL_HANDLING) {
                 return;
             }
 

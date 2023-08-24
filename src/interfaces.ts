@@ -36,3 +36,8 @@ export interface IUserResponse extends IApiResponse {
     user: IUserData;
     privilegeLevel: string;
 }
+
+export interface IChooseBranchRequest {
+    branchId: number;
+    secondChanceIds: number[];
+}
