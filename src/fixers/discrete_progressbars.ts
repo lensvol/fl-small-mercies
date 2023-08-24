@@ -24,13 +24,9 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
             }
 
             this.qualityDisplays.set(qualityName.textContent, quality as HTMLElement);
+            this.updateScrollBarVisibility(qualityName.textContent);
 
-            if (
-              (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName.textContent)) ||
-              (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName.textContent))
-            ) {
-                this.changeScrollBarVisibility(quality as HTMLElement, true);
-
+            if (this.shouldBeHidden(qualityName.textContent)) {
                 // This is hackish as heck, but still better than misaligned quality names... So be it.
                 // (although "Monstrous Anatomy" will still fail the check and be misaligned)
                 if (qualityName.textContent.length < 16) {
@@ -64,11 +60,21 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
         return node.getElementsByClassName("sidebar-quality").length > 0;
     }
 
-    changeScrollBarVisibility(node: HTMLElement, hidden: boolean) {
-        const scrollBar = getSingletonByClassName(node, "progress-bar");
-        if (scrollBar) {
-            scrollBar.style.cssText = hidden ? "display: none;" : "";
+    updateScrollBarVisibility(qualityName: string) {
+        const qualityDisplay = this.qualityDisplays.get(qualityName);
+        if (!qualityDisplay) {
+            return;
         }
+
+        const scrollBar = getSingletonByClassName(qualityDisplay, "progress-bar");
+        if (scrollBar) {
+            scrollBar.style.cssText = this.shouldBeHidden(qualityName) ? "display: none;" : "";
+        }
+    }
+
+    private shouldBeHidden(qualityName: string) {
+        return (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName)) ||
+            (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName));
     }
 
     linkState(state: GameStateController): void {
@@ -78,24 +84,18 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
                     this.maxedOutQualities.add(quality.name);
                 }
 
-                const qualityDisplay = this.qualityDisplays.get(quality.name);
-                if (qualityDisplay) {
-                    this.changeScrollBarVisibility(qualityDisplay, this.maxedOutQualities.has(quality.name));
-                }
+                this.updateScrollBarVisibility(quality.name);
             }
         });
 
-        state.onQualityChanged((state, quality, _before, _after) => {
+        state.onQualityChanged((_state, quality, _before, _after) => {
             if (quality.level < quality.cap) {
                 this.maxedOutQualities.delete(quality.name);
             } else {
                 this.maxedOutQualities.add(quality.name);
             }
 
-            const qualityDisplay = this.qualityDisplays.get(quality.name);
-            if (qualityDisplay) {
-                this.changeScrollBarVisibility(qualityDisplay, this.maxedOutQualities.has(quality.name));
-            }
+            this.updateScrollBarVisibility(quality.name);
         });
     }
 }
