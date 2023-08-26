@@ -106,6 +106,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             shortcut_another_time: {
                 description: "Shortcut 'Another time' branch in Labyrinth of Tigers.",
                 default: true,
+            },
+            persistent_premium: {
+                description: 'Move gold-framed storylets into "Fifth City Stories".',
+                default: false,
             }
         },
     },
