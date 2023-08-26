@@ -1,8 +1,8 @@
-import { INetworkAware } from "./base.js";
-import { SettingsObject } from "../settings.js";
-import { DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING } from "../api_interceptor.js";
-import { FLApiClient } from "../api_client.js";
-import { IChooseBranchRequest } from "../interfaces.js";
+import {INetworkAware} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING} from "../api_interceptor.js";
+import {FLApiClient} from "../api_client.js";
+import {IChooseBranchRequest} from "../interfaces.js";
 
 const ANOTHER_TIME_BRANCH_ID = 211150;
 
@@ -26,11 +26,9 @@ export class AnotherTimeFixer implements INetworkAware {
 
             const branchRequest = data as unknown as IChooseBranchRequest;
             if (branchRequest.branchId === ANOTHER_TIME_BRANCH_ID) {
-                this.apiClient?.goBack().then(
-                    (json) => {
-                        setFakeXhrResponse(request, 200, json);
-                    }
-                )
+                this.apiClient?.goBack().then((json) => {
+                    setFakeXhrResponse(request, 200, json);
+                });
 
                 return SPECIAL_HANDLING;
             }

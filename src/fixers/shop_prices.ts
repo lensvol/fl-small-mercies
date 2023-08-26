@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 function numberWithCommas(x: string): string {
     return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -47,7 +47,6 @@ export class ShopPricesFixer implements IMutationAware {
                     }
                 });
             });
-
         });
     }
 
@@ -72,7 +71,7 @@ export class ShopPricesFixer implements IMutationAware {
 
             const flgf_container = getSingletonByClassName(parent, "flgf__reserve-display");
             if (flgf_container) {
-                reservedAmount = parseInt(flgf_container.textContent?.substring(9) || "0")
+                reservedAmount = parseInt(flgf_container.textContent?.substring(9) || "0");
                 if (reservedAmount > quantityValue) {
                     reservedAmount = quantityValue;
                 }
@@ -110,9 +109,13 @@ export class ShopPricesFixer implements IMutationAware {
                 priceField.textContent = `${priceText} × (${quantityValue} - ${reservedAmount}) = ${totalPrice}`;
             }
 
-            sellButton.addEventListener("mouseout", () => {
-                priceField.textContent = originalText;
-            }, { once: true });
+            sellButton.addEventListener(
+                "mouseout",
+                () => {
+                    priceField.textContent = originalText;
+                },
+                {once: true}
+            );
         });
         sellButton.classList.add("flsm-has-listener");
     }
@@ -131,7 +134,7 @@ export class ShopPricesFixer implements IMutationAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"shop") != null;
+        return getSingletonByClassName(node, "shop") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {

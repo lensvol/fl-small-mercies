@@ -1,6 +1,6 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAware} from "./base.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 export class ScripIconFixer implements IMutationAware {
     private showScripIcon = false;
@@ -30,6 +30,6 @@ export class ScripIconFixer implements IMutationAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"sidebar") != null;
+        return getSingletonByClassName(node, "sidebar") != null;
     }
 }

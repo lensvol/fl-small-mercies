@@ -13,7 +13,7 @@ export class PlanButtonsFixer implements IMutationAware {
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        if(!this.removePlanButtons) {
+        if (!this.removePlanButtons) {
             return false;
         }
 

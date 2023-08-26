@@ -2,7 +2,7 @@ import {SettingsObject} from "../settings.js";
 import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state.js";
 import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -220,7 +220,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
         for (const [name, predicate] of this.currencyToPredicate.entries()) {
             const display = this.currencyToDisplay.get(name);
-            if(!display) {
+            if (!display) {
                 continue;
             }
 
@@ -252,10 +252,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
             if (candidate.textContent === "Mr Chimes' Lost & Found") {
                 this.shopButtonObserver.disconnect();
-                this.shopButtonObserver.observe(
-                  candidate,
-                  {attributes: true, attributeFilter: ["class"]},
-                )
+                this.shopButtonObserver.observe(candidate, {attributes: true, attributeFilter: ["class"]});
 
                 this.isInLostAndFound = candidate.classList.contains("menu-item--active");
                 this.checkSpecialVisibility();

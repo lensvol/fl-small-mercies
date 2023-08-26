@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 export class SocialEmptyReqsFixer implements IMutationAware {
     private fixEmptyRequirements = false;
@@ -14,7 +14,7 @@ export class SocialEmptyReqsFixer implements IMutationAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"act__quality-requirements") != null;
+        return getSingletonByClassName(node, "act__quality-requirements") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {

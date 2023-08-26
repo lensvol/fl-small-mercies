@@ -1,6 +1,6 @@
 import {SettingsObject} from "../settings.js";
 import {IMutationAware} from "./base.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 // Shamelessly taken from https://stackoverflow.com/a/2901298
 function numberWithCommas(x: string): string {

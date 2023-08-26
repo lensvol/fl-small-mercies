@@ -1,7 +1,7 @@
 import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {GameStateController, StoryletPhases} from "../game_state.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 export class TopExitButtonsFixer implements IMutationAware, IStateAware {
     private moveExitButtonsToTop = false;
@@ -27,7 +27,7 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"media--root") != null;
+        return getSingletonByClassName(node, "media--root") != null;
     }
 
     createPerhapsNotMimic(): [HTMLElement, HTMLElement] {

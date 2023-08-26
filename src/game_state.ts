@@ -1,7 +1,7 @@
-import { FLApiInterceptor } from "./api_interceptor.js";
-import { IShopResponse, IUserResponse } from "./interfaces.js";
-import { FLApiClient } from "./api_client.js";
-import { debug } from "./logging.js";
+import {FLApiInterceptor} from "./api_interceptor.js";
+import {IShopResponse, IUserResponse} from "./interfaces.js";
+import {FLApiClient} from "./api_client.js";
+import {debug} from "./logging.js";
 
 export const UNKNOWN = -1;
 
@@ -149,7 +149,7 @@ export class GameState {
 export class GameStateController {
     private static instance: GameStateController;
 
-    private constructor() { }
+    private constructor() {}
 
     public static getInstance(): GameStateController {
         if (!GameStateController.instance) {
@@ -382,14 +382,14 @@ export class GameStateController {
 
         response.possessionsChanged.forEach((changed) => {
             const [quality, previous] = this.upsertQuality(
-              changed.id,
-              changed.category,
-              changed.name,
-              changed.effectiveLevel,
-              changed.level,
-              changed.image,
-              changed.cap || 0,
-              changed.nature
+                changed.id,
+                changed.category,
+                changed.name,
+                changed.effectiveLevel,
+                changed.level,
+                changed.image,
+                changed.cap || 0,
+                changed.nature
             );
 
             if (quality.level != previous) {
@@ -433,8 +433,12 @@ export class GameStateController {
     }
 
     public hookIntoApi(interceptor: FLApiInterceptor) {
-        interceptor.onResponseReceived("/api/login", (_, response) => { this.parseUserResponse(response) });
-        interceptor.onResponseReceived("/api/login/user", (_, response) => { this.parseUserResponse(response) });
+        interceptor.onResponseReceived("/api/login", (_, response) => {
+            this.parseUserResponse(response);
+        });
+        interceptor.onResponseReceived("/api/login/user", (_, response) => {
+            this.parseUserResponse(response);
+        });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
         interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipResponse(response));
@@ -469,6 +473,6 @@ export class GameStateController {
             this.apiClient.myself().then((response) => {
                 this.parseMyselfResponse(response);
             });
-        })
+        });
     }
 }

@@ -38,7 +38,7 @@ function findAndSortIcons(node: Element, order: number[]) {
     const icons = Array.from(allIcons).filter((icon) => {
         const element = icon as HTMLElement;
         const iconId = element.dataset.branchId || element.dataset.qualityId;
-        return order.includes(parseInt(iconId || "0"))
+        return order.includes(parseInt(iconId || "0"));
     });
 
     const things = icons

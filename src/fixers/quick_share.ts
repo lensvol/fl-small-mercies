@@ -1,8 +1,8 @@
 import {IMutationAware, IStateAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
 import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
-import { getSingletonByClassName } from "../utils.js";
-import { FLApiClient } from "../api_client.js";
+import {getSingletonByClassName} from "../utils.js";
+import {FLApiClient} from "../api_client.js";
 
 const SHARE_BUTTON_SELECTOR = "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";
 const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/;
@@ -41,7 +41,8 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
             icon?.classList.remove("fa-pencil");
             icon?.classList.add("fa-refresh", "fa-spin");
 
-            this.apiClient.shareToProfile(this.currentStoryletId, imageCode)
+            this.apiClient
+                .shareToProfile(this.currentStoryletId, imageCode)
                 .then((_r) => {
                     // FIXME: Replace direct CSS manipulation with something classier
                     icon?.classList.remove("fa-refresh", "fa-spin");

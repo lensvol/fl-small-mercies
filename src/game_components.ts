@@ -1,4 +1,4 @@
-import { IQuality } from "./interfaces.js";
+import {IQuality} from "./interfaces.js";
 
 function capitalize(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);

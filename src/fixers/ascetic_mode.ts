@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
@@ -21,25 +21,25 @@ export class AsceticModeFixer implements IMutationAware {
 
     onNodeAdded(node: HTMLElement): void {
         if (this.removeHeaderAndCandles) {
-            const banner = getSingletonByClassName(node,"banner--lg-up");
+            const banner = getSingletonByClassName(node, "banner--lg-up");
 
             if (banner) {
                 const parentDiv = banner?.parentElement?.parentElement;
                 parentDiv?.classList.add("u-visually-hidden");
             }
 
-            const candleContainer = getSingletonByClassName(node,"candle-container");
+            const candleContainer = getSingletonByClassName(node, "candle-container");
             if (candleContainer) {
                 candleContainer.classList.add("u-visually-hidden");
             }
 
             // Shift columns a little to make overall look nicer
-            const primaryColumn = getSingletonByClassName(node,"col-primary");
+            const primaryColumn = getSingletonByClassName(node, "col-primary");
             if (primaryColumn) {
                 primaryColumn.style.cssText = "padding-top: 10px;";
             }
 
-            const tertiaryColumn = getSingletonByClassName(node,"col-tertiary");
+            const tertiaryColumn = getSingletonByClassName(node, "col-tertiary");
             if (tertiaryColumn) {
                 tertiaryColumn.style.cssText = "padding-top: 44px;";
             }

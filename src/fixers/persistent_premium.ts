@@ -1,7 +1,7 @@
-import { INetworkAware, IStateAware } from "./base.js";
-import { SettingsObject } from "../settings.js";
-import { FLApiInterceptor } from "../api_interceptor.js";
-import { GameState, GameStateController } from "../game_state.js";
+import {INetworkAware, IStateAware} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {FLApiInterceptor} from "../api_interceptor.js";
+import {GameState, GameStateController} from "../game_state.js";
 
 // For some reason, Zailing-related storylets in Wolfstack Docks are marked "Premium".
 const IGNORED_ZEE_STORYLET_IDS = [
@@ -14,17 +14,18 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
     private localSettingId = -1;
 
     private SMALL_MERCIES_MOVED_QUALITY = {
-        "allowedOn": "Character",
-        "qualityId": 777_777_777,
-        "qualityName": "Quality of Life",
-        "tooltip": "This storylet was made persistent by 'Small Mercies'.<p class='tooltip__secondary-description'><i>You can disable this behaviour in the extension settings screen.</i></p>",
-        "availableAtMessage": "You can disable this behaviour in the extension's settings screen.",
-        "category": "Extension",
-        "nature": "Status",
-        "status": "Unocked",
-        "isCost": false,
-        "image": "mercy",
-        "id": 777_777_777,
+        allowedOn: "Character",
+        qualityId: 777_777_777,
+        qualityName: "Quality of Life",
+        tooltip:
+            "This storylet was made persistent by 'Small Mercies'.<p class='tooltip__secondary-description'><i>You can disable this behaviour in the extension settings screen.</i></p>",
+        availableAtMessage: "You can disable this behaviour in the extension's settings screen.",
+        category: "Extension",
+        nature: "Status",
+        status: "Unocked",
+        isCost: false,
+        image: "mercy",
+        id: 777_777_777,
     };
 
     applySettings(settings: SettingsObject): void {
@@ -43,14 +44,14 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
 
         for (const storylet of response.storylets) {
             if (storylet.category !== "Premium") {
-                continue
+                continue;
             }
 
             if (IGNORED_ZEE_STORYLET_IDS.includes(storylet.id)) {
                 continue;
             }
 
-            storylet.deckType = "Persistent"
+            storylet.deckType = "Persistent";
             storylet.qualityRequirements.push(this.SMALL_MERCIES_MOVED_QUALITY);
 
             persistedStorylets.push(storylet.id);
@@ -63,7 +64,7 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
 
         if (persistedStorylets.length == 0) {
             // No storylets were persisted, no need to do modify the list of seen ones.
-            return
+            return;
         }
 
         const serializedHiddenIds = localStorage.hidden_storylets;
@@ -95,7 +96,7 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
     linkState(state: GameStateController): void {
         const settingUpdater = (state: GameState) => {
             this.localSettingId = state.location.setting.settingId;
-        }
+        };
 
         state.onLocationChanged(settingUpdater);
         state.onUserDataLoaded(settingUpdater);

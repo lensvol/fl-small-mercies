@@ -1,7 +1,7 @@
 import {GameStateController} from "../game_state.js";
 import {SettingsObject} from "../settings.js";
 import {IMutationAware, IStateAware} from "./base.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 const DISCRETE_SIDEBAR_QUALITIES = ["Notability", "Influence", "Bizarre", "Dreaded", "Respectable", "Irrigo", "A Turncoat", "Moonlit"];
 
@@ -73,8 +73,7 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
     }
 
     private shouldBeHidden(qualityName: string) {
-        return (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName)) ||
-            (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName));
+        return (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName)) || (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName));
     }
 
     linkState(state: GameStateController): void {

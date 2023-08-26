@@ -1,4 +1,4 @@
-import { FLApiInterceptor } from "./api_interceptor.js";
+import {FLApiInterceptor} from "./api_interceptor.js";
 
 const API_ROOT_URL = "https://api.fallenlondon.com/api";
 
@@ -20,7 +20,7 @@ export class FLApiClient {
                 Authorization: `Bearer ${this.authToken}`,
                 "Content-Type": "application/json",
             },
-        }
+        };
 
         if (method === "POST") {
             // @ts-ignore: I don't know how to make TS happy here
@@ -30,8 +30,8 @@ export class FLApiClient {
         const promise = fetch(`${API_ROOT_URL}${uri}`, args);
 
         return promise.then((response) => {
-            return response.json()
-        })
+            return response.json();
+        });
     }
 
     public shareToProfile(contentKey: number, image?: string): Promise<any> {
@@ -40,15 +40,14 @@ export class FLApiClient {
             contentKey: contentKey,
             image: image ?? "snowflake",
             message: "Hello, world!",
-        })
+        });
     }
 
     public myself() {
-        return this.callApi("GET", "/character/myself", {})
+        return this.callApi("GET", "/character/myself", {});
     }
 
     public goBack() {
-        return this.callApi("POST", "/storylet/goback", {})
+        return this.callApi("POST", "/storylet/goback", {});
     }
-
 }

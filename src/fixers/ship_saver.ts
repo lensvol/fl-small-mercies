@@ -1,7 +1,7 @@
-import { INetworkAware } from "./base.js";
-import { SettingsObject } from "../settings.js";
-import { FLApiInterceptor } from "../api_interceptor.js";
-import { IBeginStoryletRequest } from "../interfaces.js";
+import {INetworkAware} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {FLApiInterceptor} from "../api_interceptor.js";
+import {IBeginStoryletRequest} from "../interfaces.js";
 
 const PUT_TO_ZEE_STORYLET_ID = 335704;
 
@@ -9,17 +9,17 @@ export class ShipSaverFixer implements INetworkAware {
     private disableSaleOption = false;
     // FIXME: Re-implement using QualityRequirement component
     private SMALL_MERCIES_LOCKED_QUALITY = {
-        "allowedOn": "Character",
-        "qualityId": 777_777_777,
-        "qualityName": "Abundance of Caution",
-        "tooltip": "It is locked for your own good.",
-        "availableAtMessage": "You can re-enable this branch in the \"Small Mercies\" settings screen.",
-        "category": "Extension",
-        "nature": "Status",
-        "status": "Locked",
-        "isCost": false,
-        "image": "mercy",
-        "id": 777_777_777,
+        allowedOn: "Character",
+        qualityId: 777_777_777,
+        qualityName: "Abundance of Caution",
+        tooltip: "It is locked for your own good.",
+        availableAtMessage: 'You can re-enable this branch in the "Small Mercies" settings screen.',
+        category: "Extension",
+        nature: "Status",
+        status: "Locked",
+        isCost: false,
+        image: "mercy",
+        id: 777_777_777,
     };
 
     applySettings(settings: SettingsObject): void {

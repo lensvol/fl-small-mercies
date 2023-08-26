@@ -1,7 +1,7 @@
-import { IMutationAware, IStateAware } from "./base.js";
-import { SettingsObject } from "../settings.js";
-import { GameStateController } from "../game_state";
-import { getSingletonByClassName } from "../utils.js";
+import {IMutationAware, IStateAware} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {GameStateController} from "../game_state";
+import {getSingletonByClassName} from "../utils.js";
 
 const PENNY_QUALITY_ID = 22390;
 const SCRIP_QUALITY_ID = 125025;
@@ -36,7 +36,7 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
 
             if (quality.qualityId === PENNY_QUALITY_ID && this.echoesDisplay) {
                 actualDisplay = this.echoesDisplay;
-                quantity = (current / 100);
+                quantity = current / 100;
             }
 
             if (quality.level === SCRIP_QUALITY_ID && this.scripDisplay) {

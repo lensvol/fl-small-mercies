@@ -39,7 +39,7 @@ export class AutoScrollFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const mediaRoot = getSingletonByClassName(node,"media--root");
+        const mediaRoot = getSingletonByClassName(node, "media--root");
         if (!mediaRoot) {
             return;
         }

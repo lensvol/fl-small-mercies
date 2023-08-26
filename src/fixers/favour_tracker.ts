@@ -1,7 +1,7 @@
-import { IMutationAware, IStateAware } from "./base.js";
-import { SettingsObject } from "../settings.js";
-import { GameStateController } from "../game_state.js";
-import { getSingletonByClassName } from "../utils.js";
+import {IMutationAware, IStateAware} from "./base.js";
+import {SettingsObject} from "../settings.js";
+import {GameStateController} from "../game_state.js";
+import {getSingletonByClassName} from "../utils.js";
 
 // Mapping of favour name to its respective image
 const FAVOURS = new Map([
@@ -110,7 +110,6 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
             qualityDisplay.style.cssText = "text-align: left";
         }
     }
-
 
     private createFavourDisplay(title: string, icon: string, initialValue: number): HTMLElement {
         const li = document.createElement("li");

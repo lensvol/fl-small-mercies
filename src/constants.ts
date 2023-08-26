@@ -53,7 +53,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             track_shop_transactions: {
                 description: "Update relevant currencies on shop transactions.",
                 default: true,
-            }
+            },
         },
     },
     {
@@ -110,7 +110,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             persistent_premium: {
                 description: 'Move gold-framed storylets into "Fifth City Stories".',
                 default: false,
-            }
+            },
         },
     },
     {

@@ -1,9 +1,9 @@
-import { SettingsObject } from "../settings.js";
-import { INetworkAware, IStateAware } from "./base.js";
-import { DO_NOT_CARE, FLApiInterceptor, OverridenResponse } from "../api_interceptor.js";
-import { Branch, Storylet } from "../game_components.js";
-import { GameStateController } from "../game_state.js";
-import { IChooseBranchRequest } from "../interfaces.js";
+import {SettingsObject} from "../settings.js";
+import {INetworkAware, IStateAware} from "./base.js";
+import {DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor.js";
+import {Branch, Storylet} from "../game_components.js";
+import {GameStateController} from "../game_state.js";
+import {IChooseBranchRequest} from "../interfaces.js";
 
 const FAKE_BRANCH_ID_THRESHOLD = 77_000_000;
 const FAKE_BRANCH_ID_CEILING = 87_000_000;
@@ -96,13 +96,13 @@ const DANGEROUS_BRANCHES = [
 
 const CHOICE_HAS_BEEN_MADE_TEXT = "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
 
-const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" +
-    "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
+const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" + "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
 
-const JOHN_WICK_QUOTE_TEXT: string = "<i>" +
-    "\"Have you thought this through? I mean, chewed down to the bone? You got out once. You dip so much " +
+const JOHN_WICK_QUOTE_TEXT: string =
+    "<i>" +
+    '"Have you thought this through? I mean, chewed down to the bone? You got out once. You dip so much ' +
     "as a pinky back into this pond... you may well find something reaches out... and drags you back " +
-    "into its depths.\"</i><br><br><b><i>\"Small Mercies\" extension has detected that you chose a branch which may cost you " +
+    'into its depths."</i><br><br><b><i>"Small Mercies" extension has detected that you chose a branch which may cost you ' +
     "actions and/or resources if played unintentionally. Do you really want to do this?</i></b>";
 
 export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
@@ -142,14 +142,8 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
                 .category("SinisterZee");
 
             if (DANGEROUS_BRANCHES.includes(branchRequest.branchId)) {
-                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + branchRequest.branchId, "YES!")
-                    .description(CHOICE_HAS_BEEN_MADE_TEXT)
-                    .image("well")
-                    .actionCost(0);
-                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No.")
-                    .description(RAINCHECK_TEXT)
-                    .image("eye")
-                    .actionCost(0);
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + branchRequest.branchId, "YES!").description(CHOICE_HAS_BEEN_MADE_TEXT).image("well").actionCost(0);
+                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No.").description(RAINCHECK_TEXT).image("eye").actionCost(0);
 
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);

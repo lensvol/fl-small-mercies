@@ -1,10 +1,10 @@
-import { IUserResponse } from "./interfaces.js";
+import {IUserResponse} from "./interfaces.js";
 
 type AjaxMethod = (method: string, url: string, async: boolean) => any;
 
 interface IModifiedAjax {
-    _requestData: Record<string, unknown>,
-    _targetUrl: string,
+    _requestData: Record<string, unknown>;
+    _targetUrl: string;
 }
 
 type AugmentedXMLHttpRequest = XMLHttpRequest & IModifiedAjax;
@@ -50,7 +50,7 @@ export function setFakeXhrResponse(request: XMLHttpRequest | IModifiedAjax, stat
 export class FLApiInterceptor {
     private static instance: FLApiInterceptor;
 
-    private constructor() { }
+    private constructor() {}
 
     public static getInstance(): FLApiInterceptor {
         if (!FLApiInterceptor.instance) {
@@ -142,8 +142,6 @@ export class FLApiInterceptor {
             for (const handler of listeners) {
                 handler(request, resultingResponse);
             }
-
-
         } catch (error) {
             console.error(`Error caught when running listener for ${uri}:`, error);
             return response;
@@ -178,7 +176,7 @@ export class FLApiInterceptor {
     }
 
     private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: IModifiedAjax, data: Record<string, unknown>) => HandlerResult): AjaxMethod {
-        return function (this: AugmentedXMLHttpRequest,...args) {
+        return function (this: AugmentedXMLHttpRequest, ...args) {
             if (!this._targetUrl.includes("api.fallenlondon.com")) {
                 return original_function.apply(this, args);
             }
@@ -191,7 +189,7 @@ export class FLApiInterceptor {
                 return;
             }
 
-            if  (result == SPECIAL_HANDLING) {
+            if (result == SPECIAL_HANDLING) {
                 return;
             }
 

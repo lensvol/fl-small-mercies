@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base.js";
 import {SettingsObject} from "../settings.js";
-import { getSingletonByClassName } from "../utils.js";
+import {getSingletonByClassName} from "../utils.js";
 
 export class SingleItemIconFixer implements IMutationAware {
     private hideSingleItemIcon = false;
@@ -14,7 +14,7 @@ export class SingleItemIconFixer implements IMutationAware {
             return false;
         }
 
-        return getSingletonByClassName(node,"possessions") !== null;
+        return getSingletonByClassName(node, "possessions") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {
