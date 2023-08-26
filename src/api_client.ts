@@ -52,20 +52,19 @@ export class FLApiClient {
     }
 
     public getStorylet() {
-        return this.callApi("POST", "/storylet", {})
+        return this.callApi("POST", "/storylet", {});
     }
 
     public chooseBranch(branchId: number) {
         return this.callApi("POST", "/storylet/choosebranch", {
             branchId: branchId,
             secondChanceIds: [],
-        })
+        });
     }
 
     public beginStorylet(storyletId: number) {
         return this.callApi("POST", "/storylet/begin", {
             eventId: storyletId,
-        })
+        });
     }
-
 }
