@@ -30,12 +30,12 @@ export class ShipSaverFixer implements INetworkAware {
     linkNetworkTools(interceptor: FLApiInterceptor): void {
         interceptor.onResponseReceived("/api/storylet/begin", (request, response) => {
             if (!this.disableSaleOption) {
-                return null;
+                return;
             }
 
             const beginRequest = request as unknown as IBeginStoryletRequest;
             if (beginRequest.eventId !== PUT_TO_ZEE_STORYLET_ID) {
-                return null;
+                return;
             }
 
             for (const branch of response.storylet.childBranches) {
@@ -49,23 +49,21 @@ export class ShipSaverFixer implements INetworkAware {
 
         interceptor.onResponseReceived("/api/storylet", (_request, response) => {
             if (!this.disableSaleOption) {
-                return null;
+                return;
             }
 
             if (response.phase != "In") {
-                return null;
+                return;
             }
 
             if (response.storylet.id !== PUT_TO_ZEE_STORYLET_ID) {
-                return null;
+                return;
             }
 
-            const clonedResponse = structuredClone(response);
-            for (const branch of clonedResponse.storylet.childBranches) {
+            for (const branch of response.storylet.childBranches) {
                 if (branch.name === "Get rid of your current ship") {
                     branch.qualityLocked = true;
                     branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
-                    return clonedResponse;
                 }
             }
         });

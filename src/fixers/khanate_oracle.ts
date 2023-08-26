@@ -61,7 +61,7 @@ export class KhanateOracleFixer implements INetworkAware {
                 }
             }
 
-            return response;
+            return;
         });
     }
 }

@@ -135,13 +135,15 @@ export class FLApiInterceptor {
     }
 
     private triggerResponseListeners(uri: string, request: any, response: any): any {
-        let resultingResponse = response;
+        let resultingResponse = structuredClone(response);
 
         try {
             const listeners = this.responseListeners.get(uri) || [];
             for (const handler of listeners) {
-                resultingResponse = handler(request, resultingResponse) || resultingResponse;
+                handler(request, resultingResponse);
             }
+
+
         } catch (error) {
             console.error(`Error caught when running listener for ${uri}:`, error);
             return response;
