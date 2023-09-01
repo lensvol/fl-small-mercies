@@ -13,6 +13,10 @@ const STORYLET_TO_BRANCH_SHORTCUTS: Map<number, number> = new Map([
     [330284, 242571],
     // Stop by your Laboratory -> Go on in
     [321218, 236273],
+    // The Rat Market -> Enter the Rat Market again
+    [343815, 253288],
+    // Leave the Rat Market -> Back to the Flit
+    [343819, 252247],
 ]);
 
 export class SpaceShortcutFixer implements INetworkAware {
