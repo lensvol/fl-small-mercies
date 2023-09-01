@@ -27,11 +27,19 @@ export class FLApiClient {
             args.body = JSON.stringify(requestData);
         }
 
-        const promise = fetch(`${API_ROOT_URL}${uri}`, args);
+        const endpointUrl = `${API_ROOT_URL}${uri}`;
 
-        return promise.then((response) => {
-            return response.json();
-        });
+        return fetch(endpointUrl, args)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                /*
+                 FIXME: This is ugly as hell and probably carries performance hit, but I will get to it
+                 during the next iteration of the refactoring process.
+                 */
+                this.apiInterceptor.processResponse(endpointUrl, requestData, JSON.stringify(responseJson));
+
+                return responseJson;
+            });
     }
 
     public shareToProfile(contentKey: number, image?: string): Promise<any> {
