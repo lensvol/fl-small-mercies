@@ -76,7 +76,7 @@ export class FLApiInterceptor {
         return null;
     }
 
-    private processResponse(fullUrl: string, originalRequest: any, responseText: string): string {
+    public processResponse(fullUrl: string, originalRequest: any, responseText: string): string {
         const url = new URL(fullUrl);
 
         if (!this.responseListeners.has(url.pathname)) {
