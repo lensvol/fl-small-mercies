@@ -40,7 +40,7 @@ export class ShopPricesFixer implements IMutationAware {
 
                     if (this.displayPriceTotals) {
                         const sellButton = element.querySelector("button.js-bazaar-sell");
-                        if (!sellButton || sellButton.classList.contains("flsm-has-listener")) {
+                        if (!sellButton || sellButton.classList.contains("flsm-has-listener") || sellButton.textContent === "Buy") {
                             return;
                         }
                         this.installHoverListener(sellButton, priceField);
