@@ -10,10 +10,10 @@ export class UnknownUser {}
 export class UnknownCharacter {}
 
 export enum StoryletPhases {
-    Available,
-    In,
-    End,
-    Unknown,
+    Available = "Available",
+    In = "In",
+    End = "End",
+    Unknown = "<UNKNOWN>",
 }
 
 enum StateChangeTypes {
