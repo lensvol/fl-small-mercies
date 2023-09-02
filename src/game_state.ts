@@ -128,6 +128,10 @@ export class GameState {
         return existingCategory.get(name);
     }
 
+    public hasQuality(category: string, name: string): boolean {
+        return this.getQuality(category, name) != undefined;
+    }
+
     public setQuality(categoryName: string, qualityName: string, quality: Quality) {
         if (!this.qualities.has(categoryName)) {
             this.qualities.set(categoryName, new Map());
