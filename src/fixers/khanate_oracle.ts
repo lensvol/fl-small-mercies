@@ -47,7 +47,9 @@ export class KhanateOracleFixer implements INetworkAware {
             }
 
             if (response.messages && KHANATE_TIME_BRANCHES.includes(request.branchId)) {
-                const airsOfKhanateMessage = response.messages.find((m: any) => m.type == "QualityExplicitlySetMessage" && m.possession.name == "Airs of the Khanate");
+                const airsOfKhanateMessage = response.messages.find(
+                    (m: any) => m.type == "QualityExplicitlySetMessage" && m.possession.name == "Airs of the Khanate"
+                );
 
                 if (airsOfKhanateMessage) {
                     const prospect = this.determineProspect(airsOfKhanateMessage.possession.level);

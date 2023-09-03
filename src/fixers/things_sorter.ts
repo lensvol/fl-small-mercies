@@ -46,8 +46,12 @@ function findAndSortIcons(node: Element, order: number[]) {
             const obj1 = i1 as HTMLElement;
             const obj2 = i2 as HTMLElement;
 
-            const pos1 = order.findIndex((objId) => objId == parseInt(obj1.dataset.qualityId || obj1.dataset.branchId || "0"));
-            const pos2 = order.findIndex((objId) => objId == parseInt(obj2.dataset.qualityId || obj2.dataset.branchId || "0"));
+            const pos1 = order.findIndex(
+                (objId) => objId == parseInt(obj1.dataset.qualityId || obj1.dataset.branchId || "0")
+            );
+            const pos2 = order.findIndex(
+                (objId) => objId == parseInt(obj2.dataset.qualityId || obj2.dataset.branchId || "0")
+            );
             return pos1 - pos2;
         })
         .map((icon) => icon.parentElement);

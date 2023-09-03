@@ -90,7 +90,16 @@ export class Quality {
     cap: number;
     nature: string;
 
-    constructor(qualityId: number, category: string, name: string, effectiveLevel: number, level: number, image: string, cap: number, nature: string) {
+    constructor(
+        qualityId: number,
+        category: string,
+        name: string,
+        effectiveLevel: number,
+        level: number,
+        image: string,
+        cap: number,
+        nature: string
+    ) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
@@ -195,7 +204,16 @@ export class GameStateController {
             existingQuality.level = level;
             return [existingQuality, previousLevel];
         } else {
-            const quality = new Quality(qualityId, categoryName, qualityName, effectiveLevel, level, image, cap, nature);
+            const quality = new Quality(
+                qualityId,
+                categoryName,
+                qualityName,
+                effectiveLevel,
+                level,
+                image,
+                cap,
+                nature
+            );
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
         }
@@ -236,7 +254,16 @@ export class GameStateController {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
+                this.upsertQuality(
+                    thing.id,
+                    thing.category,
+                    thing.name,
+                    thing.effectiveLevel,
+                    thing.level,
+                    thing.image,
+                    thing.cap || 0,
+                    thing.nature
+                );
             }
         }
 
@@ -280,7 +307,11 @@ export class GameStateController {
     public parseChooseBranchResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const message of response.messages || []) {
-            if (message.type === "StandardQualityChangeMessage" || message.type === "PyramidQualityChangeMessage" || message.type === "QualityExplicitlySetMessage") {
+            if (
+                message.type === "StandardQualityChangeMessage" ||
+                message.type === "PyramidQualityChangeMessage" ||
+                message.type === "QualityExplicitlySetMessage"
+            ) {
                 const thing = message.possession;
                 const [quality, previousLevel] = this.upsertQuality(
                     thing.id,
@@ -332,7 +363,16 @@ export class GameStateController {
     public parseEquipResponse(response: Record<string, unknown>) {
         // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const thing of response.changedPossessions) {
-            const [quality, previous] = this.upsertQuality(thing.id, thing.category, thing.name, thing.effectiveLevel, thing.level, thing.image, thing.cap || 0, thing.nature);
+            const [quality, previous] = this.upsertQuality(
+                thing.id,
+                thing.category,
+                thing.name,
+                thing.effectiveLevel,
+                thing.level,
+                thing.image,
+                thing.cap || 0,
+                thing.nature
+            );
 
             if (quality.level != previous) {
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
@@ -414,7 +454,9 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.UserDataLoaded].push(handler);
     }
 
-    public onQualityChanged(handler: (g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void) {
+    public onQualityChanged(
+        handler: (g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void
+    ) {
         this.changeListeners[StateChangeTypes.QualityChanged].push(handler);
     }
 
@@ -447,7 +489,9 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
         interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipResponse(response));
         interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipResponse(response));
-        interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) => this.parseChooseBranchResponse(response));
+        interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) =>
+            this.parseChooseBranchResponse(response)
+        );
         interceptor.onResponseReceived("/api/storylet", (_, response) => this.parseStoryletResponse(response));
         interceptor.onResponseReceived("/api/storylet/begin", (_, response) => this.parseStoryletResponse(response));
         interceptor.onResponseReceived("/api/storylet/goback", (_, response) => this.parseStoryletResponse(response));

@@ -209,9 +209,15 @@ class FLSettingsFrontend {
                 }
 
                 if (isMultipleChoice(descriptor)) {
-                    const choicePanel = this.createMultipleChoice(descriptor.description, settingId, descriptor.choices);
+                    const choicePanel = this.createMultipleChoice(
+                        descriptor.description,
+                        settingId,
+                        descriptor.choices
+                    );
 
-                    const radios: NodeListOf<HTMLInputElement> = choicePanel.querySelectorAll(`input[name='${settingId}']`);
+                    const radios: NodeListOf<HTMLInputElement> = choicePanel.querySelectorAll(
+                        `input[name='${settingId}']`
+                    );
                     for (const radio of radios) {
                         if (radio.value == this.settings[settingId]) {
                             radio.setAttribute("checked", "");
@@ -242,7 +248,9 @@ class FLSettingsFrontend {
                     const node = mutation.addedNodes[n];
 
                     if (node.nodeName.toLowerCase() === "div") {
-                        const accountSections = (node as HTMLElement).querySelector("ul[aria-label='Account sections']");
+                        const accountSections = (node as HTMLElement).querySelector(
+                            "ul[aria-label='Account sections']"
+                        );
                         if (accountSections) {
                             const existingExtensionsBtn = accountSections.querySelector("button[id='tab--Extensions']");
                             if (!existingExtensionsBtn) {
@@ -253,7 +261,9 @@ class FLSettingsFrontend {
                                 }
 
                                 const customSettingsButton = this.createSettingsButton();
-                                customSettingsButton.addEventListener("click", (_e: Event) => this.prepareForCustomSettings());
+                                customSettingsButton.addEventListener("click", (_e: Event) =>
+                                    this.prepareForCustomSettings()
+                                );
                                 accountSections.insertBefore(customSettingsButton, accountSections.firstChild);
                             }
                         }
@@ -295,7 +305,9 @@ class FLSettingsFrontend {
                 }
 
                 if (isMultipleChoice(descriptor)) {
-                    const radios: NodeListOf<HTMLInputElement> = rootNode.querySelectorAll(`input[name='${settingId}']`);
+                    const radios: NodeListOf<HTMLInputElement> = rootNode.querySelectorAll(
+                        `input[name='${settingId}']`
+                    );
                     for (const radio of radios) {
                         if (radio.checked) {
                             this.settings[settingId] = radio.value;
@@ -371,7 +383,9 @@ class FLSettingsBackend {
             chrome.storage.local.get(["settings"], (result) => {
                 if (chrome.runtime.lastError) {
                     debug("Could not load settings from DB, falling back to defaults.");
-                    this.getFallenLondonTabs().then((tabs) => this.sendStateToTabs(tabs, createDefaultSettings(this.schema)));
+                    this.getFallenLondonTabs().then((tabs) =>
+                        this.sendStateToTabs(tabs, createDefaultSettings(this.schema))
+                    );
                 } else {
                     this.getFallenLondonTabs().then((tabs) => this.sendStateToTabs(tabs, result.settings));
                 }

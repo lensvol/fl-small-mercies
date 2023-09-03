@@ -54,7 +54,9 @@ class CurrencyDisplay {
             return;
         }
 
-        const currencyNames = currencyList.querySelectorAll("li[class='item'] div[class='item__desc'] span[class='item__name']");
+        const currencyNames = currencyList.querySelectorAll(
+            "li[class='item'] div[class='item__desc'] span[class='item__name']"
+        );
         // TODO: Re-implement with .find()
         for (const display of currencyNames) {
             if (display.textContent === this.name || display.textContent === this.title) {
@@ -142,9 +144,18 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
-        this.currencyToDisplay.set("Assortment of Khaganian Coinage", new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage"));
-        this.currencyToDisplay.set("Justificande Coin", new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "khaganian", "Justificande Coin"));
-        this.currencyToDisplay.set("Memory of a Tale", new CurrencyDisplay("Memory of a Tale", "book", "khaganian", "Memory of a Tale"));
+        this.currencyToDisplay.set(
+            "Assortment of Khaganian Coinage",
+            new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage")
+        );
+        this.currencyToDisplay.set(
+            "Justificande Coin",
+            new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "khaganian", "Justificande Coin")
+        );
+        this.currencyToDisplay.set(
+            "Memory of a Tale",
+            new CurrencyDisplay("Memory of a Tale", "book", "khaganian", "Memory of a Tale")
+        );
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",

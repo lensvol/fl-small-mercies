@@ -94,9 +94,12 @@ const DANGEROUS_BRANCHES = [
     // 7702,  /* Your plant is singing */
 ];
 
-const CHOICE_HAS_BEEN_MADE_TEXT = "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
+const CHOICE_HAS_BEEN_MADE_TEXT =
+    "Okay, well, sure.<br><br><b><i>Select this option to proceed with your original choice.</i></b>";
 
-const RAINCHECK_TEXT = "That's okay, no pressure, time is on your side. Rain check?<br><br>" + "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
+const RAINCHECK_TEXT =
+    "That's okay, no pressure, time is on your side. Rain check?<br><br>" +
+    "<b><i>Choosing this option will take you back to the original storylet.</i></b>";
 
 const JOHN_WICK_QUOTE_TEXT: string =
     "<i>" +
@@ -142,8 +145,14 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
                 .category("SinisterZee");
 
             if (DANGEROUS_BRANCHES.includes(branchRequest.branchId)) {
-                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + branchRequest.branchId, "YES!").description(CHOICE_HAS_BEEN_MADE_TEXT).image("well").actionCost(0);
-                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No.").description(RAINCHECK_TEXT).image("eye").actionCost(0);
+                const yesBranch = new Branch(FAKE_BRANCH_ID_THRESHOLD + branchRequest.branchId, "YES!")
+                    .description(CHOICE_HAS_BEEN_MADE_TEXT)
+                    .image("well")
+                    .actionCost(0);
+                const noBranch = new Branch(CONFIRMATION_BRANCH_ID, "...No.")
+                    .description(RAINCHECK_TEXT)
+                    .image("eye")
+                    .actionCost(0);
 
                 confirmationStorylet.addBranch(noBranch);
                 confirmationStorylet.addBranch(yesBranch);

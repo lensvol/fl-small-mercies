@@ -26,7 +26,9 @@ export class ThousandSeparatorFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const echoesIndicator = node.querySelector("div[class*='sidebar'] ul li div div[class='item__value'] div[class*='item__price']");
+        const echoesIndicator = node.querySelector(
+            "div[class*='sidebar'] ul li div div[class='item__value'] div[class*='item__price']"
+        );
         if (echoesIndicator && echoesIndicator.textContent != null) {
             echoesIndicator.textContent = numberWithCommas(echoesIndicator.textContent);
             this.currencyObserver.observe(echoesIndicator, {subtree: true, characterData: true});

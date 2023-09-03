@@ -58,7 +58,9 @@ export class SpaceShortcutFixer implements INetworkAware, IStateAware {
         if (response.phase === StoryletPhases.Available) {
             response.storylets.push(this.createBackToCityStorylet());
         } else if (response.phase === StoryletPhases.In) {
-            response.storylet.childBranches = response.storylet.childBranches.filter((branch: Record<string, any>) => branch.id !== 237415 && branch.id !== 236471);
+            response.storylet.childBranches = response.storylet.childBranches.filter(
+                (branch: Record<string, any>) => branch.id !== 237415 && branch.id !== 236471
+            );
         }
     }
 

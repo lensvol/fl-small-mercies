@@ -11,7 +11,8 @@ function numberWithCommas(x: string): string {
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
 }
 
-const ECHO_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']";
+const ECHO_DISPLAY_SELECTOR =
+    "li[class='item'] > div[class='item__desc'] > div[class='item__value'] > div[class*='price']";
 const SCRIP_DISPLAY_SELECTOR = "li[class='item'] > div[class='item__desc'] > div[class*='scrip']";
 
 export class ShopTransactionFixer implements IStateAware, IMutationAware {

@@ -35,7 +35,8 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             sort_dreams: {
-                description: "Sort advanced dreams (Stormy-Eyed, Seeing in Apocyan, Haunted by Stairs) below their base qualities.",
+                description:
+                    "Sort advanced dreams (Stormy-Eyed, Seeing in Apocyan, Haunted by Stairs) below their base qualities.",
                 default: true,
             },
             sort_neathbow_boxes: {

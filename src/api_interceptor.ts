@@ -62,10 +62,15 @@ export class FLApiInterceptor {
 
     private currentToken = "";
     private responseListeners: Map<string, ((request: any, response: any) => any)[]> = new Map();
-    private requestListeners: Map<string, ((request: IModifiedAjax, data: Record<string, unknown>) => any)[]> = new Map();
+    private requestListeners: Map<string, ((request: IModifiedAjax, data: Record<string, unknown>) => any)[]> =
+        new Map();
     private tokenChangeListeners: ((oldToken: string, newToken: string) => void)[] = [];
 
-    private processRequest(fullUrl: string, originalRequest: IModifiedAjax, requestData: Record<string, unknown>): any | null {
+    private processRequest(
+        fullUrl: string,
+        originalRequest: IModifiedAjax,
+        requestData: Record<string, unknown>
+    ): any | null {
         const url = new URL(fullUrl);
 
         if (this.requestListeners.has(url.pathname)) {
@@ -155,7 +160,10 @@ export class FLApiInterceptor {
         }
     }
 
-    private installOpenBypass(original_function: AjaxMethod, handler: (uri: string, request: any, responseText: string) => any): AjaxMethod {
+    private installOpenBypass(
+        original_function: AjaxMethod,
+        handler: (uri: string, request: any, responseText: string) => any
+    ): AjaxMethod {
         return function (this: AugmentedXMLHttpRequest, _method, url, _async) {
             this._targetUrl = url;
             this.addEventListener("readystatechange", (event) => {
@@ -175,7 +183,10 @@ export class FLApiInterceptor {
         };
     }
 
-    private installSendBypass(original_function: AjaxMethod, handler: (fullUrl: string, request: IModifiedAjax, data: Record<string, unknown>) => HandlerResult): AjaxMethod {
+    private installSendBypass(
+        original_function: AjaxMethod,
+        handler: (fullUrl: string, request: IModifiedAjax, data: Record<string, unknown>) => HandlerResult
+    ): AjaxMethod {
         return function (this: AugmentedXMLHttpRequest, ...args) {
             if (!this._targetUrl.includes("api.fallenlondon.com")) {
                 return original_function.apply(this, args);
@@ -203,9 +214,15 @@ export class FLApiInterceptor {
 
     public install() {
         // @ts-ignore: There is hell and then there is typing other people's API.
-        XMLHttpRequest.prototype.open = this.installOpenBypass(XMLHttpRequest.prototype.open, this.processResponse.bind(this));
+        XMLHttpRequest.prototype.open = this.installOpenBypass(
+            XMLHttpRequest.prototype.open,
+            this.processResponse.bind(this)
+        );
         // @ts-ignore: There is hell and then there is typing other people's API.
-        XMLHttpRequest.prototype.send = this.installSendBypass(XMLHttpRequest.prototype.send, this.processRequest.bind(this));
+        XMLHttpRequest.prototype.send = this.installSendBypass(
+            XMLHttpRequest.prototype.send,
+            this.processRequest.bind(this)
+        );
 
         // Acquire token stored by FL UI itself
         this.currentToken = localStorage.access_token || sessionStorage.access_token || "";
