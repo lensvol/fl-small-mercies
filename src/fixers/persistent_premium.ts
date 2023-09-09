@@ -3,6 +3,8 @@ import {SettingsObject} from "../settings.js";
 import {FLApiInterceptor} from "../api_interceptor.js";
 import {GameState, GameStateController} from "../game_state.js";
 
+const FIFTH_CITY_SETTING_ID = 2;
+
 // For some reason, Zailing-related storylets in Wolfstack Docks are marked "Premium".
 const IGNORED_ZEE_STORYLET_IDS = [
     335704, // Put to Zee
@@ -38,6 +40,12 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
             return null;
         }
 
+        if (this.localSettingId != FIFTH_CITY_SETTING_ID) {
+            // Places outside of London rarely have move than one gold-framed
+            // storylet, and they are much less of an eyesore.
+            return null;
+        }
+
         const persistedStorylets = [];
         if (!("storylets" in response)) {
             return;
@@ -56,11 +64,6 @@ export class PersistentPremiumFixer implements INetworkAware, IStateAware {
             storylet.qualityRequirements.push(this.SMALL_MERCIES_MOVED_QUALITY);
 
             persistedStorylets.push(storylet.id);
-        }
-
-        if (this.localSettingId === -1) {
-            // We don't know the setting ID yet, so we can't modify list of seen storylets.
-            return response;
         }
 
         if (persistedStorylets.length == 0) {
