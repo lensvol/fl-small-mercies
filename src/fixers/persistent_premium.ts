@@ -10,6 +10,7 @@ const IGNORED_ZEE_STORYLET_IDS = [
     335704, // Put to Zee
     339490, // A Return to Terra Firma
     339595, // A Return to Zee
+    18001, // Buying a Ship
 ];
 
 export class PersistentPremiumFixer implements INetworkAware, IStateAware {
