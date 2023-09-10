@@ -1,8 +1,8 @@
-import {SettingsObject} from "../settings.js";
+import {SettingsObject} from "../settings";
 import {IMutationAware, IStateAware} from "./base";
-import {GameState, GameStateController} from "../game_state.js";
-import {IsInSetting, OrPredicate, StateMatcher} from "../matchers.js";
-import {getSingletonByClassName} from "../utils.js";
+import {GameState, GameStateController} from "../game_state";
+import {IsInSetting, OrPredicate, StateMatcher} from "../matchers";
+import {getSingletonByClassName} from "../utils";
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();

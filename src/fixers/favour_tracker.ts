@@ -1,7 +1,7 @@
-import {IMutationAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {GameStateController} from "../game_state.js";
-import {getSingletonByClassName} from "../utils.js";
+import {IMutationAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
+import {GameStateController} from "../game_state";
+import {getSingletonByClassName} from "../utils";
 
 // Mapping of favour name to its respective image
 const FAVOURS = new Map([

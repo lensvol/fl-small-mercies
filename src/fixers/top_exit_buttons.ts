@@ -1,7 +1,7 @@
-import {IMutationAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {GameStateController, StoryletPhases} from "../game_state.js";
-import {getSingletonByClassName} from "../utils.js";
+import {IMutationAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
+import {GameStateController, StoryletPhases} from "../game_state";
+import {getSingletonByClassName} from "../utils";
 
 export class TopExitButtonsFixer implements IMutationAware, IStateAware {
     private moveExitButtonsToTop = false;

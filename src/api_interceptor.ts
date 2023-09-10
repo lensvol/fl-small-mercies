@@ -1,4 +1,4 @@
-import {IUserResponse} from "./interfaces.js";
+import {IUserResponse} from "./interfaces";
 
 type AjaxMethod = (method: string, url: string, async: boolean) => any;
 

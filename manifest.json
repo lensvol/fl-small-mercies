@@ -17,7 +17,7 @@
         "dist/css/extension.css"
       ],
       "js": [
-        "dist/content.js"
+        "dist/content-bundle.js"
       ],
       "run_at": "document_start"
     }

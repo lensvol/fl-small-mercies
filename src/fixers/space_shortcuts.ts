@@ -1,9 +1,9 @@
-import {INetworkAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING} from "../api_interceptor.js";
-import {FLApiClient} from "../api_client.js";
-import {IBeginStoryletRequest} from "../interfaces.js";
-import {GameStateController, StoryletPhases} from "../game_state.js";
+import {INetworkAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
+import {DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING} from "../api_interceptor";
+import {FLApiClient} from "../api_client";
+import {IBeginStoryletRequest} from "../interfaces";
+import {GameStateController, StoryletPhases} from "../game_state";
 
 const LEAVE_LAB_WITH_CAMP_STORYLET_ID = 322853;
 const LEAVE_LAB_WITHOUT_CAMP_STORYLET_ID = 321488;

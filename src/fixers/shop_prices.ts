@@ -1,6 +1,6 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {getSingletonByClassName} from "../utils.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
+import {getSingletonByClassName} from "../utils";
 
 function numberWithCommas(x: string): string {
     return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();

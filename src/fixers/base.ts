@@ -1,4 +1,4 @@
-import {SettingsObject} from "../settings.js";
+import {SettingsObject} from "../settings";
 import {GameStateController} from "../game_state";
 import {FLApiInterceptor} from "../api_interceptor";
 

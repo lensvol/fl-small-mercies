@@ -1,5 +1,5 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
 
 const AF_YEAR_OFFSET = 122;
 

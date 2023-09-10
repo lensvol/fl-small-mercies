@@ -1,5 +1,5 @@
-import {INetworkAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import {INetworkAware} from "./base";
+import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 
 const KHANATE_TIME_BRANCHES = [250668];

@@ -1,9 +1,9 @@
-import {SettingsObject} from "../settings.js";
-import {INetworkAware, IStateAware} from "./base.js";
-import {DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor.js";
-import {Branch, Storylet} from "../game_components.js";
-import {GameStateController} from "../game_state.js";
-import {IChooseBranchRequest} from "../interfaces.js";
+import {SettingsObject} from "../settings";
+import {INetworkAware, IStateAware} from "./base";
+import {DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor";
+import {Branch, Storylet} from "../game_components";
+import {GameStateController} from "../game_state";
+import {IChooseBranchRequest} from "../interfaces";
 
 const FAKE_BRANCH_ID_THRESHOLD = 77_000_000;
 const FAKE_BRANCH_ID_CEILING = 87_000_000;

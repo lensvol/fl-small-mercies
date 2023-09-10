@@ -1,4 +1,4 @@
-import {SettingsSchema} from "./settings.js";
+import {SettingsSchema} from "./settings";
 
 const EXTENSION_NAME = "FL Small Mercies";
 const EXTENSION_ID = "FL_SM";

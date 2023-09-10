@@ -1,6 +1,6 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {getSingletonByClassName} from "../utils.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
+import {getSingletonByClassName} from "../utils";
 
 const LIGHT_TURQUOISE_RGB = "#92d1d5";
 

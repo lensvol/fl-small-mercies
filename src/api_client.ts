@@ -1,4 +1,4 @@
-import {FLApiInterceptor} from "./api_interceptor.js";
+import {FLApiInterceptor} from "./api_interceptor";
 
 const API_ROOT_URL = "https://api.fallenlondon.com/api";
 

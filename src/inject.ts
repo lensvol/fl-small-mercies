@@ -1,9 +1,9 @@
-import {FLSettingsFrontend} from "./settings.js";
-import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants.js";
-import AVAILABLE_FIXERS from "./fixers/index.js";
-import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base.js";
-import {GameStateController} from "./game_state.js";
-import {FLApiInterceptor} from "./api_interceptor.js";
+import {FLSettingsFrontend} from "./settings";
+import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants";
+import AVAILABLE_FIXERS from "./fixers/index";
+import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base";
+import {GameStateController} from "./game_state";
+import {FLApiInterceptor} from "./api_interceptor";
 
 const fixers: IMercyFixer[] = AVAILABLE_FIXERS.map((fixer) => new fixer());
 

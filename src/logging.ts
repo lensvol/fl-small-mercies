@@ -1,4 +1,4 @@
-import {EXTENSION_NAME} from "./constants.js";
+import {EXTENSION_NAME} from "./constants";
 
 function debug(message: string) {
     console.debug(`[${EXTENSION_NAME}] ${message}`);

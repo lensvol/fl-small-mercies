@@ -1,7 +1,7 @@
-import {INetworkAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {FLApiInterceptor} from "../api_interceptor.js";
-import {IBeginStoryletRequest} from "../interfaces.js";
+import {INetworkAware} from "./base";
+import {SettingsObject} from "../settings";
+import {FLApiInterceptor} from "../api_interceptor";
+import {IBeginStoryletRequest} from "../interfaces";
 
 const PUT_TO_ZEE_STORYLET_ID = 335704;
 

@@ -1,7 +1,7 @@
-import {GameStateController} from "../game_state.js";
-import {SettingsObject} from "../settings.js";
-import {IMutationAware, IStateAware} from "./base.js";
-import {getSingletonByClassName} from "../utils.js";
+import {GameStateController} from "../game_state";
+import {SettingsObject} from "../settings";
+import {IMutationAware, IStateAware} from "./base";
+import {getSingletonByClassName} from "../utils";
 
 const DISCRETE_SIDEBAR_QUALITIES = [
     "Notability",

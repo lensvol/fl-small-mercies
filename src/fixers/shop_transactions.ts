@@ -1,7 +1,7 @@
-import {IMutationAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import {IMutationAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
 import {GameStateController} from "../game_state";
-import {getSingletonByClassName} from "../utils.js";
+import {getSingletonByClassName} from "../utils";
 
 const PENNY_QUALITY_ID = 22390;
 const SCRIP_QUALITY_ID = 125025;

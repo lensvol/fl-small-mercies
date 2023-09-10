@@ -1,8 +1,8 @@
-import {IMutationAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state.js";
-import {getSingletonByClassName} from "../utils.js";
-import {FLApiClient} from "../api_client.js";
+import {IMutationAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
+import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state";
+import {getSingletonByClassName} from "../utils";
+import {FLApiClient} from "../api_client";
 
 const SHARE_BUTTON_SELECTOR =
     "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";

@@ -1,5 +1,5 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
 
 const MYSTERIES_ORDER = [143188, 143189, 143190, 143191, 143192];
 

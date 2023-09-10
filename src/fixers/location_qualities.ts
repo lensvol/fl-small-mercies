@@ -1,6 +1,6 @@
-import {SettingsObject} from "../settings.js";
+import {SettingsObject} from "../settings";
 import {IMutationAware, IStateAware} from "./base";
-import {FLPlayerLocation, GameStateController} from "../game_state.js";
+import {FLPlayerLocation, GameStateController} from "../game_state";
 
 type LocationPredicate = (location: FLPlayerLocation) => boolean;
 

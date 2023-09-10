@@ -5,7 +5,7 @@
   "manifest_version": 3,
   "permissions": ["storage", "tabs"],
   "background": {
-    "service_worker": "dist/background.js",
+    "service_worker": "dist/background-bundle.js",
     "type": "module"
   },
   "content_scripts": [
@@ -17,7 +17,7 @@
         "dist/css/extension.css"
       ],
       "js": [
-        "dist/content.js"
+        "dist/content-bundle.js"
       ],
       "run_at": "document_start"
     }

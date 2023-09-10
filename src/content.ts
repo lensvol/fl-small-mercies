@@ -12,7 +12,7 @@ console.log(`[FL Small Mercies] Inserting interceptor...`);
 
 const script = document.createElement("script");
 script.setAttribute("type", "module");
-script.setAttribute("src", chrome.runtime.getURL("dist/inject.js"));
+script.setAttribute("src", chrome.runtime.getURL("dist/payload-bundle.js"));
 script.onload = function () {
     script.remove();
 };

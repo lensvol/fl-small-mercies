@@ -1,8 +1,8 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
 
-import {getSingletonByClassName} from "../utils.js";
-import {debug} from "../logging.js";
+import {getSingletonByClassName} from "../utils";
+import {debug} from "../logging";
 
 // Adapted from
 // https://stackoverflow.com/questions/123999/how-can-i-tell-if-a-dom-element-is-visible-in-the-current-viewport

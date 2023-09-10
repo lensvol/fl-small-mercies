@@ -1,8 +1,8 @@
-import {INetworkAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING} from "../api_interceptor.js";
-import {FLApiClient} from "../api_client.js";
-import {IChooseBranchRequest} from "../interfaces.js";
+import {INetworkAware} from "./base";
+import {SettingsObject} from "../settings";
+import {DO_NOT_CARE, FLApiInterceptor, setFakeXhrResponse, SPECIAL_HANDLING} from "../api_interceptor";
+import {FLApiClient} from "../api_client";
+import {IChooseBranchRequest} from "../interfaces";
 
 const ANOTHER_TIME_BRANCH_ID = 211150;
 

@@ -1,4 +1,4 @@
-import {GameState, StoryletPhases} from "./game_state.js";
+import {GameState, StoryletPhases} from "./game_state";
 
 interface StateMatcher {
     match(state: GameState): boolean;

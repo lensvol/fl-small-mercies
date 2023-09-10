@@ -1,7 +1,7 @@
-import {FLApiInterceptor} from "./api_interceptor.js";
-import {IShopResponse, IUserResponse} from "./interfaces.js";
-import {FLApiClient} from "./api_client.js";
-import {debug} from "./logging.js";
+import {FLApiInterceptor} from "./api_interceptor";
+import {IShopResponse, IUserResponse} from "./interfaces";
+import {FLApiClient} from "./api_client";
+import {debug} from "./logging";
 
 export const UNKNOWN = -1;
 

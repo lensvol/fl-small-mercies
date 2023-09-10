@@ -1,6 +1,6 @@
-import {IMutationAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {getSingletonByClassName} from "../utils.js";
+import {IMutationAware} from "./base";
+import {SettingsObject} from "../settings";
+import {getSingletonByClassName} from "../utils";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;

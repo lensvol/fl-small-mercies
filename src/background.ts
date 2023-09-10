@@ -1,5 +1,5 @@
-import {FLSettingsBackend} from "./settings.js";
-import {SETTINGS_SCHEMA} from "./constants.js";
+import {FLSettingsBackend} from "./settings";
+import {SETTINGS_SCHEMA} from "./constants";
 
 const settingsBackend = new FLSettingsBackend(SETTINGS_SCHEMA);
 

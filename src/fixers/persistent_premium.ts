@@ -1,7 +1,7 @@
-import {INetworkAware, IStateAware} from "./base.js";
-import {SettingsObject} from "../settings.js";
-import {FLApiInterceptor} from "../api_interceptor.js";
-import {GameState, GameStateController} from "../game_state.js";
+import {INetworkAware, IStateAware} from "./base";
+import {SettingsObject} from "../settings";
+import {FLApiInterceptor} from "../api_interceptor";
+import {GameState, GameStateController} from "../game_state";
 
 const FIFTH_CITY_SETTING_ID = 2;
 

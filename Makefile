@@ -3,7 +3,7 @@ build_dist:
 	cp src/background.html dist/background.html
 	cp -rf src/css dist/
 	cp -rf src/images dist/
-	tsc --pretty --project .
+	npx webpack
 
 clean:
 	rm -rf dist
