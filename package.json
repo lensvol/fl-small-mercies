@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "prettier --plugin-search-dir . --check ./src && eslint ./src",
-    "format": "prettier --plugin-search-dir . --write ./src"
+    "format": "prettier --plugin-search-dir . --write ./src",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,9 @@
     "eslint-config-prettier": "^8.8.0",
     "esquery": "^1.4.0",
     "prettier": "^2.8.8",
-    "ts-loader": "^9.3.1",
-    "typescript": "^4.8.4"
+    "ts-loader": "^9.4.4",
+    "typescript": "^4.9.5",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   }
 }
