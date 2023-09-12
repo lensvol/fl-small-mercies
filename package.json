@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "prettier --plugin-search-dir . --check ./src && eslint ./src",
     "format": "prettier --plugin-search-dir . --write ./src",
-    "build": "webpack"
+    "build": "webpack",
+    "autocompile": "webpack -w"
   },
   "keywords": [],
   "author": "",
