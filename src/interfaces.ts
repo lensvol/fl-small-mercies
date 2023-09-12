@@ -45,3 +45,21 @@ export interface IChooseBranchRequest {
 export interface IBeginStoryletRequest {
     eventId: number;
 }
+
+export interface ISnippet {
+    id: number;
+    title: string;
+    description: string;
+    image: string;
+}
+
+export interface IAdvert {
+    image: string;
+    altText: string;
+    url: string;
+}
+
+export interface IInfobarResponse {
+    snippets: ISnippet[];
+    advert: IAdvert;
+}
