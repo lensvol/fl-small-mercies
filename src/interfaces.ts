@@ -53,6 +53,13 @@ export interface ISnippet {
     image: string;
 }
 
+export interface ICustomSnippet {
+    author: string;
+    link: string;
+    title: string;
+    description: string;
+}
+
 export interface IAdvert {
     image: string;
     altText: string;
