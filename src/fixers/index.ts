@@ -24,6 +24,7 @@ import {ShopPricesFixer} from "./shop_prices";
 import {AnotherTimeFixer} from "./another_time";
 import {PersistentPremiumFixer} from "./persistent_premium";
 import {SpaceShortcutFixer} from "./space_shortcuts";
+import {CustomSnippetsFixer} from "./custom_snippets";
 
 export default [
     AutoScrollFixer,
@@ -52,4 +53,5 @@ export default [
     AnotherTimeFixer,
     PersistentPremiumFixer,
     SpaceShortcutFixer,
+    CustomSnippetsFixer,
 ];

@@ -117,6 +117,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Shortcut travel between Laboratory / Port / Bone Market.",
                 default: false,
             },
+            enable_custom_snippets: {
+                description: "Show community-made snippets in the right sidebar.",
+                default: false,
+            },
         },
     },
     {
@@ -173,6 +177,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             },
             display_currencies_everywhere: {
                 description: "Show indicators for additional currencies regardless of location.",
+                default: false,
+            },
+            replace_fbg_snippets: {
+                description: "Only show community-made snippets, not the FBG ones.",
                 default: false,
             },
         },
