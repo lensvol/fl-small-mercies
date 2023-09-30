@@ -58,7 +58,17 @@ export class CustomSnippetsFixer implements INetworkAware, IMutationAware {
     }
 
     augmentInterceptedSnippets(originalSnippets: ISnippet[]): ISnippet[] {
-        return [...(this.replaceDefaultSnippets ? [] : originalSnippets), ...this.customSnippets];
+        // Add custom snippets to the list of default ones (or replace it entirely if asked to).
+        return (
+            [...(this.replaceDefaultSnippets ? [] : originalSnippets), ...this.customSnippets]
+                // Shuffle the list of snippets to avoid having the same one at the top every time.
+                .map((value) => ({
+                    snippet: value,
+                    sort: Math.random(),
+                }))
+                .sort((a, b) => a.sort - b.sort)
+                .map((pair) => pair.snippet)
+        );
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
