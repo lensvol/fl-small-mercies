@@ -70,3 +70,33 @@ export interface IInfobarResponse {
     snippets: ISnippet[];
     advert: IAdvert;
 }
+
+export interface IStorylet {
+    id: number;
+    deckType: string;
+    distribution: string;
+    name: string;
+    description: string;
+    image: string;
+    teaser: string;
+    urgency: string;
+    category: string;
+    canGoBack: boolean;
+    isLocked: boolean;
+}
+
+export interface IStoryletResponse extends IApiResponse {
+    storylet: IStorylet;
+    actions: number;
+    phase: string;
+    hasUpdatedCharacter: boolean;
+    canChangeOutfit: boolean;
+}
+
+export interface IStoryletListResponse extends IApiResponse {
+    actions: number;
+    phase: string;
+    hasUpdatedCharacter: boolean;
+    canChangeOutfit: boolean;
+    storylets: IStorylet[];
+}

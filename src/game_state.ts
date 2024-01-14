@@ -1,5 +1,5 @@
 import {FLApiInterceptor} from "./api_interceptor";
-import {IShopResponse, IUserResponse} from "./interfaces";
+import {IShopResponse, IStorylet, IStoryletListResponse, IStoryletResponse, IUserResponse} from "./interfaces";
 import {FLApiClient} from "./api_client";
 import {debug} from "./logging";
 
@@ -8,6 +8,8 @@ export const UNKNOWN = -1;
 export class UnknownUser {}
 
 export class UnknownCharacter {}
+
+export class UnknownStorylet {}
 
 export enum StoryletPhases {
     Available = "Available",
@@ -20,6 +22,7 @@ enum StateChangeTypes {
     QualityChanged = "QualityChanged",
     CharacterDataLoaded = "CharacterDataLoaded",
     UserDataLoaded = "UserDataLoaded",
+    StoryletChanged = "StoryletChanged",
     StoryletPhaseChanged = "StoryletPhaseChanged",
     ActionsCountChanged = "ActionsCountChanged",
     LocationChanged = "LocationChanged",
@@ -117,6 +120,7 @@ export class GameState {
     public location: FLPlayerLocation = new FLPlayerLocation(UNKNOWN_GEO_SETTING, UNKNOWN_AREA);
 
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
+    public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
 
     public actionsLeft = 0;
 
@@ -178,6 +182,7 @@ export class GameStateController {
 
     private changeListeners: {[key in StateChangeTypes]: ((...args: any[]) => void)[]} = {
         [StateChangeTypes.ActionsCountChanged]: [],
+        [StateChangeTypes.StoryletChanged]: [],
         [StateChangeTypes.QualityChanged]: [],
         [StateChangeTypes.CharacterDataLoaded]: [],
         [StateChangeTypes.UserDataLoaded]: [],
@@ -380,19 +385,27 @@ export class GameStateController {
         }
     }
 
-    public parseStoryletResponse(response: Record<string, unknown>) {
-        if (!("phase" in response)) return;
-        // @ts-ignore: There is hell and then there is writing types for external APIs
+    public parseCurrentStoryletResponse(response: IStoryletResponse) {
+        this.state.storyletPhase = this.decodePhase(response.phase);
+        this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+
+        this.state.currentStorylet = response.storylet;
+        this.triggerListeners(StateChangeTypes.StoryletChanged);
+    }
+
+    public parseStoryletListResponse(response: IStoryletListResponse) {
         this.state.storyletPhase = this.decodePhase(response.phase);
 
-        if ("storylet" in response) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
-            this.state.storyletId = response.storylet.id;
-        } else {
-            this.state.storyletId = UNKNOWN;
-        }
-
+        this.state.currentStorylet = new UnknownStorylet();
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+    }
+
+    public parseStoryletResponse(response: any) {
+        if ("storylet" in response) {
+            this.parseCurrentStoryletResponse(response as IStoryletResponse);
+        } else {
+            this.parseStoryletListResponse(response as IStoryletListResponse);
+        }
     }
 
     public parseMapResponse(response: Record<string, unknown>) {
@@ -440,6 +453,10 @@ export class GameStateController {
                 this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
             }
         });
+    }
+
+    public onStoryletChanged(handler: (g: GameState) => void) {
+        this.changeListeners[StateChangeTypes.StoryletChanged].push(handler);
     }
 
     public onStoryletPhaseChanged(handler: (g: GameState) => void) {

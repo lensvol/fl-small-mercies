@@ -1,6 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {FLUser, GameState, GameStateController, StoryletPhases} from "../game_state";
+import {FLUser, GameState, GameStateController, StoryletPhases, UnknownStorylet} from "../game_state";
 import {getSingletonByClassName} from "../utils";
 import {FLApiClient} from "../api_client";
 
@@ -15,6 +15,7 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
     private shareClickListener: EventListener;
 
     private apiClient: FLApiClient;
+    private currentStoryletName: string = "<unknown>";
 
     constructor() {
         this.apiClient = new FLApiClient();
@@ -43,7 +44,7 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
             icon?.classList.add("fa-refresh", "fa-spin");
 
             this.apiClient
-                .shareToProfile(this.currentStoryletId, imageCode)
+                .shareToProfile(this.currentStoryletId, this.currentStoryletName, imageCode)
                 .then((_r) => {
                     // FIXME: Replace direct CSS manipulation with something classier
                     icon?.classList.remove("fa-refresh", "fa-spin");
@@ -101,11 +102,13 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
             }
         });
 
-        stateController.onStoryletPhaseChanged((g: GameState) => {
-            if ([StoryletPhases.In, StoryletPhases.End].includes(g.storyletPhase)) {
-                this.currentStoryletId = g.storyletId;
-            } else {
+        stateController.onStoryletChanged((g: GameState) => {
+            if (g.currentStorylet instanceof UnknownStorylet) {
                 this.currentStoryletId = null;
+                this.currentStoryletName = "<unknown>";
+            } else {
+                this.currentStoryletId = g.currentStorylet.id;
+                this.currentStoryletName = g.currentStorylet.name;
             }
         });
     }

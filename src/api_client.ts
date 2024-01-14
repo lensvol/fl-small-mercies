@@ -42,12 +42,12 @@ export class FLApiClient {
             });
     }
 
-    public shareToProfile(contentKey: number, image?: string): Promise<any> {
+    public shareToProfile(contentKey: number, message: string, image?: string): Promise<any> {
         return this.callApi("POST", "/profile/share", {
             contentClass: "EventConclusion",
             contentKey: contentKey,
             image: image ?? "snowflake",
-            message: "Hello, world!",
+            message: message,
         });
     }
 
