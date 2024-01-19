@@ -70,7 +70,7 @@ export class ShopPricesFixer implements IMutationAware {
 
             const originalText = priceField.textContent || "0";
             const isQuality = originalText.includes(" x ");
-            const quantityValue = parseInt(quantityDisplay.textContent ?? "0");
+            const quantityValue = parseFloat((quantityDisplay.textContent ?? "0").replace(/,/, ""));
             let reservedAmount = 0;
 
             const flgf_container = getSingletonByClassName(parent, "flgf__reserve-display");
