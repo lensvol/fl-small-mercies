@@ -52,6 +52,7 @@ export default [
     ShopPricesFixer,
     AnotherTimeFixer,
     PersistentPremiumFixer,
-    SpaceShortcutFixer,
+    // FIXME: Removed till better times are at hand and FBG are less trigger-happy.
+    // SpaceShortcutFixer,
     CustomSnippetsFixer,
 ];
