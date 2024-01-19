@@ -70,7 +70,7 @@ export class ShopPricesFixer implements IMutationAware {
 
             const originalText = priceField.textContent || "0";
             const isQuality = originalText.includes(" x ");
-            const quantityValue = parseFloat((quantityDisplay.textContent ?? "0").replace(/,/, ""));
+            const quantityValue = parseFloat((quantityDisplay.textContent ?? "0").replace(/,/g, ""));
             let reservedAmount = 0;
 
             const flgf_container = getSingletonByClassName(parent, "flgf__reserve-display");
@@ -91,14 +91,14 @@ export class ShopPricesFixer implements IMutationAware {
                 }
 
                 priceText = parts[0];
-                const price = parseFloat(priceText.replace(/,/, "") || "0");
+                const price = parseFloat(priceText.replace(/,/g, "") || "0");
 
                 // Price in items is always an integer, so we can just multiply
                 // it without caring for fractions.
                 totalPrice = (price * (quantityValue - reservedAmount)).toString();
             } else {
                 priceText = originalText;
-                const price = parseFloat(priceText.replace(/,/, "") || "0");
+                const price = parseFloat(priceText.replace(/,/g, "") || "0");
 
                 totalPrice = (price * (quantityValue - reservedAmount)).toFixed(2);
             }
