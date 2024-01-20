@@ -1,14 +1,15 @@
-import {IMutationAware, IStateAware} from "./base";
+import {IMutationAware, INetworkAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
 import {FLUser, GameState, GameStateController, StoryletPhases, UnknownStorylet} from "../game_state";
 import {getSingletonByClassName} from "../utils";
 import {FLApiClient} from "../api_client";
+import {FLApiInterceptor} from "../api_interceptor";
 
 const SHARE_BUTTON_SELECTOR =
     "div[class='storylet-root__frequency'] button[class='buttonlet-container'] span[class*='buttonlet-edit']";
 const SOURCE_EXTRACTION_REGEX = /\/\/images\.fallenlondon\.com\/icons\/([a-z0-9]+)\.png/;
 
-export class QuickShareFixer implements IMutationAware, IStateAware {
+export class QuickShareFixer implements IMutationAware, IStateAware, INetworkAware {
     private replaceShareButton = false;
     private currentStoryletId: number | null = null;
     private authToken: string | null = null;
@@ -109,6 +110,18 @@ export class QuickShareFixer implements IMutationAware, IStateAware {
             } else {
                 this.currentStoryletId = g.currentStorylet.id;
                 this.currentStoryletName = g.currentStorylet.name;
+            }
+        });
+    }
+
+    linkNetworkTools(interceptor: FLApiInterceptor): void {
+        // FIXME: This is a quick hack to work over the fact that our state controller does not
+        // expose hooks for branch results. This should be removed when appropriate hook points are added.
+
+        interceptor.onResponseReceived("/api/storylet/choosebranch", (_request, response) => {
+            if ("endStorylet" in response) {
+                this.currentStoryletId = response.endStorylet.event.id;
+                this.currentStoryletName = response.endStorylet.event.name;
             }
         });
     }
