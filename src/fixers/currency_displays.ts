@@ -156,6 +156,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             "Memory of a Tale",
             new CurrencyDisplay("Memory of a Tale", "book", "khaganian", "Memory of a Tale")
         );
+        this.currencyToDisplay.set(
+            "Hinterland Prosperity",
+            new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
+        );
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
@@ -167,15 +171,17 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 new IsInSetting(107975) // Irem
             )
         );
-
         this.currencyToPredicate.set(
             "Rat-Shilling",
             new IsInSetting(107960) // Rat-Market
         );
-
         this.currencyToPredicate.set(
             "Justificande Coin",
             new IsInSetting(107975) // Irem
+        );
+        this.currencyToPredicate.set(
+            "Hinterland Prosperity",
+            new IsInSetting(107982) // The Far Hinterland
         );
     }
 
@@ -198,7 +204,13 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     linkState(controller: GameStateController): void {
         controller.onCharacterDataLoaded((state) => {
             for (const [name, display] of this.currencyToDisplay.entries()) {
-                const quality = state.getQuality("Currency", name);
+                let quality = state.getQuality("Currency", name);
+                // Some progress-related qualities are not currencies, but are denominated in the
+                // same way (e.g. "Hinterlands Prosperity").
+                if (!quality) {
+                    quality = state.getQuality("Progress", name);
+                }
+
                 if (quality) {
                     display.setQuantity(quality.level);
                     display.refresh();
@@ -207,7 +219,8 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         });
 
         controller.onQualityChanged((_state: GameState, quality, _previous, current) => {
-            if (quality.category !== "Currency") return;
+            // It can be earned, is denominated and can be spent... But apparently it's not a currency. ¯\_(ツ)_/¯
+            if (quality.category !== "Currency" && quality.name !== "Hinterland Prosperity") return;
 
             const display = this.currencyToDisplay.get(quality.name);
             if (display) {
