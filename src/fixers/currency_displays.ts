@@ -150,11 +150,11 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         );
         this.currencyToDisplay.set(
             "Justificande Coin",
-            new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "khaganian", "Justificande Coin")
+            new CurrencyDisplay("Justificande Coin", "currency1_silversmall", "justificande", "Justificande Coin")
         );
         this.currencyToDisplay.set(
             "Memory of a Tale",
-            new CurrencyDisplay("Memory of a Tale", "book", "khaganian", "Memory of a Tale")
+            new CurrencyDisplay("Memory of a Tale", "book", "memorytale", "Memory of a Tale")
         );
         this.currencyToDisplay.set(
             "Hinterland Prosperity",
