@@ -25,6 +25,7 @@ import {AnotherTimeFixer} from "./another_time";
 import {PersistentPremiumFixer} from "./persistent_premium";
 import {SpaceShortcutFixer} from "./space_shortcuts";
 import {CustomSnippetsFixer} from "./custom_snippets";
+import {TrivialChecksFixer} from "./trivial_checks";
 
 export default [
     AutoScrollFixer,
@@ -55,4 +56,5 @@ export default [
     // FIXME: Removed till better times are at hand and FBG are less trigger-happy.
     // SpaceShortcutFixer,
     CustomSnippetsFixer,
+    TrivialChecksFixer,
 ];

@@ -121,6 +121,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show community-made snippets in the right sidebar.",
                 default: false,
             },
+            hide_trivial_checks: {
+                description: "Hide checks that are trivially easy to pass.",
+                default: true,
+            },
         },
     },
     {

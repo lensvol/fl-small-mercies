@@ -46,6 +46,14 @@ export interface IBeginStoryletRequest {
     eventId: number;
 }
 
+export interface IBeginStoryletResponse extends IApiResponse {
+    actions: number;
+    phase: string;
+    hasUpdatedCharacter: boolean;
+    canChangeOutfit: boolean;
+    storylet: IStorylet;
+}
+
 export interface ISnippet {
     id: number;
     title: string;
@@ -71,6 +79,31 @@ export interface IInfobarResponse {
     advert: IAdvert;
 }
 
+interface IChallenge {
+    name: string;
+    targetNumber: number;
+    description: string;
+    category: string;
+    nature: string;
+    canAffordSecondChance: boolean;
+    secondChanceId: number;
+    secondChanceDescription: string;
+    secoldChanceLevel: number;
+    image: string;
+    id: number;
+}
+
+export interface IBranch {
+    name: string;
+    description: string;
+    planKey: string;
+    currencyCost: number;
+    actionCost: number;
+    buttonText: string;
+    challenges: IChallenge[];
+    qualityRequirements: IQuality[];
+}
+
 export interface IStorylet {
     id: number;
     deckType: string;
@@ -83,6 +116,7 @@ export interface IStorylet {
     category: string;
     canGoBack: boolean;
     isLocked: boolean;
+    childBranches: IBranch[];
 }
 
 export interface IStoryletResponse extends IApiResponse {
