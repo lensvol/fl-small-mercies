@@ -121,6 +121,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Remove messages about quality caps from branch results.",
                 default: true,
             },
+            remove_simple_challenge_text: {
+                description: "Remove text about challenge being simple from check results.",
+                default: true,
+            },
         },
     },
     {
