@@ -94,8 +94,16 @@ interface IChallenge {
 }
 
 export interface IQualityRequirement extends IQuality {
+    allowedOn: string;
+    qualityId: number;
+    qualityName: string;
     tooltip: string;
+    category: string;
+    nature: string;
+    status: string;
     isCost: boolean;
+    image: string;
+    id: number;
 }
 
 export interface IBranch {
