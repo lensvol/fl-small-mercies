@@ -93,6 +93,11 @@ interface IChallenge {
     id: number;
 }
 
+export interface IQualityRequirement extends IQuality {
+    tooltip: string;
+    isCost: boolean;
+}
+
 export interface IBranch {
     name: string;
     description: string;
@@ -101,7 +106,7 @@ export interface IBranch {
     actionCost: number;
     buttonText: string;
     challenges: IChallenge[];
-    qualityRequirements: IQuality[];
+    qualityRequirements: IQualityRequirement[];
 }
 
 export interface IStorylet {

@@ -18,9 +18,33 @@ export class TrivialChecksFixer implements INetworkAware {
             }
 
             response.storylet.childBranches.map((branch) => {
-                branch.challenges = branch.challenges.filter((challenge) => {
-                    return challenge.targetNumber < 100;
-                });
+                const remainingChallenges = [];
+
+                for (const challenge of branch.challenges) {
+                    if (challenge.targetNumber === 100) {
+                        branch.qualityRequirements.push({
+                            allowedOn: "Character",
+                            qualityId: 777_777_777 + challenge.id,
+                            qualityName: challenge.name,
+                            tooltip:
+                                `There was a check for your <span class='quality-name'>${challenge.name}</span> skill, but since you would ` +
+                                `100% pass it anyway... We removed it.<br><br><b>You can change that behaviour in ` +
+                                `<i>"Small Mercies"</i> settings.</b>`,
+                            category: "Accomplishment",
+                            nature: "Status",
+                            status: "Unlocked",
+                            isCost: false,
+                            image: challenge.image,
+                            id: 777_777_777 + challenge.id,
+                        });
+
+                        continue;
+                    }
+
+                    remainingChallenges.push(challenge);
+                }
+
+                branch.challenges = remainingChallenges;
             });
         };
 
