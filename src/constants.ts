@@ -105,19 +105,23 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Display total value when hovering over 'Sell' button.",
                 default: true,
             },
-/*             shortcut_another_time: {
+            /*
+            shortcut_another_time: {
                 description: "Shortcut 'Another time' branch in Labyrinth of Tigers.",
                 default: true,
             },
- */            persistent_premium: {
+            */
+            persistent_premium: {
                 description: 'Move gold-framed storylets into "Fifth City Stories".',
                 default: false,
             },
-/*             shortcut_specific_branches: {
+            /*
+            shortcut_specific_branches: {
                 description: "Shortcut travel between Laboratory / Port / Bone Market.",
                 default: false,
             },
- */            enable_custom_snippets: {
+            */
+            enable_custom_snippets: {
                 description: "Show community-made snippets in the right sidebar.",
                 default: false,
             },
