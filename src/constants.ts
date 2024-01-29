@@ -109,6 +109,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show community-made snippets in the right sidebar.",
                 default: false,
             },
+            show_vanity_section: {
+                description: "Show 'Vanities' section in your 'Myself' tab.",
+                default: false,
+            },
         },
     },
     {
