@@ -201,6 +201,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 this.currencyToDisplay.forEach((display, _) => display.show());
             } else if (this.currentState) {
                 this.checkVisibilityPredicates(this.currentState);
+                this.checkSpecialVisibility();
             }
         } else {
             this.currencyToDisplay.forEach((display, _) => display.hide());
@@ -269,6 +270,8 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 display.show();
             }
         }
+
+        this.checkSpecialVisibility();
     }
 
     checkEligibility(node: HTMLElement): boolean {
@@ -285,7 +288,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     onNodeAdded(node: HTMLElement): void {
         const shopButtons = node.getElementsByClassName("nav__button");
         for (const candidate of shopButtons) {
-            if (candidate.nodeName !== "button") {
+            if (candidate.nodeName.toLowerCase() !== "button") {
                 continue;
             }
 
@@ -309,13 +312,16 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
     onNodeRemoved(node: HTMLElement): void {
         const shopButtons = node.querySelectorAll("li[class='nav__item'] > button[class*='nav__button']");
-        shopButtons.forEach((button) => {
-            if (button.textContent === "Mr Chimes' Lost & Found") {
-                this.shopButtonObserver.disconnect();
-            }
+        if (shopButtons) {
+            shopButtons.forEach((button) => {
+                if (button.textContent === "Mr Chimes' Lost & Found") {
+                    this.shopButtonObserver.disconnect();
+                }
+            });
+
             this.isInLostAndFound = false;
             this.checkSpecialVisibility();
-        });
+        }
     }
 
     private checkSpecialVisibility() {
