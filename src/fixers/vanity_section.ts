@@ -95,15 +95,13 @@ export class VanitySectionFixer implements INetworkAware {
             for (const category of response.possessions) {
                 for (const quality of category.possessions) {
                     if (
-                        VANITY_777_QUALITY_IDS.indexOf(quality.id) === -1 &&
-                        VANITY_MAIN_QUALITIY_IDS.indexOf(quality.id) === -1 &&
-                        VANITY_FACTION_QUALITY_IDS.indexOf(quality.id) === -1
+                        VANITY_777_QUALITY_IDS.indexOf(quality.id) !== -1 ||
+                        VANITY_MAIN_QUALITIY_IDS.indexOf(quality.id) !== -1 ||
+                        VANITY_FACTION_QUALITY_IDS.indexOf(quality.id) !== -1
                     ) {
-                        continue;
+                        // FIXME: Also remove the quality from the original category (make it configurable?).
+                        extractedVanities.push(quality);
                     }
-
-                    // FIXME: Also remove the quality from the original category (make it configurable?).
-                    extractedVanities.push(quality);
                 }
             }
 
