@@ -3,7 +3,7 @@ import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IQuality} from "../interfaces";
 
-const VANITY_QUALITY_IDS = [
+const VANITY_777_QUALITY_IDS = [
     142587, // A Historian of the Neath
     142894, // A Hunter of Zee Beasts
     144063, // A Prolific Pirate
@@ -17,6 +17,7 @@ const VANITY_QUALITY_IDS = [
     142565, // Oneiropomp
     142505, // Painter of Fine Art
     140888, // Palaeontologist
+    141368, // Barrister of the Evenlode
 
     // 143753, // Palaeozoologist (does not yet have QLDs)
 
@@ -28,6 +29,21 @@ const VANITY_QUALITY_IDS = [
 
     127253, // Teaching Reputation of Your Laboratory
     127257, // The Prestige of your Laboratory
+];
+
+const VANITY_MAIN_QUALITIY_IDS = [
+    510, // A Scholar of the Correspondence
+    142865, // Twilit Smuggler
+    141626, // Defender of the Public Safety
+    134835, // A Poet-Laureate
+    141287, // Paramount Presence of the Ancient Regime
+    135060, // A Weaseller
+    144550, // A Woeseller
+    125026, // A Private Tattoo of your Noman, Inscribed in Gant
+    144210, // Memories of a Doubled Spring
+    142640, // Acquainted: The Lion Sacrificial
+    143192, // A Mystery of the Fifth City
+    143589, // A Purveyor of Cruel and Unusual Cheeses
 ];
 
 export class VanitySectionFixer implements INetworkAware {
@@ -63,7 +79,10 @@ export class VanitySectionFixer implements INetworkAware {
 
             for (const category of response.possessions) {
                 for (const quality of category.possessions) {
-                    if (VANITY_QUALITY_IDS.indexOf(quality.id) === -1) {
+                    if (
+                        VANITY_777_QUALITY_IDS.indexOf(quality.id) === -1 &&
+                        VANITY_MAIN_QUALITIY_IDS.indexOf(quality.id) === -1
+                    ) {
                         continue;
                     }
 
