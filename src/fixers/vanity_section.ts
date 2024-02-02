@@ -46,6 +46,21 @@ const VANITY_MAIN_QUALITIY_IDS = [
     143589, // A Purveyor of Cruel and Unusual Cheeses
 ];
 
+const VANITY_FACTION_QUALITY_IDS = [
+    133830, // Bohemians
+    121992, // Criminals
+    132801, // Hell
+    133832, // Revolutionaries
+    126001, // Rubbery Men
+    133834, // Society
+    133828, // The Church
+    125528, // The Docks
+    133045, // The Great Game
+    125787, // The Tomb-Colonies
+    129666, // The Urchins
+    144064, // Respected by Corsairs
+];
+
 export class VanitySectionFixer implements INetworkAware {
     showVanitySection = false;
 
@@ -81,7 +96,8 @@ export class VanitySectionFixer implements INetworkAware {
                 for (const quality of category.possessions) {
                     if (
                         VANITY_777_QUALITY_IDS.indexOf(quality.id) === -1 &&
-                        VANITY_MAIN_QUALITIY_IDS.indexOf(quality.id) === -1
+                        VANITY_MAIN_QUALITIY_IDS.indexOf(quality.id) === -1 &&
+                        VANITY_FACTION_QUALITY_IDS.indexOf(quality.id) === -1
                     ) {
                         continue;
                     }
