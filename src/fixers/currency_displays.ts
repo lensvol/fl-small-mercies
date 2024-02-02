@@ -126,6 +126,7 @@ class CurrencyDisplay {
 }
 
 export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
+    // TODO: This whole fixer needs to cleaned up and reworked, it's a mess.
     private displayMoreCurrencies = false;
     private displayCurrenciesEverywhere = false;
 
@@ -141,6 +142,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             this.checkSpecialVisibility();
         });
     });
+    private currentState?: GameState;
 
     constructor() {
         this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
@@ -192,13 +194,18 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
         this.currencyToDisplay.forEach((display, _) => {
             display.setThousandsFlag(this.separateThousands);
-
-            if (this.displayCurrenciesEverywhere) {
-                display.show();
-            } else {
-                display.hide();
-            }
         });
+
+        if (this.displayMoreCurrencies) {
+            if (this.displayCurrenciesEverywhere) {
+                this.currencyToDisplay.forEach((display, _) => display.show());
+            } else if (this.currentState) {
+                this.checkVisibilityPredicates(this.currentState);
+                this.checkSpecialVisibility();
+            }
+        } else {
+            this.currencyToDisplay.forEach((display, _) => display.hide());
+        }
     }
 
     linkState(controller: GameStateController): void {
@@ -213,9 +220,14 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
                 if (quality) {
                     display.setQuantity(quality.level);
-                    display.refresh();
+
+                    if (this.displayMoreCurrencies) {
+                        display.refresh();
+                    }
                 }
             }
+
+            this.currentState = state;
         });
 
         controller.onQualityChanged((_state: GameState, quality, _previous, current) => {
@@ -229,11 +241,15 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         });
 
         controller.onLocationChanged((state, _location) => {
-            this.checkVisibilityPredicates(state);
+            if (this.displayMoreCurrencies) {
+                this.checkVisibilityPredicates(state);
+            }
         });
 
         controller.onStoryletPhaseChanged((state) => {
-            this.checkVisibilityPredicates(state);
+            if (this.displayMoreCurrencies) {
+                this.checkVisibilityPredicates(state);
+            }
         });
     }
 
@@ -254,6 +270,8 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 display.show();
             }
         }
+
+        this.checkSpecialVisibility();
     }
 
     checkEligibility(node: HTMLElement): boolean {
@@ -270,7 +288,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     onNodeAdded(node: HTMLElement): void {
         const shopButtons = node.getElementsByClassName("nav__button");
         for (const candidate of shopButtons) {
-            if (candidate.nodeName !== "button") {
+            if (candidate.nodeName.toLowerCase() !== "button") {
                 continue;
             }
 
@@ -294,13 +312,16 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
 
     onNodeRemoved(node: HTMLElement): void {
         const shopButtons = node.querySelectorAll("li[class='nav__item'] > button[class*='nav__button']");
-        shopButtons.forEach((button) => {
-            if (button.textContent === "Mr Chimes' Lost & Found") {
-                this.shopButtonObserver.disconnect();
-            }
+        if (shopButtons) {
+            shopButtons.forEach((button) => {
+                if (button.textContent === "Mr Chimes' Lost & Found") {
+                    this.shopButtonObserver.disconnect();
+                }
+            });
+
             this.isInLostAndFound = false;
             this.checkSpecialVisibility();
-        });
+        }
     }
 
     private checkSpecialVisibility() {
