@@ -191,6 +191,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Only show community-made snippets, not the FBG ones.",
                 default: false,
             },
+            only_completed_vanities: {
+                description: "Only show completed vanities in the 'Vanities' section.",
+                default: true,
+            },
         },
     },
 ];
