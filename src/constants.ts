@@ -126,7 +126,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: false,
             },
             convert_pennies_to_echoes: {
-                description: "Convert Pennies to Echoes in branch results.",
+                description: "Convert Pennies to Echoes in branch results and quality requirements.",
                 default: true,
             },
         },
