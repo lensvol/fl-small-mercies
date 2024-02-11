@@ -71,6 +71,26 @@ export interface IInfobarResponse {
     advert: IAdvert;
 }
 
+export interface IQualityRequirement {
+    qualityName: string;
+    qualityId: number;
+    tooltip: string;
+    id: number;
+}
+
+export interface IBranch {
+    id: number;
+    name: string;
+    description: string;
+    ordering: number;
+    image: string;
+    isLocked: boolean;
+    actionLocked: boolean;
+    qualityLocked: boolean;
+    currencyLocked: boolean;
+    qualityRequirements: IQualityRequirement[];
+}
+
 export interface IStorylet {
     id: number;
     deckType: string;
@@ -83,6 +103,7 @@ export interface IStorylet {
     category: string;
     canGoBack: boolean;
     isLocked: boolean;
+    childBranches: IBranch[];
 }
 
 export interface IStoryletResponse extends IApiResponse {
