@@ -1,6 +1,5 @@
 import {FLApiInterceptor} from "./api_interceptor";
 import {IShopResponse, IStorylet, IStoryletListResponse, IStoryletResponse, IUserResponse} from "./interfaces";
-import {FLApiClient} from "./api_client";
 import {debug} from "./logging";
 
 export const UNKNOWN = -1;
@@ -177,8 +176,6 @@ export class GameStateController {
     }
 
     private state: GameState = new GameState();
-    private myselfReceived = false;
-    private apiClient = new FLApiClient();
 
     private changeListeners: {[key in StateChangeTypes]: ((...args: any[]) => void)[]} = {
         [StateChangeTypes.ActionsCountChanged]: [],
@@ -242,8 +239,6 @@ export class GameStateController {
 
     public parseMyselfResponse(response: Record<string, unknown>) {
         if (!("character" in response)) return;
-
-        this.myselfReceived = true;
 
         // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.character = new FLCharacter(response.character.id, response.character.name);
@@ -516,28 +511,5 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/map/move", (_, response) => this.parseMapMoveResponse(response));
         interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
-
-        /*
-        Since our content script is being executed in a context separate from where FL UI code lives,
-        we cannot intercept network requests from it. To work around this, our code is being injected
-        via an artificial "script" tag pointing to our payload holding actual business logic for the
-        extension.
-
-        Unfortunately, that introduces a bit of a lag between FL UI starting sending requests and
-        API interceptor code hooking into XMLHttpRequest. This leads to a high chance of our extension
-        missing two initial API calls (`categories` and `myself`) and not having consistent data when
-        the page is displayed for the first time.
-
-        Thus, the following hack is born.
-         */
-        interceptor.onResponseReceived("/api/settings/authmethods", (_req, _resp) => {
-            // Do not do anything with this response, we already got initial data.
-            if (this.myselfReceived) return;
-
-            debug("Missed initial /character/myself response, requesting again.");
-            this.apiClient.myself().then((response) => {
-                this.parseMyselfResponse(response);
-            });
-        });
     }
 }
