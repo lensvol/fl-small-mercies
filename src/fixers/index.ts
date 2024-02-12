@@ -20,7 +20,6 @@ import {TwoStepConfirmationsFixer} from "./two_step_confirmations";
 import {SingleItemIconFixer} from "./single_item_icon";
 import {ShopTransactionFixer} from "./shop_transactions";
 import {ShopPricesFixer} from "./shop_prices";
-import {AnotherTimeFixer} from "./another_time";
 import {PersistentPremiumFixer} from "./persistent_premium";
 import {CustomSnippetsFixer} from "./custom_snippets";
 
@@ -47,9 +46,6 @@ export default [
     SingleItemIconFixer,
     ShopTransactionFixer,
     ShopPricesFixer,
-    AnotherTimeFixer,
     PersistentPremiumFixer,
-    // FIXME: Removed till better times are at hand and FBG are less trigger-happy.
-    // SpaceShortcutFixer,
     CustomSnippetsFixer,
 ];
