@@ -11,7 +11,6 @@ Set of small "fixers" for the Fallen London UI. Each of them can be disabled or 
 
 Current features:
 * Display Favours in the right sidebar.
-* Quicker sharing of storylet snippets.
 * Remove "Plans" button and related UI.
 * Fix color and alignment of the navigation buttons in Journal.
 * Add comma after thousands in the currency indicators.
