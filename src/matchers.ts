@@ -39,6 +39,22 @@ class IsInSetting implements StateMatcher {
     }
 }
 
+class IsInArea implements StateMatcher {
+    private readonly expectedAreaId: number;
+
+    constructor(settingId: number) {
+        this.expectedAreaId = settingId;
+    }
+
+    describe(): string {
+        return `InArea(${this.expectedAreaId})`;
+    }
+
+    match(state: GameState): boolean {
+        return state.location.area.areaId === this.expectedAreaId;
+    }
+}
+
 class IsInStorylet implements StateMatcher {
     private readonly expectedStoryletId: number;
 
@@ -55,4 +71,4 @@ class IsInStorylet implements StateMatcher {
     }
 }
 
-export {IsInSetting, IsInStorylet, OrPredicate, StateMatcher};
+export {IsInArea, IsInSetting, IsInStorylet, OrPredicate, StateMatcher};

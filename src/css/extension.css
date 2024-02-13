@@ -61,3 +61,13 @@
     margin: 0 0 -0.8em;
     background-size: 1.75em;
 }
+
+.currency__attar:before {
+    content: "";
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' height='2000' width='3000'%3E%3Cdefs%3E%3Cpath id='a' d='M781.553 160.194h1461.165V1766.99H781.553z'/%3E%3C/defs%3E%3Cg style='font-size:2058.62px;line-height:1.25;font-family:sans-serif;letter-spacing:0;stroke-width:10.722'%3E%3Ctext xml:space='preserve' style='font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0;white-space:pre;shape-inside:url(%23a);stroke-width:10.722' transform='matrix(44.56891 0 0 59.6422 -34072.781 -9939.921)' aria-label='𝒯'%3E%3Ctspan x='781.553' y='196.687'%3E%3Ctspan%3E𝒜%3C/tspan%3E%3C/tspan%3E%3C/text%3E%3C/g%3E%3C/svg%3E") -6px 0px no-repeat;
+    display: inline-block;
+    width: 1.2em;
+    height: 1.8em;
+    margin: 0 0 -0.8em;
+    background-size: 1.75em;
+}

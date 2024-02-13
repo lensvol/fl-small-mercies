@@ -1,7 +1,7 @@
 import {SettingsObject} from "../settings";
 import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state";
-import {IsInSetting, OrPredicate, StateMatcher} from "../matchers";
+import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
 import {getSingletonByClassName} from "../utils";
 
 function numberWithCommas(x: string): string {
@@ -162,6 +162,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             "Hinterland Prosperity",
             new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
         );
+        this.currencyToDisplay.set("Attar", new CurrencyDisplay("Attar", "redhoneyjar", "attar", "Attar"));
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
@@ -184,6 +185,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         this.currencyToPredicate.set(
             "Hinterland Prosperity",
             new IsInSetting(107982) // The Far Hinterland
+        );
+        this.currencyToPredicate.set(
+            "Attar",
+            new IsInArea(110903) // Arbor, of the Roses
         );
     }
 
@@ -218,6 +223,11 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                     quality = state.getQuality("Progress", name);
                 }
 
+                // Attar, apparently, goes under "Goods" (╯°□°)╯︵ ┻━┻
+                if (!quality) {
+                    quality = state.getQuality("Goods", name);
+                }
+
                 if (quality) {
                     display.setQuantity(quality.level);
 
@@ -231,9 +241,6 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         });
 
         controller.onQualityChanged((_state: GameState, quality, _previous, current) => {
-            // It can be earned, is denominated and can be spent... But apparently it's not a currency. ¯\_(ツ)_/¯
-            if (quality.category !== "Currency" && quality.name !== "Hinterland Prosperity") return;
-
             const display = this.currencyToDisplay.get(quality.name);
             if (display) {
                 display.setQuantity(current);
