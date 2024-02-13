@@ -8,7 +8,6 @@ import {RightSidebarFixer} from "./right_sidebar";
 import {PlanButtonsFixer} from "./plan_remover";
 import {ThingSortFixer} from "./things_sorter";
 import {ProfileLinkFixer} from "./profile_link";
-import {QuickShareFixer} from "./quick_share";
 import {AsceticModeFixer} from "./ascetic_mode";
 import {FavourTrackerFixer} from "./favour_tracker";
 import {SocialEmptyReqsFixer} from "./empty_requirements";
@@ -21,9 +20,7 @@ import {TwoStepConfirmationsFixer} from "./two_step_confirmations";
 import {SingleItemIconFixer} from "./single_item_icon";
 import {ShopTransactionFixer} from "./shop_transactions";
 import {ShopPricesFixer} from "./shop_prices";
-import {AnotherTimeFixer} from "./another_time";
 import {PersistentPremiumFixer} from "./persistent_premium";
-import {SpaceShortcutFixer} from "./space_shortcuts";
 import {CustomSnippetsFixer} from "./custom_snippets";
 
 export default [
@@ -37,7 +34,6 @@ export default [
     PlanButtonsFixer,
     ProfileLinkFixer,
     ThingSortFixer,
-    QuickShareFixer,
     AsceticModeFixer,
     FavourTrackerFixer,
     SocialEmptyReqsFixer,
@@ -50,9 +46,6 @@ export default [
     SingleItemIconFixer,
     ShopTransactionFixer,
     ShopPricesFixer,
-    AnotherTimeFixer,
     PersistentPremiumFixer,
-    // FIXME: Removed till better times are at hand and FBG are less trigger-happy.
-    // SpaceShortcutFixer,
     CustomSnippetsFixer,
 ];
