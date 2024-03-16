@@ -109,6 +109,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show community-made snippets in the right sidebar.",
                 default: false,
             },
+            show_vanity_section: {
+                description: "Show 'Vanities' section in your 'Myself' tab.",
+                default: false,
+            },
         },
     },
     {
@@ -170,6 +174,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             replace_fbg_snippets: {
                 description: "Only show community-made snippets, not the FBG ones.",
                 default: false,
+            },
+            only_completed_vanities: {
+                description: "Only show completed vanities in the 'Vanities' section.",
+                default: true,
             },
         },
     },
