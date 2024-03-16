@@ -68,22 +68,6 @@ export class VanitySectionFixer implements INetworkAware, IMutationAware {
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
-        interceptor.onResponseReceived("/api/app/categories", (request, response) => {
-            if (!this.showVanitySection) {
-                return;
-            }
-
-            response.status.push("Vanity");
-
-            response.categories.push({
-                displayName: "Vanity",
-                isExclusive: false,
-                category: "Vanity",
-                nature: "Status",
-                shouldDisplayLevel: true,
-            });
-        });
-
         interceptor.onResponseReceived("/api/character/myself", (request, response) => {
             if (!this.showVanitySection) {
                 return;
@@ -107,7 +91,8 @@ export class VanitySectionFixer implements INetworkAware, IMutationAware {
             }
 
             response.possessions.push({
-                categories: ["Vanity"],
+                appearance: "Default",
+                categories: ["Venture"],
                 name: "Vanities",
                 possessions: extractedVanities,
             });
