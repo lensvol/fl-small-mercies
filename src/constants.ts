@@ -113,6 +113,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show 'Vanities' section in your 'Myself' tab.",
                 default: false,
             },
+            manual_fifth_stories: {
+                description: "Prevent 'Fifth Stories' panel from auto-opening.",
+                default: false,
+            },
         },
     },
     {
