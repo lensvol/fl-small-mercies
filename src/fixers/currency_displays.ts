@@ -163,6 +163,11 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
         );
         this.currencyToDisplay.set("Attar", new CurrencyDisplay("Attar", "redhoneyjar", "attar", "Attar"));
+        this.currencyToDisplay.set("Stuiver", new CurrencyDisplay("Stuiver", "currency1_copper", "attar", "Stuiver"));
+        this.currencyToDisplay.set(
+            "Ascended Ambergris",
+            new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "attar", "Ambergris")
+        );
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
@@ -189,6 +194,14 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         this.currencyToPredicate.set(
             "Attar",
             new IsInArea(110903) // Arbor, of the Roses
+        );
+        this.currencyToPredicate.set(
+            "Stuiver",
+            new IsInSetting(107987) // Hallow's Throat
+        );
+        this.currencyToPredicate.set(
+            "Ascended Ambergris",
+            new IsInSetting(107987) // Hallow's Throat
         );
     }
 
