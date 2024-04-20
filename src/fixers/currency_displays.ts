@@ -163,10 +163,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
         );
         this.currencyToDisplay.set("Attar", new CurrencyDisplay("Attar", "redhoneyjar", "attar", "Attar"));
-        this.currencyToDisplay.set("Stuiver", new CurrencyDisplay("Stuiver", "currency1_copper", "attar", "Stuiver"));
+        this.currencyToDisplay.set("Stuiver", new CurrencyDisplay("Stuiver", "currency1_copper", "stuiver", "Stuiver"));
         this.currencyToDisplay.set(
             "Ascended Ambergris",
-            new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "attar", "Ambergris")
+            new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "ambergris", "Ambergris")
         );
 
         this.currencyToPredicate.set(
