@@ -23,6 +23,7 @@ import {ShopPricesFixer} from "./shop_prices";
 import {PersistentPremiumFixer} from "./persistent_premium";
 import {CustomSnippetsFixer} from "./custom_snippets";
 import {VanitySectionFixer} from "./vanity_section";
+import {DiscordanceChecksFixer} from "./discordance_checks";
 
 export default [
     AutoScrollFixer,
@@ -50,4 +51,5 @@ export default [
     PersistentPremiumFixer,
     CustomSnippetsFixer,
     VanitySectionFixer,
+    DiscordanceChecksFixer,
 ];

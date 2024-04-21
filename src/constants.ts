@@ -146,6 +146,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show 'Perhaps Not' button at the top in storylets that have 4 branches or more.",
                 default: false,
             },
+            prettify_discordance_checks: {
+                description: "Introduce obnoxious negation into 'Steward of the Discordance' challenges.",
+                default: false,
+            },
         },
     },
     {
