@@ -117,6 +117,14 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Convert Pennies to Echoes in branch results and quality requirements.",
                 default: true,
             },
+            remove_quality_cap_msgs: {
+                description: "Remove messages about quality caps from branch results.",
+                default: true,
+            },
+            remove_simple_challenge_text: {
+                description: "Remove text about challenge being simple from check results.",
+                default: true,
+            },
         },
     },
     {

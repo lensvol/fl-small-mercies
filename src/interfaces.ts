@@ -42,6 +42,68 @@ export interface IChooseBranchRequest {
     secondChanceIds: number[];
 }
 
+export interface IMessage {
+    message: string;
+    image: string;
+    tooltip: string;
+}
+
+export interface IRollSuccessMessage extends IMessage {
+    type: "DifficultyRollSuccessMessage";
+}
+
+export interface IRollFailureMessage extends IMessage {
+    type: "DifficultyRollFailureMessage";
+}
+
+export interface IQualityCapMessage extends IMessage {
+    type: "QualityCapMessage";
+    possession: IQuality;
+    priority: number;
+    isSidebar: boolean;
+    changeType: "Unaltered" | "Increased" | "Decreased";
+}
+
+export interface ISetting {
+    id: number;
+    mapRootArea: Record<string, string>;
+    name: string;
+    canChangeOutfit: boolean;
+    canOpenMap: boolean;
+    canTravel: boolean;
+    itemsUsableHere: boolean;
+    isInfiniteDraw: boolean;
+}
+
+export interface IStoryletStub {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+    deckType: string;
+    isInEventUseTree: boolean;
+}
+
+export interface IEndStorylet {
+    rootEventId: number;
+    event: IStoryletStub;
+    isLinkingEvent: boolean;
+    isDirectLinkingEvent: boolean;
+    canGoAgain: boolean;
+}
+
+type IMessageResult = IRollSuccessMessage | IRollFailureMessage | IQualityCapMessage;
+
+export interface IChooseBranchResponse extends IApiResponse {
+    actions: number;
+    phase: string;
+    endStorylet: IEndStorylet;
+    hasUpdatedCharacter: boolean;
+    canChangeOutfit: boolean;
+    messages: IMessageResult[];
+    setting: ISetting;
+}
+
 export interface IBeginStoryletRequest {
     eventId: number;
 }
