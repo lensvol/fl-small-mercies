@@ -113,6 +113,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show 'Vanities' section in your 'Myself' tab.",
                 default: false,
             },
+            convert_pennies_to_echoes: {
+                description: "Convert Pennies to Echoes in branch results and quality requirements.",
+                default: true,
+            },
         },
     },
     {

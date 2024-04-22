@@ -24,6 +24,7 @@ import {PersistentPremiumFixer} from "./persistent_premium";
 import {CustomSnippetsFixer} from "./custom_snippets";
 import {VanitySectionFixer} from "./vanity_section";
 import {DiscordanceChecksFixer} from "./discordance_checks";
+import {EchoPenniesFixer} from "./echo_pennies";
 
 export default [
     AutoScrollFixer,
@@ -52,4 +53,5 @@ export default [
     CustomSnippetsFixer,
     VanitySectionFixer,
     DiscordanceChecksFixer,
+    EchoPenniesFixer,
 ];
