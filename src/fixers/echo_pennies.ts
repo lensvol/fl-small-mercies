@@ -19,6 +19,13 @@ export class EchoPenniesFixer implements INetworkAware {
                 return;
             }
 
+            // Since /storylet response can hold either contents of the current storylet or list of available
+            // storylets, we need to explicitly check which is which. We are only interested in the already started
+            // storylets.
+            if (!response.storylet) {
+                return;
+            }
+
             response.storylet.childBranches.map((branch: IBranch) => {
                 branch.qualityRequirements.map((req: IQualityRequirement) => {
                     if (req.qualityName === "Penny") {
