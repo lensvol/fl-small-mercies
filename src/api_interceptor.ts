@@ -122,35 +122,40 @@ export class FLApiInterceptor {
 
     private triggerRequestListeners(uri: string, request: IModifiedAjax, data: Record<string, unknown>): any {
         let fakeResponse = null;
+        let requestData = structuredClone(data);
 
-        try {
-            const listeners = this.requestListeners.get(uri) || [];
-            for (const handler of listeners) {
-                fakeResponse = handler(request, data);
-                // Short-circuit if a listener returns a response
-                if (fakeResponse) {
-                    break;
-                }
+        const listeners = this.requestListeners.get(uri) || [];
+        for (const handler of listeners) {
+            const dataCopy = structuredClone(requestData);
+            try {
+                fakeResponse = handler(request, dataCopy);
+                requestData = dataCopy;
+            } catch (error) {
+                console.error(`Error caught when running request listener for ${uri}:`, error);
             }
-        } catch (error) {
-            console.error(`Error caught when running listener for ${uri}:`, error);
-            return null;
+            // Short-circuit if a listener returns a response
+            if (fakeResponse) {
+                break;
+            }
         }
+
         return fakeResponse;
     }
 
     private triggerResponseListeners(uri: string, request: any, response: any): any {
         let resultingResponse = structuredClone(response);
 
-        try {
-            const listeners = this.responseListeners.get(uri) || [];
-            for (const handler of listeners) {
-                handler(request, resultingResponse);
+        const listeners = this.responseListeners.get(uri) || [];
+        for (const handler of listeners) {
+            try {
+                const responseCopy = structuredClone(resultingResponse);
+                handler(request, responseCopy);
+                resultingResponse = responseCopy;
+            } catch (error) {
+                console.error(`Error caught when running response listener for ${uri}:`, error);
             }
-        } catch (error) {
-            console.error(`Error caught when running listener for ${uri}:`, error);
-            return response;
         }
+
         return resultingResponse;
     }
 
