@@ -35,11 +35,16 @@ export class EchoPenniesFixer implements INetworkAware {
                         }
 
                         const [_, current_amount_str, needed_amount_str] = matches;
-                        const currentAmount = parseInt(current_amount_str.replace(/,/g, ""), 10);
-                        const neededAmount = parseInt(needed_amount_str.replace(/,/g, ""), 10);
-                        req.tooltip = `You unlocked this with ${currentAmount / 100} Echoes (you needed ${
-                            neededAmount / 100
-                        })`;
+                        const neededAmount = parseInt(needed_amount_str.replace(/,/g, ""), 10) / 100;
+                        let currentAmount = parseInt(current_amount_str.replace(/,/g, ""), 10) / 100;
+
+                        // In the interest of aesthetics, we will remove fraction part if the needed amount
+                        // does not have them.
+                        if (Math.floor(neededAmount) == neededAmount) {
+                            currentAmount = Math.floor(currentAmount);
+                        }
+
+                        req.tooltip = `You unlocked this with ${currentAmount} Echoes (you needed ${neededAmount})`;
                     }
                 });
             });
