@@ -183,3 +183,18 @@ export interface IStoryletListResponse extends IApiResponse {
     canChangeOutfit: boolean;
     storylets: IStorylet[];
 }
+
+export interface IEquipmentSlot {
+    name: string;
+    qualityId?: number;
+    canChange: boolean;
+    isEffect: boolean;
+    isOutfit: true;
+}
+
+export interface IEquipResponse extends IApiResponse {
+    slots: IEquipmentSlot[];
+    dirty: boolean;
+    maxOutfits: number;
+    isFavourite: boolean;
+}
