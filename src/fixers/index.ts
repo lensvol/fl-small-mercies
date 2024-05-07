@@ -27,6 +27,7 @@ import {VanitySectionFixer} from "./vanity_section";
 import {DiscordanceChecksFixer} from "./discordance_checks";
 import {EchoPenniesFixer} from "./echo_pennies";
 import {BranchResultsFixer} from "./branch_results";
+import {SidebarArtFixer} from "./sidebar_art";
 
 export default [
     AutoScrollFixer,
@@ -57,4 +58,5 @@ export default [
     DiscordanceChecksFixer,
     EchoPenniesFixer,
     BranchResultsFixer,
+    SidebarArtFixer,
 ];

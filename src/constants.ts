@@ -56,6 +56,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Update relevant currencies on shop transactions.",
                 default: true,
             },
+            revert_sidebar_art: {
+                description: "Use old art for sidebar icons of Advanced Skills.",
+                default: false,
+            },
         },
     },
     {
