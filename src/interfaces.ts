@@ -92,7 +92,7 @@ export interface IEndStorylet {
     canGoAgain: boolean;
 }
 
-type IMessageResult = IRollSuccessMessage | IRollFailureMessage | IQualityCapMessage;
+export type IMessageResult = IRollSuccessMessage | IRollFailureMessage | IQualityCapMessage;
 
 export interface IChooseBranchResponse extends IApiResponse {
     actions: number;
@@ -134,13 +134,30 @@ export interface IInfobarResponse {
 }
 
 export interface IQualityRequirement {
+    image: string;
     qualityName: string;
     qualityId: number;
     tooltip: string;
     id: number;
 }
 
+export interface IChallenge {
+    id: number;
+    name: string;
+    image: string;
+    targetNumber: number;
+    type: string;
+    category: string;
+    description: string;
+    nature: string;
+    secondChangeId: number;
+    secondChanceDescription: string;
+    secondChanceLevel: number;
+    canAffordSecondChance: boolean;
+}
+
 export interface IBranch {
+    challenges: IChallenge[];
     id: number;
     name: string;
     description: string;
