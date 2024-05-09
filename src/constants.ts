@@ -57,7 +57,7 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             revert_sidebar_art: {
-                description: "Use old art for sidebar icons of Advanced Skills.",
+                description: "Use old art for icons of Advanced Skills.",
                 default: false,
             },
         },
