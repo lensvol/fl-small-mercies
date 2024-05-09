@@ -131,8 +131,6 @@ export class GameState {
 
     public actionsLeft = 0;
 
-    public storyletId = UNKNOWN;
-
     private qualities: Map<string, Map<string, Quality>> = new Map();
     private qualityIdMapping: Map<number, Quality> = new Map();
 
@@ -358,13 +356,18 @@ export class GameStateController {
             // @ts-ignore: There is hell and then there is writing types for external APIs
             const currentPhase = this.decodePhase(response.phase);
             if (currentPhase != this.state.storyletPhase) {
-                if (currentPhase == StoryletPhases.End) {
-                    // @ts-ignore: There is hell and then there is writing types for external APIs
-                    this.state.storyletId = response.endStorylet.event.id;
-                }
-
                 this.state.storyletPhase = currentPhase;
                 this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+            }
+            if (response.endStorylet) {
+                // @ts-ignore: There is hell and then there is writing types for external APIs
+                this.state.currentStorylet = response.endStorylet.event;
+                this.triggerListeners(StateChangeTypes.StoryletChanged);
+            }
+            if (response.storylet) {
+                // @ts-ignore: There is hell and then there is writing types for external APIs
+                this.state.currentStorylet = response.storylet;
+                this.triggerListeners(StateChangeTypes.StoryletChanged);
             }
         }
 
@@ -403,6 +406,7 @@ export class GameStateController {
 
         this.state.currentStorylet = new UnknownStorylet();
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+        this.triggerListeners(StateChangeTypes.StoryletChanged);
     }
 
     public parseStoryletResponse(response: any) {

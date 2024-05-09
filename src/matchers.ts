@@ -67,7 +67,10 @@ class IsInStorylet implements StateMatcher {
     }
 
     match(state: GameState): boolean {
-        return state.storyletPhase == StoryletPhases.In && state.storyletId === this.expectedStoryletId;
+        if (state.storyletPhase == StoryletPhases.In && 'id' in state.currentStorylet) {
+            return state.currentStorylet.id == this.expectedStoryletId;
+        }
+        return false;
     }
 }
 
