@@ -172,11 +172,9 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
             new OrPredicate(
-                new OrPredicate(
-                    new IsInSetting(107955), // Khanate (Inner)
-                    new IsInSetting(107959) // Khanate (Copper Quarter)
-                ),
-                new IsInSetting(107975) // Irem
+                new IsInSetting(107955), // Khanate (Inner)
+                new IsInSetting(107959), // Khanate (Copper Quarter)
+                new IsInSetting(107975), // Irem
             )
         );
         this.currencyToPredicate.set(

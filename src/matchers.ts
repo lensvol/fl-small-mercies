@@ -6,20 +6,18 @@ interface StateMatcher {
 }
 
 class OrPredicate implements StateMatcher {
-    private readonly left: StateMatcher;
-    private readonly right: StateMatcher;
+    private readonly predicates: StateMatcher[];
 
-    constructor(left: StateMatcher, right: StateMatcher) {
-        this.left = left;
-        this.right = right;
+    constructor(...predicates: StateMatcher[]) {
+        this.predicates = predicates;
     }
 
     describe(): string {
-        return `Or(${this.left.describe()}, ${this.right.describe()})`;
+        return `Or(${this.predicates.map(p => p.describe()).join(', ')}})`;
     }
 
     match(state: GameState): boolean {
-        return this.left.match(state) || this.right.match(state);
+        return this.predicates.map(p => p.match(state)).some(b => b);
     }
 }
 
