@@ -5,16 +5,16 @@ import {IBeginStoryletRequest, IBranch, IChallenge, IQualityRequirement, IStoryl
 import {getSingletonByClassName} from "../utils";
 
 const OLD_SKILLS_ART = new Map([
-    ["Kataleptic Toxicology", "honeyjar"],
-    ["Monstrous Anatomy", "tentacle"],
-    ["A Player of Chess", "chesspiece"],
-    ["Glasswork", "mirror"],
-    ["Shapeling Arts", "amber2"],
-    ["Artisan of the Red Science", "dawnmachine"],
-    ["Mithridacy", "snakehead2"],
-    ["Steward of the Discordance", "black"],
-    ["Zeefaring", "captainhat"],
-    ["Chthonosophy", "stalagmite"],
+    ["kataleptictoxicology", "honeyjar"],
+    ["monstrousanatomy", "tentacle"],
+    ["playerofchess", "chesspiece"],
+    ["glasswork", "mirror"],
+    ["shapelingarts", "amber2"],
+    ["artisanredscience", "dawnmachine"],
+    ["mithridacy", "snakehead2"],
+    ["stewardofdiscordance", "black"],
+    ["zeefaring", "captainhat"],
+    ["cthonsosophy", "stalagmite"],
 ]);
 
 export class AdvancedArtFixer implements IMutationAware, INetworkAware {
@@ -39,15 +39,6 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
         }
 
         for (const quality of sidebarQualities) {
-            const qualityName = getSingletonByClassName(quality as HTMLElement, "item__name");
-            if (!qualityName || !qualityName.textContent) {
-                continue;
-            }
-
-            if (!OLD_SKILLS_ART.has(qualityName.textContent)) {
-                continue;
-            }
-
             const images = quality.getElementsByTagName("img");
             if (images.length == 0) {
                 continue;
@@ -60,8 +51,12 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
             }
 
             const parts = imageUri.split("/");
-            parts[parts.length - 1] = OLD_SKILLS_ART.get(qualityName.textContent) + "small.png";
-            itemImage.setAttribute("src", parts.join("/"));
+            const filename = parts[parts.length - 1].replace("small.png", "");
+
+            if (OLD_SKILLS_ART.has(filename)) {
+                parts[parts.length - 1] = OLD_SKILLS_ART.get(filename) + "small.png";
+                itemImage.setAttribute("src", parts.join("/"));
+            }
         }
     }
 
@@ -82,14 +77,14 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
 
             response.storylet.childBranches.map((branch: IBranch) => {
                 branch.qualityRequirements.map((req: IQualityRequirement) => {
-                    if (OLD_SKILLS_ART.has(req.qualityName)) {
-                        req.image = OLD_SKILLS_ART.get(req.qualityName)!!;
+                    if (OLD_SKILLS_ART.has(req.image)) {
+                        req.image = OLD_SKILLS_ART.get(req.image)!!;
                     }
                 });
 
                 branch.challenges.map((challenge: IChallenge) => {
-                    if (OLD_SKILLS_ART.has(challenge.name)) {
-                        challenge.image = OLD_SKILLS_ART.get(challenge.name)!!;
+                    if (OLD_SKILLS_ART.has(challenge.image)) {
+                        challenge.image = OLD_SKILLS_ART.get(challenge.image)!!;
                     }
                 });
             });
