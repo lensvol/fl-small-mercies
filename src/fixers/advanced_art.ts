@@ -1,7 +1,16 @@
 import {IMutationAware, INetworkAware} from "./base";
 import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
-import {IBeginStoryletRequest, IBranch, IChallenge, IQualityRequirement, IStoryletResponse} from "../interfaces";
+import {
+    IBeginStoryletRequest,
+    IBranch,
+    IChallenge,
+    IChooseBranchRequest,
+    IChooseBranchResponse,
+    IMessageResult,
+    IQualityRequirement,
+    IStoryletResponse,
+} from "../interfaces";
 import {getSingletonByClassName} from "../utils";
 
 const OLD_SKILLS_ART = new Map([
@@ -90,7 +99,16 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
             });
         };
 
+        const branchResultsPatcher = (request: IChooseBranchRequest, response: IChooseBranchResponse) => {
+            response.messages.map((message: IMessageResult) => {
+                if (OLD_SKILLS_ART.has(message.image)) {
+                    message.image = OLD_SKILLS_ART.get(message.image)!!;
+                }
+            });
+        };
+
         interceptor.onResponseReceived("/api/storylet", requirementsPatcher);
         interceptor.onResponseReceived("/api/storylet/begin", requirementsPatcher);
+        interceptor.onResponseReceived("/api/storylet/choosebranch", branchResultsPatcher);
     }
 }
