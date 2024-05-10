@@ -17,6 +17,7 @@ QUALITIY_LOCATION_PREDICATES.set("Moonlit", isArea("Balmoral"));
 QUALITIY_LOCATION_PREDICATES.set("Taimen's Attention", isSetting("Khanate (Inner)"));
 QUALITIY_LOCATION_PREDICATES.set("A Turncoat", isArea("Spite"));
 QUALITIY_LOCATION_PREDICATES.set("Disgruntlement among the Students", isSetting("Science Laboratory"));
+QUALITIY_LOCATION_PREDICATES.set("The City Waning", isArea("The City of the Tracklayers"));
 
 export class LocationQualitiesFixer implements IMutationAware, IStateAware {
     private hideNonlocalQualities = false;
