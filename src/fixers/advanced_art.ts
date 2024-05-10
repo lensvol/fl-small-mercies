@@ -14,16 +14,16 @@ import {
 import {getSingletonByClassName} from "../utils";
 
 const OLD_SKILLS_ART = new Map([
-    ["kataleptictoxicology", "honeyjar"],
-    ["monstrousanatomy", "tentacle"],
-    ["playerofchess", "chesspiece"],
-    ["glasswork", "mirror"],
-    ["shapelingarts", "amber2"],
-    ["artisanredscience", "dawnmachine"],
-    ["mithridacy", "snakehead2"],
-    ["stewardofdiscordance", "black"],
-    ["zeefaring", "captainhat"],
-    ["cthonsosophy", "stalagmite"],
+    ["kataleptictoxicology_sidebar", "honeyjar"],
+    ["monstrousanatomy_sidebar", "tentacle"],
+    ["playerofchess_sidebar", "chesspiece"],
+    ["glasswork_sidebar", "mirror"],
+    ["shapelingarts_sidebar", "amber2"],
+    ["artisanredscience_sidebar", "dawnmachine"],
+    ["mithridacy_sidebar", "snakehead2"],
+    ["stewardofdiscordance_sidebar", "black"],
+    ["zeefaring_sidebar", "captainhat"],
+    ["chthonosophy_sidebar", "stalagmite"],
 ]);
 
 export class AdvancedArtFixer implements IMutationAware, INetworkAware {
