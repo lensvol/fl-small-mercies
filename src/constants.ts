@@ -60,6 +60,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Use old art for icons of Advanced Skills.",
                 default: false,
             },
+            old_airship_fix: {
+                description: "Fix display of the airship name from Estival 2023.",
+                default: true,
+            },
         },
     },
     {
