@@ -100,6 +100,11 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
         };
 
         const branchResultsPatcher = (request: IChooseBranchRequest, response: IChooseBranchResponse) => {
+            // Responses that indicate end of the storylet carry no messages
+            if (!response.messages) {
+                return;
+            }
+
             response.messages.map((message: IMessageResult) => {
                 if (OLD_SKILLS_ART.has(message.image)) {
                     message.image = OLD_SKILLS_ART.get(message.image)!!;
