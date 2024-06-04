@@ -1,6 +1,6 @@
 import {SettingsObject} from "../settings";
 import {INetworkAware, IStateAware} from "./base";
-import {DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor";
+import {AmendedRequest, DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor";
 import {Branch, Storylet} from "../game_components";
 import {GameStateController} from "../game_state";
 import {IChooseBranchRequest} from "../interfaces";
@@ -171,8 +171,7 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
             }
 
             if (branchRequest.branchId > FAKE_BRANCH_ID_THRESHOLD && branchRequest.branchId < FAKE_BRANCH_ID_CEILING) {
-                branchRequest.branchId -= FAKE_BRANCH_ID_THRESHOLD;
-                return DO_NOT_CARE;
+                return new AmendedRequest({branchId: branchRequest.branchId - FAKE_BRANCH_ID_THRESHOLD});
             }
         });
     }
