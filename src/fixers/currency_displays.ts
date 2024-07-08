@@ -197,11 +197,17 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         );
         this.currencyToPredicate.set(
             "Stuiver",
-            new IsInSetting(107987) // Hallow's Throat
+            new OrPredicate(
+                new IsInSetting(107987), // Hallow's Throat
+                new IsInSetting(107989) // Midnight Moon
+            )
         );
         this.currencyToPredicate.set(
             "Ascended Ambergris",
-            new IsInSetting(107987) // Hallow's Throat
+            new OrPredicate(
+                new IsInSetting(107987), // Hallow's Throat
+                new IsInSetting(107989) // Midnight Moon
+            )
         );
     }
 
