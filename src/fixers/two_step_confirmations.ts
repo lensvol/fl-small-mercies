@@ -70,6 +70,7 @@ const DANGEROUS_BRANCHES = [
     121107 /* Don't sell your soul at Sackmas */,
     205784 /* A Reputation of Some Importance: Another Way */,
     246280 /* Adulterine Castle: Leave through the Mirror-Marches */,
+    259359 /* Obtaining A Severed Thread */,
 
     // TODO: Re-enable it when support for protecting cards is added
     // 18162,  /* A Flash of White */
