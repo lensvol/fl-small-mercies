@@ -4,6 +4,8 @@ import {GameState, GameStateController} from "../game_state";
 import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
 import {getSingletonByClassName} from "../utils";
 
+const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband"];
+
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
@@ -163,15 +165,18 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
         );
         this.currencyToDisplay.set("Attar", new CurrencyDisplay("Attar", "redhoneyjar", "attar", "Attar"));
+        this.currencyToDisplay.set("Stuiver", new CurrencyDisplay("Stuiver", "currency1_copper", "stuiver", "Stuiver"));
+        this.currencyToDisplay.set(
+            "Ascended Ambergris",
+            new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "ambergris", "Ambergris")
+        );
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
             new OrPredicate(
-                new OrPredicate(
-                    new IsInSetting(107955), // Khanate (Inner)
-                    new IsInSetting(107959) // Khanate (Copper Quarter)
-                ),
-                new IsInSetting(107975) // Irem
+                new IsInSetting(107955), // Khanate (Inner)
+                new IsInSetting(107959), // Khanate (Copper Quarter)
+                new IsInSetting(107975), // Irem
             )
         );
         this.currencyToPredicate.set(
@@ -189,6 +194,20 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         this.currencyToPredicate.set(
             "Attar",
             new IsInArea(110903) // Arbor, of the Roses
+        );
+        this.currencyToPredicate.set(
+            "Stuiver",
+            new OrPredicate(
+                new IsInSetting(107987), // Hallow's Throat
+                new IsInSetting(107989) // Midnight Moon
+            )
+        );
+        this.currencyToPredicate.set(
+            "Ascended Ambergris",
+            new OrPredicate(
+                new IsInSetting(107987), // Hallow's Throat
+                new IsInSetting(107989) // Midnight Moon
+            )
         );
     }
 
@@ -216,23 +235,24 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     linkState(controller: GameStateController): void {
         controller.onCharacterDataLoaded((state) => {
             for (const [name, display] of this.currencyToDisplay.entries()) {
-                let quality = state.getQuality("Currency", name);
-                // Some progress-related qualities are not currencies, but are denominated in the
-                // same way (e.g. "Hinterlands Prosperity").
-                if (!quality) {
-                    quality = state.getQuality("Progress", name);
-                }
+                /*
+                Some progress-related qualities are not currencies, but are denominated in the
+                same way (e.g. "Hinterlands Prosperity").
 
-                // Attar, apparently, goes under "Goods" (╯°□°)╯︵ ┻━┻
-                if (!quality) {
-                    quality = state.getQuality("Goods", name);
-                }
+                Attar, apparently, goes under "Goods" (╯°□°)╯︵ ┻━┻
+                */
+                let quality = undefined;
+                for (const category of CURRENCY_CATEGORIES) {
+                    quality = state.getQuality(category, name);
 
-                if (quality) {
-                    display.setQuantity(quality.level);
+                    if (quality) {
+                        display.setQuantity(quality.level);
 
-                    if (this.displayMoreCurrencies) {
-                        display.refresh();
+                        if (this.displayMoreCurrencies) {
+                            display.refresh();
+                        }
+
+                        break;
                     }
                 }
             }

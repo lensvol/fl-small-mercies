@@ -42,6 +42,68 @@ export interface IChooseBranchRequest {
     secondChanceIds: number[];
 }
 
+export interface IMessage {
+    message: string;
+    image: string;
+    tooltip: string;
+}
+
+export interface IRollSuccessMessage extends IMessage {
+    type: "DifficultyRollSuccessMessage";
+}
+
+export interface IRollFailureMessage extends IMessage {
+    type: "DifficultyRollFailureMessage";
+}
+
+export interface IQualityCapMessage extends IMessage {
+    type: "QualityCapMessage";
+    possession: IQuality;
+    priority: number;
+    isSidebar: boolean;
+    changeType: "Unaltered" | "Increased" | "Decreased";
+}
+
+export interface ISetting {
+    id: number;
+    mapRootArea: Record<string, string>;
+    name: string;
+    canChangeOutfit: boolean;
+    canOpenMap: boolean;
+    canTravel: boolean;
+    itemsUsableHere: boolean;
+    isInfiniteDraw: boolean;
+}
+
+export interface IStoryletStub {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+    deckType: string;
+    isInEventUseTree: boolean;
+}
+
+export interface IEndStorylet {
+    rootEventId: number;
+    event: IStoryletStub;
+    isLinkingEvent: boolean;
+    isDirectLinkingEvent: boolean;
+    canGoAgain: boolean;
+}
+
+export type IMessageResult = IRollSuccessMessage | IRollFailureMessage | IQualityCapMessage;
+
+export interface IChooseBranchResponse extends IApiResponse {
+    actions: number;
+    phase: string;
+    endStorylet: IEndStorylet;
+    hasUpdatedCharacter: boolean;
+    canChangeOutfit: boolean;
+    messages: IMessageResult[];
+    setting: ISetting;
+}
+
 export interface IBeginStoryletRequest {
     eventId: number;
 }
@@ -71,6 +133,43 @@ export interface IInfobarResponse {
     advert: IAdvert;
 }
 
+export interface IQualityRequirement {
+    image: string;
+    qualityName: string;
+    qualityId: number;
+    tooltip: string;
+    id: number;
+}
+
+export interface IChallenge {
+    id: number;
+    name: string;
+    image: string;
+    targetNumber: number;
+    type: string;
+    category: string;
+    description: string;
+    nature: string;
+    secondChangeId: number;
+    secondChanceDescription: string;
+    secondChanceLevel: number;
+    canAffordSecondChance: boolean;
+}
+
+export interface IBranch {
+    challenges: IChallenge[];
+    id: number;
+    name: string;
+    description: string;
+    ordering: number;
+    image: string;
+    isLocked: boolean;
+    actionLocked: boolean;
+    qualityLocked: boolean;
+    currencyLocked: boolean;
+    qualityRequirements: IQualityRequirement[];
+}
+
 export interface IStorylet {
     id: number;
     deckType: string;
@@ -83,6 +182,7 @@ export interface IStorylet {
     category: string;
     canGoBack: boolean;
     isLocked: boolean;
+    childBranches: IBranch[];
 }
 
 export interface IStoryletResponse extends IApiResponse {
@@ -99,4 +199,19 @@ export interface IStoryletListResponse extends IApiResponse {
     hasUpdatedCharacter: boolean;
     canChangeOutfit: boolean;
     storylets: IStorylet[];
+}
+
+export interface IEquipmentSlot {
+    name: string;
+    qualityId?: number;
+    canChange: boolean;
+    isEffect: boolean;
+    isOutfit: true;
+}
+
+export interface IEquipResponse extends IApiResponse {
+    slots: IEquipmentSlot[];
+    dirty: boolean;
+    maxOutfits: number;
+    isFavourite: boolean;
 }

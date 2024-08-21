@@ -1,6 +1,6 @@
 import {SettingsObject} from "../settings";
 import {INetworkAware, IStateAware} from "./base";
-import {DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor";
+import {AmendedRequest, DO_NOT_CARE, FLApiInterceptor, OverridenResponse} from "../api_interceptor";
 import {Branch, Storylet} from "../game_components";
 import {GameStateController} from "../game_state";
 import {IChooseBranchRequest} from "../interfaces";
@@ -70,6 +70,7 @@ const DANGEROUS_BRANCHES = [
     121107 /* Don't sell your soul at Sackmas */,
     205784 /* A Reputation of Some Importance: Another Way */,
     246280 /* Adulterine Castle: Leave through the Mirror-Marches */,
+    259359 /* Obtaining A Severed Thread */,
 
     // TODO: Re-enable it when support for protecting cards is added
     // 18162,  /* A Flash of White */
@@ -171,8 +172,7 @@ export class TwoStepConfirmationsFixer implements INetworkAware, IStateAware {
             }
 
             if (branchRequest.branchId > FAKE_BRANCH_ID_THRESHOLD && branchRequest.branchId < FAKE_BRANCH_ID_CEILING) {
-                branchRequest.branchId -= FAKE_BRANCH_ID_THRESHOLD;
-                return DO_NOT_CARE;
+                return new AmendedRequest({branchId: branchRequest.branchId - FAKE_BRANCH_ID_THRESHOLD});
             }
         });
     }

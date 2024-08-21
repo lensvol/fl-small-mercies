@@ -56,6 +56,14 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Update relevant currencies on shop transactions.",
                 default: true,
             },
+            revert_sidebar_art: {
+                description: "Use old art for icons of Advanced Skills.",
+                default: false,
+            },
+            old_airship_fix: {
+                description: "Fix display of the airship name from Estival 2023.",
+                default: true,
+            },
         },
     },
     {
@@ -113,6 +121,18 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show 'Vanities' section in your 'Myself' tab.",
                 default: false,
             },
+            convert_pennies_to_echoes: {
+                description: "Convert Pennies to Echoes in branch results and quality requirements.",
+                default: true,
+            },
+            remove_quality_cap_msgs: {
+                description: "Remove messages about quality caps from branch results.",
+                default: true,
+            },
+            remove_simple_challenge_text: {
+                description: "Remove text about challenge being simple from check results.",
+                default: true,
+            },
         },
     },
     {
@@ -144,6 +164,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             },
             top_exit_buttons: {
                 description: "Show 'Perhaps Not' button at the top in storylets that have 4 branches or more.",
+                default: false,
+            },
+            prettify_discordance_checks: {
+                description: "Introduce obnoxious negation into 'Steward of the Discordance' challenges.",
                 default: false,
             },
         },

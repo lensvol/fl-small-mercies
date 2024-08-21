@@ -1,4 +1,5 @@
-import {IUserResponse} from "./interfaces";
+import {IChooseBranchRequest, IUserResponse} from "./interfaces";
+import {debug} from "./logging";
 
 type AjaxMethod = (method: string, url: string, async: boolean) => any;
 
@@ -21,10 +22,18 @@ export class OverridenResponse {
     }
 }
 
+export class AmendedRequest {
+    public readonly request: Record<string, unknown>;
+
+    constructor(request: Record<string, unknown>) {
+        this.request = request;
+    }
+}
+
 export const DO_NOT_CARE = 1;
 export const SPECIAL_HANDLING = 2;
 
-type HandlerResult = OverridenResponse | typeof DO_NOT_CARE | typeof SPECIAL_HANDLING;
+type HandlerResult = OverridenResponse | AmendedRequest | typeof DO_NOT_CARE;
 
 // FIXME: Properly type AJAX requests
 export function setFakeXhrResponse(request: XMLHttpRequest | IModifiedAjax, status: number, response: object) {
@@ -123,34 +132,36 @@ export class FLApiInterceptor {
     private triggerRequestListeners(uri: string, request: IModifiedAjax, data: Record<string, unknown>): any {
         let fakeResponse = null;
 
-        try {
-            const listeners = this.requestListeners.get(uri) || [];
-            for (const handler of listeners) {
+        const listeners = this.requestListeners.get(uri) || [];
+        for (const handler of listeners) {
+            try {
                 fakeResponse = handler(request, data);
-                // Short-circuit if a listener returns a response
-                if (fakeResponse) {
-                    break;
-                }
+            } catch (error) {
+                console.error(`Error caught when running request listener for ${uri}:`, error);
             }
-        } catch (error) {
-            console.error(`Error caught when running listener for ${uri}:`, error);
-            return null;
+            // Short-circuit if a listener returns a response
+            if (fakeResponse) {
+                break;
+            }
         }
+
         return fakeResponse;
     }
 
     private triggerResponseListeners(uri: string, request: any, response: any): any {
         let resultingResponse = structuredClone(response);
 
-        try {
-            const listeners = this.responseListeners.get(uri) || [];
-            for (const handler of listeners) {
-                handler(request, resultingResponse);
+        const listeners = this.responseListeners.get(uri) || [];
+        for (const handler of listeners) {
+            try {
+                const responseCopy = structuredClone(resultingResponse);
+                handler(request, responseCopy);
+                resultingResponse = responseCopy;
+            } catch (error) {
+                console.error(`Error caught when running response listener for ${uri}:`, error);
             }
-        } catch (error) {
-            console.error(`Error caught when running listener for ${uri}:`, error);
-            return response;
         }
+
         return resultingResponse;
     }
 
@@ -200,14 +211,16 @@ export class FLApiInterceptor {
                 return;
             }
 
-            if (result == SPECIAL_HANDLING) {
-                return;
-            }
+            if (result instanceof AmendedRequest) {
+                if (result.request != null) {
+                    this._requestData = {...this._requestData, ...result.request};
+                } else {
+                    this._requestData = {};
+                }
 
-            // FIXME: Only deserialize _changed_ request data
-            if (this._requestData != null) {
                 args[0] = JSON.stringify(this._requestData);
             }
+
             return original_function.apply(this, args);
         };
     }

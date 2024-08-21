@@ -1,7 +1,7 @@
 import {EXTENSION_NAME} from "./constants";
 
-function debug(message: string) {
-    console.debug(`[${EXTENSION_NAME}] ${message}`);
+function debug(message: string, ...args: any[]) {
+    console.debug(`[${EXTENSION_NAME}] ${message}`, ...args);
 }
 
 function log(message: string) {

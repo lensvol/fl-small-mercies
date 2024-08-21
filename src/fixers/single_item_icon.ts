@@ -14,11 +14,20 @@ export class SingleItemIconFixer implements IMutationAware {
             return false;
         }
 
+        if (node.classList.contains("equipped-item")) {
+            return true;
+        }
+
         return getSingletonByClassName(node, "possessions") !== null;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const itemCounters = node.getElementsByClassName("js-item-value");
+        const possessionsDiv = getSingletonByClassName(document.body, "possessions");
+        if (possessionsDiv == null) {
+            return;
+        }
+
+        const itemCounters = possessionsDiv.getElementsByClassName("js-item-value");
         for (let i = 0; i < itemCounters.length; i++) {
             const counter = itemCounters[i] as HTMLElement;
             if (counter.nodeName.toLowerCase() === "span" && counter.textContent == "1") {

@@ -4,6 +4,10 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IQuality} from "../interfaces";
 
 const VANITY_QUALITY_IDS = [
+    [77, 144494], // A Shaper of Starved Culture
+    [77, 144203], // Neighbourhood Noctivagant
+    [77, 144910], // Volatile Consignments Delivered to the Remote Magazine
+
     [777, 142587], // A Historian of the Neath
     [777, 142894], // A Hunter of Zee Beasts
     [777, 144063], // A Prolific Pirate
@@ -29,6 +33,7 @@ const VANITY_QUALITY_IDS = [
 
     [777, 127253], // Teaching Reputation of Your Laboratory
     [777, 127257], // The Prestige of your Laboratory
+    [777, 145263], // An Interloper in the Library
 
     [21, 510], // A Scholar of the Correspondence
     [21, 142865], // Twilit Smuggler

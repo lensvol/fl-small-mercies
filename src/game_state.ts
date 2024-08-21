@@ -1,5 +1,12 @@
 import {FLApiInterceptor} from "./api_interceptor";
-import {IShopResponse, IStorylet, IStoryletListResponse, IStoryletResponse, IUserResponse} from "./interfaces";
+import {
+    IEquipResponse,
+    IShopResponse,
+    IStorylet,
+    IStoryletListResponse,
+    IStoryletResponse,
+    IUserResponse,
+} from "./interfaces";
 import {debug} from "./logging";
 
 export const UNKNOWN = -1;
@@ -25,6 +32,7 @@ enum StateChangeTypes {
     StoryletPhaseChanged = "StoryletPhaseChanged",
     ActionsCountChanged = "ActionsCountChanged",
     LocationChanged = "LocationChanged",
+    EquipmentChanged = "EquipmentChanged",
 }
 
 export class FLUser {
@@ -123,12 +131,15 @@ export class GameState {
 
     public actionsLeft = 0;
 
-    public storyletId = UNKNOWN;
-
     private qualities: Map<string, Map<string, Quality>> = new Map();
+    private qualityIdMapping: Map<number, Quality> = new Map();
 
     public resetQualities() {
         this.qualities.clear();
+    }
+
+    public getQualityById(qualityId: number): Quality | undefined {
+        return this.qualityIdMapping.get(qualityId);
     }
 
     public getQuality(category: string, name: string): Quality | undefined {
@@ -151,6 +162,8 @@ export class GameState {
 
         const category = this.qualities.get(categoryName) || new Map();
         category.set(qualityName, quality);
+
+        this.qualityIdMapping.set(quality.qualityId, quality);
     }
 
     public *enumerateQualities() {
@@ -185,6 +198,7 @@ export class GameStateController {
         [StateChangeTypes.UserDataLoaded]: [],
         [StateChangeTypes.StoryletPhaseChanged]: [],
         [StateChangeTypes.LocationChanged]: [],
+        [StateChangeTypes.EquipmentChanged]: [],
     };
 
     private upsertQuality(
@@ -342,13 +356,18 @@ export class GameStateController {
             // @ts-ignore: There is hell and then there is writing types for external APIs
             const currentPhase = this.decodePhase(response.phase);
             if (currentPhase != this.state.storyletPhase) {
-                if (currentPhase == StoryletPhases.End) {
-                    // @ts-ignore: There is hell and then there is writing types for external APIs
-                    this.state.storyletId = response.endStorylet.event.id;
-                }
-
                 this.state.storyletPhase = currentPhase;
                 this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+            }
+            if (response.endStorylet) {
+                // @ts-ignore: There is hell and then there is writing types for external APIs
+                this.state.currentStorylet = response.endStorylet.event;
+                this.triggerListeners(StateChangeTypes.StoryletChanged);
+            }
+            if (response.storylet) {
+                // @ts-ignore: There is hell and then there is writing types for external APIs
+                this.state.currentStorylet = response.storylet;
+                this.triggerListeners(StateChangeTypes.StoryletChanged);
             }
         }
 
@@ -360,22 +379,16 @@ export class GameStateController {
         }
     }
 
-    public parseEquipResponse(response: Record<string, unknown>) {
-        // @ts-ignore: There is hell and then there is writing types for external APIs
-        for (const thing of response.changedPossessions) {
-            const [quality, previous] = this.upsertQuality(
-                thing.id,
-                thing.category,
-                thing.name,
-                thing.effectiveLevel,
-                thing.level,
-                thing.image,
-                thing.cap || 0,
-                thing.nature
-            );
-
-            if (quality.level != previous) {
-                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
+    public parseEquipmentResponse(response: IEquipResponse) {
+        for (const equipmentSlot of response.slots) {
+            // TODO: Only trigger listeners on actual _changes_ to slot contents
+            if (equipmentSlot.qualityId != null) {
+                // Item was equipped into the inventory slot
+                const itemQuality = this.state.getQualityById(equipmentSlot.qualityId);
+                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, itemQuality);
+            } else {
+                // Equipment slot was cleared
+                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, null);
             }
         }
     }
@@ -393,6 +406,7 @@ export class GameStateController {
 
         this.state.currentStorylet = new UnknownStorylet();
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
+        this.triggerListeners(StateChangeTypes.StoryletChanged);
     }
 
     public parseStoryletResponse(response: any) {
@@ -480,6 +494,10 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.ActionsCountChanged].push(handler);
     }
 
+    public onEquipmentChanged(handler: (g: GameState, slotName: string, item: Quality | null) => void) {
+        this.changeListeners[StateChangeTypes.EquipmentChanged].push(handler);
+    }
+
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
         this.changeListeners[changeType].map((handler) => {
             try {
@@ -499,8 +517,8 @@ export class GameStateController {
         });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
-        interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipResponse(response));
-        interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipResponse(response));
+        interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipmentResponse(response));
+        interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipmentResponse(response));
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) =>
             this.parseChooseBranchResponse(response)
         );
