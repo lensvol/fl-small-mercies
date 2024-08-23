@@ -147,7 +147,6 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     private currentState?: GameState;
 
     constructor() {
-        this.currencyToDisplay.set("Rat-Shilling", new CurrencyDisplay("Rat-Shilling", "purse", "rat_shilling"));
         this.currencyToDisplay.set(
             "Assortment of Khaganian Coinage",
             new CurrencyDisplay("Assortment of Khaganian Coinage", "currency2_silver", "khaganian", "Khaganian Coinage")
@@ -165,7 +164,6 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             new CurrencyDisplay("Hinterland Prosperity", "ambercoins", "prosperity", "Hinterland Prosperity")
         );
         this.currencyToDisplay.set("Attar", new CurrencyDisplay("Attar", "redhoneyjar", "attar", "Attar"));
-        this.currencyToDisplay.set("Stuiver", new CurrencyDisplay("Stuiver", "currency1_copper", "stuiver", "Stuiver"));
         this.currencyToDisplay.set(
             "Ascended Ambergris",
             new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "ambergris", "Ambergris")
@@ -176,12 +174,8 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             new OrPredicate(
                 new IsInSetting(107955), // Khanate (Inner)
                 new IsInSetting(107959), // Khanate (Copper Quarter)
-                new IsInSetting(107975), // Irem
+                new IsInSetting(107975) // Irem
             )
-        );
-        this.currencyToPredicate.set(
-            "Rat-Shilling",
-            new IsInSetting(107960) // Rat-Market
         );
         this.currencyToPredicate.set(
             "Justificande Coin",
@@ -194,13 +188,6 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         this.currencyToPredicate.set(
             "Attar",
             new IsInArea(110903) // Arbor, of the Roses
-        );
-        this.currencyToPredicate.set(
-            "Stuiver",
-            new OrPredicate(
-                new IsInSetting(107987), // Hallow's Throat
-                new IsInSetting(107989) // Midnight Moon
-            )
         );
         this.currencyToPredicate.set(
             "Ascended Ambergris",
