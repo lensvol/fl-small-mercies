@@ -24,7 +24,15 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             scrip_icon: {
-                description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
+                description: "Add Hinterlands Scrip icon to a sidebar indicator.",
+                default: true,
+            },
+            stuiver_icon: {
+                description: "Add Stuiver icon to a sidebar indicator.",
+                default: true,
+            },
+            shillings_icon: {
+                description: "Add Rat-Shilling icon to a sidebar indicator.",
                 default: true,
             },
             sort_city_mysteries: {

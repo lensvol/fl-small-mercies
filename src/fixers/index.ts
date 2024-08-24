@@ -2,7 +2,7 @@ import {JournalUiFixer} from "./journal_ui";
 import {ThousandSeparatorFixer} from "./thousands_separator";
 import {AutoScrollFixer} from "./auto_scroll";
 import {DiscreteScrollbarsFixer} from "./discrete_progressbars";
-import {ScripIconFixer} from "./scrip_icon";
+import {CurrencyIconsFixer} from "./currency_icons";
 import {ShipSaverFixer} from "./ship_saver";
 import {RightSidebarFixer} from "./right_sidebar";
 import {PlanButtonsFixer} from "./plan_remover";
@@ -34,7 +34,7 @@ export default [
     JournalUiFixer,
     ThousandSeparatorFixer,
     DiscreteScrollbarsFixer,
-    ScripIconFixer,
+    CurrencyIconsFixer,
     ShipSaverFixer,
     RightSidebarFixer,
     PlanButtonsFixer,
