@@ -1,12 +1,15 @@
 import {debug, log} from "./logging";
 import {sendToServiceWorker} from "./comms";
 import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants";
+import { GameState, GameStateController } from "./game_state";
 import Tab = chrome.tabs.Tab;
+import { TrackedQuality } from "./fixers/misc_tracker";
 
 type MultipleChoices = [string, string][];
 type ToggleSetting = {description: string; default: boolean};
 type MultipleChoiceSetting = {description: string; default: string; choices: MultipleChoices};
-type SettingDescriptor = MultipleChoiceSetting | ToggleSetting;
+type DropDownListSetting = { description: string; default: string };
+type SettingDescriptor = MultipleChoiceSetting | ToggleSetting | DropDownListSetting;
 type SettingGroupDescriptor = {title: string; settings: {[key: string]: SettingDescriptor}};
 type SettingsSchema = SettingGroupDescriptor[];
 type SettingsObject = {[key: string]: boolean | string};
@@ -24,6 +27,7 @@ function createDefaultSettings(schema: SettingsSchema): SettingsObject {
 
 const isToggle = (setting: SettingDescriptor): setting is ToggleSetting => typeof setting.default == "boolean";
 const isMultipleChoice = (setting: SettingDescriptor): setting is MultipleChoiceSetting => "choices" in setting;
+const isDropDown = (setting: SettingDescriptor): setting is DropDownListSetting => setting.default === "select";
 
 class FLSettingsFrontend {
     private readonly name: string;
@@ -33,6 +37,11 @@ class FLSettingsFrontend {
     private readonly schema: SettingsSchema;
 
     private updateHandler?: (settings: SettingsObject) => void;
+
+    private currentState?: GameState;
+    private trackedQualities: Map<string, TrackedQuality> = new Map();
+    private qualityNameAndCategory: Map<string, string> = new Map();
+    private qualityNames: string[] = [];
 
     constructor(extensionId: string, name: string, schema: SettingsSchema) {
         this.extensionId = extensionId;
@@ -50,6 +59,19 @@ class FLSettingsFrontend {
         });
 
         sendToServiceWorker(MSG_TYPE_CURRENT_SETTINGS, {});
+    }
+
+    linkState(state: GameStateController): void {
+        const stringSorter = (s1: string, s2: string) => (s1 > s2 ? 1 : -1)
+        state.onCharacterDataLoaded((g) => {
+            this.currentState = g;
+            const unsortedQualityNames: string[] = []
+            for (const quality of g.enumerateQualities()) {
+                this.qualityNameAndCategory.set(quality.name, quality.category);
+                unsortedQualityNames.push(quality.name);
+            }
+            this.qualityNames = unsortedQualityNames.sort(stringSorter)
+        });
     }
 
     private attachPanelInjector(node: Node) {
@@ -172,6 +194,51 @@ class FLSettingsFrontend {
         return div;
     }
 
+    createDropDownSelect() {
+        const miscPicker = document.createElement("div");
+        miscPicker.setAttribute("id", "misc-picker");
+        const miscSelect = document.createElement("input");
+        miscSelect.setAttribute("list", "quality-list");
+        miscSelect.id = "track-target-name";
+        miscPicker.appendChild(miscSelect);
+        const dataList = document.createElement("datalist");
+        dataList.setAttribute("id", "quality-list");
+        for (const qualityName of this.qualityNames) {
+            const option = document.createElement("option");
+            option.value = qualityName;
+            option.text = qualityName;
+            dataList.appendChild(option);
+        }
+        miscPicker.appendChild(dataList);
+        const targetInput = document.createElement("input");
+        targetInput.id = "track-target-number";
+        targetInput.type = "number";
+        miscPicker.appendChild(targetInput);
+        const trackButton = document.createElement("button");
+        trackButton.classList.add("js-tt", "button", "button--primary", "button--margin", "button--go")
+        trackButton.addEventListener("click", () => {
+            const trackName = (document.getElementById("track-target-name") as HTMLSelectElement).value;
+            const trackNumber = Number((document.getElementById("track-target-number") as HTMLInputElement).value);
+            const trackCategory = this.qualityNameAndCategory.get(trackName) || "";
+            const trackCurrent: number = this.currentState?.getQuality(trackCategory, trackName)?.level || 0;
+            const trackImage: string = this.currentState?.getQuality(trackCategory, trackName)?.image || "question"
+            const newQuality = { name: trackName, category: trackCategory, currentValue: trackCurrent, targetValue: trackNumber, image: trackImage };
+            this.trackedQualities.set(trackName, newQuality);
+
+            this.settings.trackedQualities = JSON.stringify(Object.fromEntries(this.trackedQualities));
+
+            sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.settings });
+
+            document.getElementById('misc-tracker')?.insertBefore(this.createTracker(trackName), miscPicker);
+        })
+        const trackText = document.createElement("span");
+        trackText.textContent = "Track";
+        trackButton.appendChild(trackText);
+        miscPicker.appendChild(trackButton);
+
+        return miscPicker;
+    }
+
     private createLocalSettingsPanel(): Node {
         const containerDiv = document.createElement("div");
         containerDiv.setAttribute("custom-settings", this.extensionId);
@@ -206,6 +273,18 @@ class FLSettingsFrontend {
 
                     toggle.appendChild(label);
                     listContainer.appendChild(toggle);
+                    if (settingId === "display_quality_tracker") {
+                        toggle.addEventListener("click", () => {
+                            const miscPanel = document.getElementById('misc-tracker')
+                            if (miscPanel) {
+                                if (this.settings.display_quality_tracker) {
+                                    miscPanel.removeAttribute("hidden")
+                                } else {
+                                    miscPanel.setAttribute("hidden", "");
+                                }
+                            }
+                        })
+                    }
                 }
 
                 if (isMultipleChoice(descriptor)) {
@@ -230,6 +309,35 @@ class FLSettingsFrontend {
 
                     listContainer.appendChild(choicePanel);
                 }
+
+                if (isDropDown(descriptor)) {
+                    let temp = this.settings.trackedQualities as string;
+                    if (!temp) {
+                        temp = "{}";
+                    }
+                    this.trackedQualities = new Map(Object.entries(JSON.parse(temp)));
+
+                    const miscPanel = document.createElement("ul");
+                    miscPanel.setAttribute("id", "misc-tracker");
+                    miscPanel.setAttribute("hidden", "true")
+                    miscPanel.classList.add("items", "items--list");
+
+                    for (const valueName of this.trackedQualities.keys()) {
+                        const miscDisplay = this.createTracker(valueName);
+                        miscPanel.appendChild(miscDisplay);
+                    }
+
+                    if (this.settings.display_quality_tracker) {
+                        miscPanel.removeAttribute("hidden")
+                    } else {
+                        miscPanel.setAttribute("hidden", "");
+                    }
+
+                    const dropDown = this.createDropDownSelect()
+
+                    miscPanel.appendChild(dropDown);
+                    listContainer.appendChild(miscPanel);
+                }
             }
         }
 
@@ -237,6 +345,87 @@ class FLSettingsFrontend {
         containerDiv.appendChild(listContainer);
 
         return containerDiv;
+    }
+
+    private createTracker(title: string): HTMLElement {
+        const trackedQuality = this.trackedQualities.get(title);
+        const initialValue = trackedQuality?.currentValue || 0;
+        const targetValue = trackedQuality?.targetValue || 0;
+        const icon = trackedQuality?.image || "question";
+
+        const li = document.createElement("li");
+        li.id = `${title}-tracker`;
+        li.classList.add("js-item", "item", "sidebar-quality", "tracked-misc");
+        li.style.cssText = "text-align: left";
+        li.dataset.qualityName = title;
+
+        const div = document.createElement("div");
+        div.classList.add("js-icon", "icon", "js-tt", "icon--circular");
+
+        const div3 = document.createElement("div");
+        div3.classList.add("item__desc");
+
+        const div4 = document.createElement("div");
+        div4.setAttribute("tabindex", "0");
+        div4.setAttribute("role", "button");
+        div4.setAttribute("aria-label", title);
+        div4.style.cssText = "outline: 0px; outline-offset: 0px; cursor: default;";
+
+        const span = document.createElement("span");
+        span.classList.add("js-item-name", "item__name");
+        span.textContent = title;
+
+        const span3 = document.createElement("span");
+        span3.classList.add("item__value");
+        span3.textContent = ` ${initialValue} / ${targetValue}`;
+
+        const img = document.createElement("img");
+        img.classList.add("cursor-default");
+        img.setAttribute("alt", `${title}`);
+        img.setAttribute("src", `//images.fallenlondon.com/icons/${icon}.png`);
+        img.setAttribute("aria-label", `${title}`);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("buttonlet-container")
+        deleteButton.setAttribute("aria-label", "Stop Tracking");
+        deleteButton.setAttribute("type", "button");
+
+        const deleteSpan1 = document.createElement("span");
+        deleteSpan1.classList.add("buttonlet", "fa-stack", "fa-lg", "buttonlet-enabled", "buttonlet-delete");
+        deleteSpan1.setAttribute("title", "Stop Tracking")
+
+        const deleteSpan2 = document.createElement("span");
+        deleteSpan2.classList.add("fa", "fa-circle", "fa-stack-2x");
+
+        const deleteSpan3 = document.createElement("span");
+        deleteSpan3.classList.add("fa", "fa-inverse", "fa-stack-1x", "fa-times");
+
+        const deleteSpan4 = document.createElement("span");
+        deleteSpan4.classList.add("u-visually-hidden")
+        deleteSpan4.textContent = "delete";
+
+        deleteButton.appendChild(deleteSpan1);
+        deleteSpan1.appendChild(deleteSpan2);
+        deleteSpan1.appendChild(deleteSpan3);
+        deleteSpan1.appendChild(deleteSpan4);
+
+        deleteButton.addEventListener("click", () => {
+            document.getElementById(li.id)?.remove();
+            this.trackedQualities.delete(title);
+            this.settings.trackedQualities = JSON.stringify(Object.fromEntries(this.trackedQualities))
+
+            sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.settings });
+        })
+
+        li.appendChild(div);
+        li.appendChild(div3);
+        li.appendChild(deleteButton);
+        div.appendChild(div4);
+        div3.appendChild(span);
+        div3.appendChild(span3);
+        div4.appendChild(img);
+
+        return li;
     }
 
     installSettingsPage() {

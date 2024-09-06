@@ -31,6 +31,7 @@ const fixers: IMercyFixer[] = AVAILABLE_FIXERS.flatMap((fixerCls) => {
 });
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
+settingsFrontend.linkState(gameStateController);
 settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
     fixers.map((fixer) => {

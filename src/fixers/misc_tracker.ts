@@ -5,7 +5,7 @@ import { getSingletonByClassName } from "../utils";
 import { MSG_TYPE_SAVE_SETTINGS } from "../constants";
 import { sendToServiceWorker } from "../comms";
 
-export class MiscTracker implements IMutationAware, IStateAware {
+export class MiscTrackerFixer implements IMutationAware, IStateAware {
 
     private displayMiscTracker = true;
     private miscQualities: Map<string, TrackedQuality> = new Map();
@@ -22,18 +22,18 @@ export class MiscTracker implements IMutationAware, IStateAware {
 
     applySettings(settings: SettingsObject): void {
         this.currentSettings = settings;
-        console.log("received settings")
-        console.log(settings)
         let temp = settings.trackedQualities as string;
         if (!temp) {
             temp = "{}";
         }
         this.miscQualities = new Map(Object.entries(JSON.parse(temp)));
+        this.displayMiscTracker = this.currentSettings.display_quality_tracker as boolean;
     }
 
     
 
     linkState(state: GameStateController): void {
+        const stringSorter = (s1: string, s2: string) => (s1 > s2 ? 1 : -1)
         state.onCharacterDataLoaded((g) => {
             this.currentState = g;
             const unsortedQualityNames: string[] = []
@@ -41,23 +41,39 @@ export class MiscTracker implements IMutationAware, IStateAware {
                 this.qualityNameAndCategory.set(quality.name, quality.category);
                 unsortedQualityNames.push(quality.name);
             }
-            this.qualityNames = unsortedQualityNames.sort(this.stringSorter())
+            this.qualityNames = unsortedQualityNames.sort(stringSorter)
             for (const [key, value] of this.miscQualities) {
-                const quality = g.getQuality(value.category, key);
-                if (quality) {
-                    value.currentValue = quality.level;
-                } else {
-                    value.currentValue = 0;
+                let dirty = false;
+                if (value.category === "") {
+                    value.category = this.qualityNameAndCategory.get(key) || "";
+                    value.image = this.currentState?.getQuality(value.category, key)?.image || "question"
+                    if (value.image !== "question") {
+                        const tracker = document.getElementById(`${key}-tracker-icon`)
+                        tracker?.setAttribute("src", `//images.fallenlondon.com/icons/${value.image}.png`);
+                    }
+                    dirty = value.category !== "";
                 }
-
-                this.updateTracker(key, quality?.level || 0);
+                if (value.category != "") {
+                    const quality = g.getQuality(value.category, key);
+                    if (quality) {;
+                        value.currentValue = quality.level;
+                    } else {
+                        value.currentValue = 0;
+                    }
+                    this.updateTracker(key, quality?.level || 0);
+                }
+                if (dirty && this.currentSettings) {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities))
+                    sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
+                }
             }
         });
 
         state.onQualityChanged((state, quality, _previous, current) => {
             if (!this.qualityNames.includes(quality.name)) {
                 this.qualityNames.push(quality.name);
-                this.qualityNames = this.qualityNames.sort(this.stringSorter())
+                this.qualityNames = this.qualityNames.sort(stringSorter)
                 this.qualityNameAndCategory.set(quality.name, quality.category);
 
                 const miscSelect = document.getElementById("track-target-name");
@@ -69,22 +85,22 @@ export class MiscTracker implements IMutationAware, IStateAware {
             }
             if (this.miscQualities.has(quality.name)) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                this.miscQualities.get(quality.name)!.currentValue = current;
+                const updatedQuality = this.miscQualities.get(quality.name)!;
+                updatedQuality.currentValue = current;
                 this.updateTracker(quality.name, current);
+                if (updatedQuality.category === "") {
+                    updatedQuality.category = this.qualityNameAndCategory.get(quality.name) || "";
+                    updatedQuality.image = this.currentState?.getQuality(quality.category, quality.name)?.image || "question"
+                    if (updatedQuality.image !== "question") {
+                        const tracker = document.getElementById(`${quality.name}-tracker-icon`)
+                        tracker?.setAttribute("src", `//images.fallenlondon.com/icons/${updatedQuality.image}.png`);
+                    }
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities))
+                    sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
+                }
             }
         });
-    }
-
-    private stringSorter(): ((a: string, b: string) => number) | undefined {
-        return (s1, s2) => {
-            if (s1 > s2) {
-                return 1;
-            }
-            if (s1 < s2) {
-                return -1;
-            }
-            return 0;
-        };
     }
 
     //create the html element to track one quality
@@ -125,6 +141,7 @@ export class MiscTracker implements IMutationAware, IStateAware {
 
         const img = document.createElement("img");
         img.classList.add("cursor-default");
+        img.setAttribute("id", `${title}-tracker-icon`)
         img.setAttribute("alt", `${title}`);
         img.setAttribute("src", `//images.fallenlondon.com/icons/${icon}.png`);
         img.setAttribute("aria-label", `${title}`);
@@ -137,48 +154,8 @@ export class MiscTracker implements IMutationAware, IStateAware {
         }
         span4.style.cssText = `width: ${percentage}%;`;
 
-        const deleteButton = document.createElement("button");
-        deleteButton.classList.add("buttonlet-container")
-        deleteButton.setAttribute("aria-label", "Stop Tracking");
-        deleteButton.setAttribute("type", "button");
-
-        const deleteSpan1 = document.createElement("span");
-        deleteSpan1.classList.add("buttonlet", "fa-stack", "fa-lg", "buttonlet-enabled", "buttonlet-delete");
-        deleteSpan1.setAttribute("title", "Stop Tracking")
-
-        const deleteSpan2 = document.createElement("span");
-        deleteSpan2.classList.add("fa", "fa-circle", "fa-stack-2x");
-
-        const deleteSpan3 = document.createElement("span");
-        deleteSpan3.classList.add("fa", "fa-inverse", "fa-stack-1x", "fa-times");
-
-        const deleteSpan4 = document.createElement("span");
-        deleteSpan4.classList.add("u-visually-hidden")
-        deleteSpan4.textContent = "delete";
-
-        deleteButton.appendChild(deleteSpan1);
-        deleteSpan1.appendChild(deleteSpan2);
-        deleteSpan1.appendChild(deleteSpan3);
-        deleteSpan1.appendChild(deleteSpan4);
-
-        deleteButton.addEventListener("click", () => {
-            console.log("before delete")
-            console.log(this.miscQualities)
-            console.log(this.currentSettings)
-            document.getElementById(li.id)?.remove();
-            this.miscQualities.delete(title);
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities))
-
-            sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
-
-            console.log(this.miscQualities)
-            console.log(this.currentSettings)
-        })
-
         li.appendChild(div);
         li.appendChild(div3);
-        li.appendChild(deleteButton);
         div.appendChild(div4);
         div3.appendChild(span);
         div3.appendChild(span3);
@@ -274,54 +251,6 @@ export class MiscTracker implements IMutationAware, IStateAware {
                 const miscDisplay = this.createTracker(valueName);
                 miscPanel.appendChild(miscDisplay);
             }
-
-            const miscPicker = document.createElement("div");
-            const miscSelect = document.createElement("select");
-            miscSelect.id = "track-target-name";
-            miscPicker.appendChild(miscSelect);
-            for (const qualityName of this.qualityNames) {
-                const option = document.createElement("option");
-                option.value = qualityName;
-                option.text = qualityName;
-                miscSelect.appendChild(option);
-            }
-            const targetInput = document.createElement("input");
-            targetInput.id = "track-target-number";
-            targetInput.type = "number";
-            miscPicker.appendChild(targetInput);
-
-            const trackButton = document.createElement("button");
-            trackButton.classList.add("js-tt", "button", "button--primary", "button--margin", "button--go")
-            trackButton.addEventListener("click", () => {
-                const trackName = (document.getElementById("track-target-name") as HTMLSelectElement).value;
-                const trackNumber = Number((document.getElementById("track-target-number") as HTMLInputElement).value);
-                const trackCategory = this.qualityNameAndCategory.get(trackName) || "";
-                const trackCurrent: number = this.currentState?.getQuality(trackCategory, trackName)?.level || 0;
-                const trackImage: string = this.currentState?.getQuality(trackCategory, trackName)?.image || "question"
-                const newQuality = { name: trackName, category: trackCategory, currentValue: trackCurrent, targetValue: trackNumber, image: trackImage };
-                console.log("before add")
-                console.log(this.miscQualities)
-                console.log(this.currentSettings)
-                this.miscQualities.set(trackName, newQuality);
-                if (this.currentSettings) {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities)) ;
-                }
-
-                sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
-                console.log(this.miscQualities)
-                console.log(this.currentSettings)
-               
-                const miscDisplay = this.createTracker(trackName);
-                miscPanel?.appendChild(miscDisplay);
-                miscPanel?.appendChild(miscPicker);
-            })
-            const trackText = document.createElement("span");
-            trackText.textContent = "Track";
-            trackButton.appendChild(trackText);
-            miscPicker.appendChild(trackButton);
-
-            miscPanel.appendChild(miscPicker);
 
             sidebar.appendChild(fragment);
         }
