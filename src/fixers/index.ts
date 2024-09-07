@@ -9,7 +9,6 @@ import {PlanButtonsFixer} from "./plan_remover";
 import {ThingSortFixer} from "./things_sorter";
 import {ProfileLinkFixer} from "./profile_link";
 import {AsceticModeFixer} from "./ascetic_mode";
-import { FavourTrackerFixer } from "./favour_tracker";
 import { MiscTrackerFixer } from "./misc_tracker";
 import {SocialEmptyReqsFixer} from "./empty_requirements";
 import {AfterFallYearFixer} from "./af_year";
@@ -43,7 +42,6 @@ export default [
     ProfileLinkFixer,
     ThingSortFixer,
     AsceticModeFixer,
-    FavourTrackerFixer,
     MiscTrackerFixer,
     SocialEmptyReqsFixer,
     AfterFallYearFixer,

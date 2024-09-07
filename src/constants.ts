@@ -85,10 +85,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Add button that points to your profile.",
                 default: true,
             },
-            display_favour_tracker: {
-                description: "Display Favours in the right sidebar.",
-                default: true,
-            },
             display_quality_tracker: { 
                 description: "Display tracker for Qualities in the right sidebar",
                 default: true
@@ -183,10 +179,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "Fine-tuning",
         settings: {
-            show_zero_favours: {
-                description: "Show factions with zero Favours.",
-                default: false,
-            },
             scroll_back_behavior: {
                 description: "Scroll back mode",
                 default: "auto",
