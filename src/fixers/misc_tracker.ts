@@ -95,10 +95,10 @@ export class MiscTrackerFixer implements IMutationAware, IStateAware {
                         const tracker = document.getElementById(`${quality.name}-tracker-icon`)
                         tracker?.setAttribute("src", `//images.fallenlondon.com/icons/${updatedQuality.image}.png`);
                     }
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities))
-                    sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
                 }
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                this.currentSettings!.trackedQualities = JSON.stringify(Object.fromEntries(this.miscQualities))
+                sendToServiceWorker(MSG_TYPE_SAVE_SETTINGS, { settings: this.currentSettings });
             }
         });
     }
