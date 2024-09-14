@@ -89,10 +89,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Display tracker for Qualities in the right sidebar",
                 default: true
             },
-            quality_to_track: {
-                description: "Track this quality:",
-                default: "select"
-            },
             auto_scroll_back: {
                 description: "Auto-scroll to the storylet after choosing a branch.",
                 default: true,
