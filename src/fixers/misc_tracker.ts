@@ -585,6 +585,12 @@ export class MiscTrackerFixer implements IMutationAware, IStateAware {
                     firstElementUpButton.setAttribute("hidden", "");
                     firstElementUpButton.style.opacity = "0.0";
                     firstElementUpButton.disabled = true;
+                    if (arrayItems.length > 1) {
+                        const firstElementDownButton = arrayItems[0].getElementsByClassName("down-button").item(0) as HTMLButtonElement;
+                        firstElementDownButton.removeAttribute("hidden");
+                        firstElementDownButton.style.opacity = "1.0";
+                        firstElementDownButton.disabled = false;
+                    }
                 }
 
                 const lastElementDownButton = arrayItems[arrayItems.length - 1].getElementsByClassName("down-button").item(0) as HTMLButtonElement;
@@ -592,6 +598,12 @@ export class MiscTrackerFixer implements IMutationAware, IStateAware {
                     lastElementDownButton.setAttribute("hidden", "");
                     lastElementDownButton.style.opacity = "0.0";
                     lastElementDownButton.disabled = true;
+                    if (arrayItems.length > 1) {
+                        const lastElementUpButton = arrayItems[arrayItems.length - 1].getElementsByClassName("up-button").item(0) as HTMLButtonElement;
+                        lastElementUpButton.removeAttribute("hidden");
+                        lastElementUpButton.style.opacity = "1.0";
+                        lastElementUpButton.disabled = false;
+                    }
                 }
                 if (arrayItems.length > 2) {
                     arrayItems.slice(1, -1).forEach((element) => {
