@@ -76,7 +76,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             fixers.filter(isMutationAware).map((fixer) => {
                 try {
                     if (fixer.checkEligibility(node)) {
-                        fixer.onNodeAdded(node);
+                        fixer.onNodeRemoved(node);
                     }
                 } catch (error) {
                     console.error("Error occured while processing removed node:", error);

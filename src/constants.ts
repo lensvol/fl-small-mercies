@@ -5,6 +5,7 @@ const EXTENSION_NAME = "FL Small Mercies";
 const EXTENSION_ID = "FL_SM";
 
 const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_ID}_saveSettings`;
+const MSG_TYPE_UPDATE_SETTINGS = `${EXTENSION_ID}_updateSettings`;
 const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_ID}_currentSettings`;
 
 const SETTINGS_SCHEMA: SettingsSchema = [
@@ -93,9 +94,9 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Add button that points to your profile.",
                 default: true,
             },
-            display_favour_tracker: {
-                description: "Display Favours in the right sidebar.",
-                default: true,
+            display_quality_tracker: { 
+                description: "Display tracker for Qualities in the right sidebar",
+                default: true
             },
             auto_scroll_back: {
                 description: "Auto-scroll to the storylet after choosing a branch.",
@@ -183,10 +184,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "Fine-tuning",
         settings: {
-            show_zero_favours: {
-                description: "Show factions with zero Favours.",
-                default: false,
-            },
             scroll_back_behavior: {
                 description: "Scroll back mode",
                 default: "auto",
@@ -336,6 +333,7 @@ export {
     EXTENSION_NAME,
     EXTENSION_ID,
     MSG_TYPE_SAVE_SETTINGS,
+    MSG_TYPE_UPDATE_SETTINGS,
     MSG_TYPE_CURRENT_SETTINGS,
     SETTINGS_SCHEMA,
     COMMUNITY_SNIPPETS,
