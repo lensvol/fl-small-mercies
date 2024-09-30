@@ -1,6 +1,6 @@
 import {debug, log} from "./logging";
 import {sendToServiceWorker} from "./comms";
-import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants";
+import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS, MSG_TYPE_UPDATE_SETTINGS} from "./constants";
 import Tab = chrome.tabs.Tab;
 
 type MultipleChoices = [string, string][];
@@ -10,7 +10,7 @@ type SettingDescriptor = MultipleChoiceSetting | ToggleSetting;
 type SettingGroupDescriptor = {title: string; settings: {[key: string]: SettingDescriptor}};
 type SettingsSchema = SettingGroupDescriptor[];
 type SettingsObject = {[key: string]: boolean | string};
-type SettingsMessage = {action: string; settings?: SettingsObject};
+type SettingsMessage = { action: string; settings?: SettingsObject };
 
 function createDefaultSettings(schema: SettingsSchema): SettingsObject {
     const defaultSettings: {[key: string]: boolean | string} = {};
@@ -356,8 +356,8 @@ class FLSettingsBackend {
         });
     }
 
-    isMessageRelevant(message: {[key: string]: boolean | string}) {
-        return message.action == MSG_TYPE_CURRENT_SETTINGS || message.action == MSG_TYPE_SAVE_SETTINGS;
+    isMessageRelevant(message: { [key: string]: boolean | string }) {
+        return message.action == MSG_TYPE_CURRENT_SETTINGS || message.action == MSG_TYPE_SAVE_SETTINGS || message.action == MSG_TYPE_UPDATE_SETTINGS;
     }
 
     handleMessage(message: SettingsMessage) {
@@ -393,7 +393,29 @@ class FLSettingsBackend {
                 }
             });
         }
+
+        if (message.action === MSG_TYPE_UPDATE_SETTINGS) {
+            chrome.storage.local.get(["settings"], (result) => {
+                if (chrome.runtime.lastError) {
+                    log("Could not load settings from DB, doing nothing.");
+                } else {
+                    const settingsMessage = message as SettingsMessage;
+                    if (settingsMessage.settings) {
+                        for (const [key, val] of Object.entries(settingsMessage.settings)) {
+                            if (val) {
+                                result.settings[key] = val;
+                            } else {
+                                delete result.settings[key];
+                            }
+                        }
+                    }
+                    this.handleMessage({ action: MSG_TYPE_SAVE_SETTINGS, settings: result.settings })
+                }
+            });
+        }
     }
 }
 
 export {FLSettingsFrontend, FLSettingsBackend, SettingsObject, SettingsSchema};
+
+

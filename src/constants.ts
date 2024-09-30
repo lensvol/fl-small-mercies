@@ -5,6 +5,7 @@ const EXTENSION_NAME = "FL Small Mercies";
 const EXTENSION_ID = "FL_SM";
 
 const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_ID}_saveSettings`;
+const MSG_TYPE_UPDATE_SETTINGS = `${EXTENSION_ID}_updateSettings`;
 const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_ID}_currentSettings`;
 
 const SETTINGS_SCHEMA: SettingsSchema = [
@@ -24,7 +25,15 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 default: true,
             },
             scrip_icon: {
-                description: "Add Hinterlands Scrip Icon to a sidebar indicator.",
+                description: "Add Hinterlands Scrip icon to a sidebar indicator.",
+                default: true,
+            },
+            stuiver_icon: {
+                description: "Add Stuiver icon to a sidebar indicator.",
+                default: true,
+            },
+            shillings_icon: {
+                description: "Add Rat-Shilling icon to a sidebar indicator.",
                 default: true,
             },
             sort_city_mysteries: {
@@ -324,6 +333,7 @@ export {
     EXTENSION_NAME,
     EXTENSION_ID,
     MSG_TYPE_SAVE_SETTINGS,
+    MSG_TYPE_UPDATE_SETTINGS,
     MSG_TYPE_CURRENT_SETTINGS,
     SETTINGS_SCHEMA,
     COMMUNITY_SNIPPETS,
