@@ -23,10 +23,6 @@ export class TopExitButtonsFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        if (!node.parentElement) {
-            return false;
-        }
-
         return getSingletonByClassName(node, "media--root") != null;
     }
 
