@@ -51,7 +51,12 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
         for (let n = 0; n < mutation.addedNodes.length; n++) {
             const node = mutation.addedNodes[n] as HTMLElement;
 
-            if (node.nodeName.toLowerCase() !== "div") {
+            try {
+                if (node.nodeName.toLowerCase() !== "div") {
+                    continue;
+                }
+            } catch (e) {
+                console.error(`Cannot access 'nodeName' in global mutator: {e}`);
                 continue;
             }
 
@@ -61,7 +66,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
                         fixer.onNodeAdded(node);
                     }
                 } catch (error) {
-                    console.error("Error occured while processing added node:", error);
+                    console.error("Error occurred while processing added node:", error);
                 }
             });
         }
@@ -69,7 +74,12 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
         for (let n = 0; n < mutation.removedNodes.length; n++) {
             const node = mutation.removedNodes[n] as HTMLElement;
 
-            if (node.nodeName.toLowerCase() !== "div") {
+            try {
+                if (node.nodeName.toLowerCase() !== "div") {
+                    continue;
+                }
+            } catch (e) {
+                console.error(`Cannot access 'nodeName' in global mutator: {e}`);
                 continue;
             }
 

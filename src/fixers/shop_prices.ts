@@ -1,6 +1,7 @@
 import {IMutationAware} from "./base";
 import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
+import { error } from "../logging";
 
 function numberWithCommas(x: string): string {
     return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();

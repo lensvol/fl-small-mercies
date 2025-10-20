@@ -1,4 +1,4 @@
-import {debug, log} from "./logging";
+import { debug, error, log } from "./logging";
 import {sendToServiceWorker} from "./comms";
 import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants";
 import Tab = chrome.tabs.Tab;
@@ -247,31 +247,39 @@ class FLSettingsFrontend {
                 for (let n = 0; n < mutation.addedNodes.length; n++) {
                     const node = mutation.addedNodes[n];
 
-                    if (node.nodeName.toLowerCase() === "div") {
-                        const accountSections = (node as HTMLElement).querySelector(
-                            "ul[aria-label='Account sections']"
-                        );
-                        if (accountSections) {
-                            const existingExtensionsBtn = accountSections.querySelector("button[id='tab--Extensions']");
-                            if (!existingExtensionsBtn) {
-                                for (const defaultBtn of accountSections.children) {
-                                    defaultBtn.addEventListener("click", (_e: Event) => {
-                                        this.cleanupCustomSettings();
-                                    });
-                                }
+                    try {
+                        const nodeName = node.nodeName.toLowerCase();
+                        if (nodeName != "div") {
+                            continue;
+                        }
+                    } catch (e) {
+                        error(`Cannot access 'nodeName' when accessing settings: {e}`)
+                        continue;
+                    }
 
-                                const customSettingsButton = this.createSettingsButton();
-                                customSettingsButton.addEventListener("click", (_e: Event) =>
-                                    this.prepareForCustomSettings()
-                                );
-                                accountSections.insertBefore(customSettingsButton, accountSections.firstChild);
+                    const accountSections = (node as HTMLElement).querySelector(
+                        "ul[aria-label='Account sections']"
+                    );
+                    if (accountSections) {
+                        const existingExtensionsBtn = accountSections.querySelector("button[id='tab--Extensions']");
+                        if (!existingExtensionsBtn) {
+                            for (const defaultBtn of accountSections.children) {
+                                defaultBtn.addEventListener("click", (_e: Event) => {
+                                    this.cleanupCustomSettings();
+                                });
                             }
-                        }
 
-                        const tabPanel = document.querySelector("div[role='tabpanel']");
-                        if (tabPanel) {
-                            this.attachPanelInjector(tabPanel);
+                            const customSettingsButton = this.createSettingsButton();
+                            customSettingsButton.addEventListener("click", (_e: Event) =>
+                                this.prepareForCustomSettings()
+                            );
+                            accountSections.insertBefore(customSettingsButton, accountSections.firstChild);
                         }
+                    }
+
+                    const tabPanel = document.querySelector("div[role='tabpanel']");
+                    if (tabPanel) {
+                        this.attachPanelInjector(tabPanel);
                     }
                 }
             }
