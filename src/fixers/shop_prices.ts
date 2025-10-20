@@ -18,8 +18,12 @@ export class ShopPricesFixer implements IMutationAware {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     const element = node as HTMLElement;
-                    if (element.nodeName.toLowerCase() != "li") {
-                        return;
+                    try {
+                        if (element.nodeName.toLowerCase() != "li") {
+                            return;
+                        }
+                    } catch (e) {
+                        console.error(`Failed to access 'nodeName' while processing shop prices: {e}`);
                     }
 
                     if (!element.classList.contains("shop__item")) {
