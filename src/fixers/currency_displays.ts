@@ -3,6 +3,7 @@ import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state";
 import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
 import {getSingletonByClassName} from "../utils";
+import { error } from "../logging";
 
 const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband"];
 
@@ -302,7 +303,12 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
     onNodeAdded(node: HTMLElement): void {
         const shopButtons = node.getElementsByClassName("nav__button");
         for (const candidate of shopButtons) {
-            if (candidate.nodeName.toLowerCase() !== "button") {
+            try {
+                if (candidate.nodeName.toLowerCase() !== "button") {
+                    continue;
+                }
+            } catch (e) {
+                error(`Failed to access 'nodeName' when modifying currencies: {e}`)
                 continue;
             }
 
