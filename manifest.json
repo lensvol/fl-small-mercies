@@ -16,6 +16,14 @@
       "matches": [
         "https://www.fallenlondon.com/*"
       ],
+      "js": ["dist/early_sniffer.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.fallenlondon.com/*"
+      ],
       "css": [
         "dist/css/extension.css"
       ],

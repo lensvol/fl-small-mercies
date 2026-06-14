@@ -8,7 +8,7 @@ function sendToInjectedPage(action: string, detail: object) {
     );
 }
 
-console.log(`[FL Small Mercies] Inserting interceptor...`);
+console.log(`[FL Small Mercies] Injecting extension payload...`);
 
 const script = document.createElement("script");
 script.setAttribute("type", "module");

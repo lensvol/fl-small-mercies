@@ -4,6 +4,7 @@ import AVAILABLE_FIXERS from "./fixers/index";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base";
 import {GameStateController} from "./game_state";
 import {FLApiInterceptor} from "./api_interceptor";
+import {debug} from "./logging";
 
 const apiInterceptor = FLApiInterceptor.getInstance();
 const gameStateController = GameStateController.getInstance();
@@ -29,6 +30,20 @@ const fixers: IMercyFixer[] = AVAILABLE_FIXERS.flatMap((fixerCls) => {
         return [];
     }
 });
+
+debug(`Registering listener for stashed responses...`);
+// NB: Responses can arrive _after_ we have requested already stashed stuff.
+window.addEventListener("message", (event) => {
+    if (event.data.action === "FL_SM_stashedResponse") {
+        debug(`Processing stashed response from ${event.data.url} (${event.data.response.length})`);
+        if (event.data.url.endsWith("/api/character/myself")) {
+            apiInterceptor.processResponse(event.data.url, null, event.data.response);
+            window.dispatchEvent(new CustomEvent("FL_SM_stopSniffing"));
+        }
+    }
+});
+debug(`Requesting stashed responses from the early stage sniffer...`);
+window.dispatchEvent(new CustomEvent("FL_SM_divulgeStash"));
 
 const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();

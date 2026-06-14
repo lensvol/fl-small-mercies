@@ -1,5 +1,6 @@
 build_dist:
 	mkdir -p dist
+	cp src/early_sniffer.js dist/early_sniffer.js
 	cp src/background.html dist/background.html
 	cp -rf src/css dist/
 	cp -rf src/images dist/
