@@ -2,11 +2,14 @@
   "name": "FL Small Mercies",
   "description": "Set of small 'fixes' for Fallen London UI.",
   "version": "3.2.0",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "permissions": ["storage", "tabs"],
   "background": {
-    "page": "dist/background.html",
-    "persistent": true
+    "service_worker": "dist/background-bundle.js",
+    "type": "module",
+    "scripts": [
+      "dist/background-bundle.js"
+    ]
   },
   "content_scripts": [
     {
@@ -22,7 +25,7 @@
       "run_at": "document_start"
     }
   ],
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "/images/fl-small-mercies-icon-16.png",
       "32": "/images/fl-small-mercies-icon-32.png",
@@ -36,8 +39,21 @@
     "48": "/images/fl-small-mercies-icon-48.png",
     "128": "/images/fl-small-mercies-icon-128.png"
   },
-  "web_accessible_resources": [
+  "web_accessible_resources": [{
+    "resources": [
       "dist/*",
       "src/*"
-  ]
+    ],
+    "matches": ["https://www.fallenlondon.com/*"]
+  }],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{fc58eef1-6594-4fd2-81f3-67785bb234da}",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  }
 }
