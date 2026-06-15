@@ -28,7 +28,6 @@ import {DiscordanceChecksFixer} from "./discordance_checks";
 import {EchoPenniesFixer} from "./echo_pennies";
 import {BranchResultsFixer} from "./branch_results";
 import {AdvancedArtFixer} from "./advanced_art";
-import {AirshipNameFixer} from "./airship_name";
 import {TreasureMapFixer} from "./treasure_map";
 
 export default [
@@ -61,6 +60,5 @@ export default [
     EchoPenniesFixer,
     BranchResultsFixer,
     AdvancedArtFixer,
-    AirshipNameFixer,
     TreasureMapFixer,
 ];
