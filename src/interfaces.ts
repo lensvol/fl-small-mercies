@@ -215,3 +215,36 @@ export interface IEquipResponse extends IApiResponse {
     maxOutfits: number;
     isFavourite: boolean;
 }
+
+export interface IMapJsonInfo {
+    hideLabel: boolean;
+    labelX: number;
+    labelY: number;
+    spriteTopLeftX: number;
+    spriteTopLeftY: number;
+}
+
+export interface IArea {
+    id: number;
+    name: string;
+    description: string;
+    unavailableDescription: string;
+    image: string;
+    hideName: boolean;
+    showOps: boolean;
+    premiumSubRequired: boolean;
+    canChangeOutfit: boolean;
+    canMoveTo: boolean;
+    discovered: boolean;
+    unlocked: boolean;
+    type: boolean;
+    parentAreaKey: string;
+    areaKey: string;
+    childAreas: IArea[];
+    jsonInfo?: IMapJsonInfo;
+}
+
+export interface IMapResponse extends IApiResponse {
+    currentArea: IArea;
+    areas: IArea[];
+}
