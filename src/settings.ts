@@ -39,7 +39,7 @@ class FLSettingsFrontend {
         this.name = name;
         this.schema = schema;
 
-        debug("Initializing create default settings object...");
+        debug("Creating default settings object...");
         this.settings = createDefaultSettings(this.schema);
 
         window.addEventListener("message", (event) => {
