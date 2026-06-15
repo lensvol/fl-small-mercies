@@ -29,6 +29,7 @@ import {EchoPenniesFixer} from "./echo_pennies";
 import {BranchResultsFixer} from "./branch_results";
 import {AdvancedArtFixer} from "./advanced_art";
 import {AirshipNameFixer} from "./airship_name";
+import {TreasureMapFixer} from "./treasure_map";
 
 export default [
     AutoScrollFixer,
@@ -61,4 +62,5 @@ export default [
     BranchResultsFixer,
     AdvancedArtFixer,
     AirshipNameFixer,
+    TreasureMapFixer,
 ];

@@ -141,6 +141,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Remove text about challenge being simple from check results.",
                 default: true,
             },
+            show_treasure_marker: {
+                description: "Mark location of a treasure stash on the Zee map",
+                default: false,
+            },
         },
     },
     {
