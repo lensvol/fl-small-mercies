@@ -21,7 +21,6 @@ import {SingleItemIconFixer} from "./single_item_icon";
 import {ShopTransactionFixer} from "./shop_transactions";
 import {ShopPricesFixer} from "./shop_prices";
 import {PersistentPremiumFixer} from "./persistent_premium";
-// import {SpaceShortcutFixer} from "./space_shortcuts";
 import {CustomSnippetsFixer} from "./custom_snippets";
 import {VanitySectionFixer} from "./vanity_section";
 import {DiscordanceChecksFixer} from "./discordance_checks";
