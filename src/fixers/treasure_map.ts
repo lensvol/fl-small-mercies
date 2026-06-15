@@ -10,12 +10,12 @@ const TREASURE_LOCATIONS: string[] = [
     "unknown location",
     "Hunter's Keep",
     "Mutton Island",
-    "Port Carnelian",
+    "The Elder Continent",
     "Polythreme",
     "The Khanate",
     "Port Cecil",
     "Godfall",
-    "Iron Republic",
+    "The Iron Republic",
 ];
 
 export class TreasureMapFixer implements INetworkAware, IStateAware {
