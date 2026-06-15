@@ -1,4 +1,4 @@
-DONE = 4;
+const DONE = 4;
 
 /*
   This thing is so mental that I will probably need to take a shower
