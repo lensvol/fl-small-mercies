@@ -22,10 +22,6 @@ assemble_zip: build_dist
 	cd $(TMPDIR) && zip -r -FS $(PWD)/$(NAME)-v$(VERSION)$(SUFFIX).zip . --exclude '*.git*' -x '*.idea*' -x '*screenshot*'
 	rm -rf $(TMPDIR)
 
-extension_v2: MANIFEST := "manifest.json"
-extension_v2: SUFFIX := ""
-extension_v2: assemble_zip
-
-extension_v3: MANIFEST := "manifest_v3.json"
-extension_v3: SUFFIX := "_chrome"
-extension_v3: assemble_zip
+extension: MANIFEST := "manifest.json"
+extension: SUFFIX := ""
+extension: assemble_zip

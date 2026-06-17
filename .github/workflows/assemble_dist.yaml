@@ -26,11 +26,8 @@ jobs:
       - name: Build extension
         run: make build_dist
 
-      - name: Assemble V2 archive
-        run: make extension_v2
-
-      - name: Assemble V3 archive
-        run: make extension_v3
+      - name: Assemble extension archive
+        run: make extension
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
