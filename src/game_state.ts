@@ -1,7 +1,6 @@
 import {FLApiInterceptor} from "./api_interceptor";
 import {
     IEquipResponse,
-    IPlan,
     IPlanResponse,
     IQualityRequirement,
     IShopResponse,
