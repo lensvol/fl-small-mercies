@@ -1,6 +1,9 @@
 import {FLApiInterceptor} from "./api_interceptor";
 import {
     IEquipResponse,
+    IPlan,
+    IPlanResponse,
+    IQualityRequirement,
     IShopResponse,
     IStorylet,
     IStoryletListResponse,
@@ -94,6 +97,7 @@ export class Quality {
     qualityId: number;
     name: string;
     level: number;
+    levelDescription: string;
     effectiveLevel: number;
     category: string;
     image: string;
@@ -106,6 +110,7 @@ export class Quality {
         name: string,
         effectiveLevel: number,
         level: number,
+        levelDescription: string,
         image: string,
         cap: number,
         nature: string
@@ -114,6 +119,7 @@ export class Quality {
         this.category = category;
         this.name = name;
         this.level = level;
+        this.levelDescription = levelDescription;
         this.effectiveLevel = effectiveLevel;
         this.image = image;
         this.cap = cap;
@@ -207,6 +213,7 @@ export class GameStateController {
         qualityName: string,
         effectiveLevel: number,
         level: number,
+        levelDescription: string,
         image: string,
         cap: number,
         nature: string
@@ -226,6 +233,7 @@ export class GameStateController {
                 qualityName,
                 effectiveLevel,
                 level,
+                levelDescription,
                 image,
                 cap,
                 nature
@@ -274,6 +282,7 @@ export class GameStateController {
                     thing.name,
                     thing.effectiveLevel,
                     thing.level,
+                    thing.levelDescription,
                     thing.image,
                     thing.cap || 0,
                     thing.nature
@@ -333,6 +342,7 @@ export class GameStateController {
                     thing.name,
                     thing.effectiveLevel,
                     thing.level,
+                    thing.levelDescription,
                     thing.image,
                     thing.cap || 0,
                     thing.nature
@@ -441,6 +451,50 @@ export class GameStateController {
         }
     }
 
+    private parseOutWorldQualities(qualityRequirements: IQualityRequirement[]) {
+        const worldQualities = qualityRequirements.filter((q) => {
+            return q.allowedOn === "World";
+        });
+
+        for (const requirement of worldQualities) {
+            const valueStartIdx = requirement.tooltip.indexOf("<li class='current'>");
+            const valueEndIdx = requirement.tooltip.indexOf("</li></ul>");
+
+            if (valueStartIdx === -1 || valueEndIdx === -1) continue;
+
+            const currentValue = requirement.tooltip.slice(valueStartIdx + 20, valueEndIdx);
+            const cleanedName = requirement.qualityName.slice(0, requirement.qualityName.length - 1);
+            debug(`Discovered world quality: ${cleanedName} = ${currentValue}`);
+            this.state.setQuality(
+                "World",
+                requirement.qualityName,
+                new Quality(
+                    requirement.qualityId,
+                    requirement.category,
+                    cleanedName,
+                    777,
+                    777,
+                    currentValue,
+                    requirement.image,
+                    777,
+                    requirement.nature
+                )
+            );
+        }
+    }
+
+    public parsePlanResponse(response: IPlanResponse) {
+        if (!response.isSuccess) return;
+
+        for (const plan of response.active) {
+            this.parseOutWorldQualities(plan.branch.qualityRequirements);
+        }
+
+        for (const plan of response.complete) {
+            this.parseOutWorldQualities(plan.branch.qualityRequirements);
+        }
+    }
+
     private parseShopResponse(response: IShopResponse) {
         if (!response.isSuccess) {
             return;
@@ -453,6 +507,7 @@ export class GameStateController {
                 changed.name,
                 changed.effectiveLevel,
                 changed.level,
+                changed.levelDescription,
                 changed.image,
                 changed.cap || 0,
                 changed.nature
@@ -529,5 +584,6 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/map/move", (_, response) => this.parseMapMoveResponse(response));
         interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
+        interceptor.onResponseReceived("/api/plan", (_, response) => this.parsePlanResponse(response));
     }
 }

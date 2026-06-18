@@ -5,6 +5,7 @@ interface IApiResponse {
 export interface IQuality {
     id: number;
     level: number;
+    levelDescription: string;
     name: string;
     description: string;
     category: string;
@@ -135,9 +136,12 @@ export interface IInfobarResponse {
 
 export interface IQualityRequirement {
     image: string;
+    category: string;
+    nature: string;
     qualityName: string;
     qualityId: number;
     tooltip: string;
+    allowedOn: string;
     id: number;
 }
 
@@ -183,6 +187,7 @@ export interface IStorylet {
     canGoBack: boolean;
     isLocked: boolean;
     childBranches: IBranch[];
+    qualityRequirements: IQualityRequirement[];
 }
 
 export interface IStoryletResponse extends IApiResponse {
@@ -247,4 +252,15 @@ export interface IArea {
 export interface IMapResponse extends IApiResponse {
     currentArea: IArea;
     areas: IArea[];
+}
+
+export interface IPlan {
+    id: number;
+    areaName: string;
+    branch: IBranch;
+}
+
+export interface IPlanResponse extends IApiResponse {
+    active: IPlan[];
+    complete: IPlan[];
 }
