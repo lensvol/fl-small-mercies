@@ -409,6 +409,10 @@ export class GameStateController {
 
         this.state.currentStorylet = response.storylet;
         this.triggerListeners(StateChangeTypes.StoryletChanged);
+
+        for (const branch of response.storylet.childBranches) {
+            this.parseOutWorldQualities(branch.qualityRequirements);
+        }
     }
 
     public parseStoryletListResponse(response: IStoryletListResponse) {
@@ -417,6 +421,8 @@ export class GameStateController {
         this.state.currentStorylet = new UnknownStorylet();
         this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
         this.triggerListeners(StateChangeTypes.StoryletChanged);
+
+        response.storylets.map((storylet) => this.parseOutWorldQualities(storylet.qualityRequirements));
     }
 
     public parseStoryletResponse(response: any) {
