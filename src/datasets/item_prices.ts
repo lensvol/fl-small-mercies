@@ -926,3 +926,5 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // False Lead
     [813, 0.02],
 ]);
+
+export {ITEM_PRICES_BY_ID};

@@ -65,6 +65,16 @@ export interface IQualityCapMessage extends IMessage {
     changeType: "Unaltered" | "Increased" | "Decreased";
 }
 
+export interface IStandardQualityChangeMessage extends IMessage {
+    type: "StandardQualityChangeMessage";
+    possession: IQuality;
+    priority: number;
+    changeType: "Unaltered" | "Increased" | "Decreased";
+    message: string;
+    image: string;
+    tooltip: string;
+}
+
 export interface ISetting {
     id: number;
     mapRootArea: Record<string, string>;
@@ -93,7 +103,11 @@ export interface IEndStorylet {
     canGoAgain: boolean;
 }
 
-export type IMessageResult = IRollSuccessMessage | IRollFailureMessage | IQualityCapMessage;
+export type IMessageResult =
+    | IRollSuccessMessage
+    | IRollFailureMessage
+    | IQualityCapMessage
+    | IStandardQualityChangeMessage;
 
 export interface IChooseBranchResponse extends IApiResponse {
     actions: number;

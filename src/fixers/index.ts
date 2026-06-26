@@ -28,6 +28,7 @@ import {EchoPenniesFixer} from "./echo_pennies";
 import {BranchResultsFixer} from "./branch_results";
 import {AdvancedArtFixer} from "./advanced_art";
 import {TreasureMapFixer} from "./treasure_map";
+import {EpaTrackerFixer} from "./epa_tracker";
 
 export default [
     AutoScrollFixer,
@@ -60,4 +61,5 @@ export default [
     BranchResultsFixer,
     AdvancedArtFixer,
     TreasureMapFixer,
+    EpaTrackerFixer,
 ];

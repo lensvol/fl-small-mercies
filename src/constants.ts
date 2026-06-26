@@ -141,6 +141,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Mark location of a treasure stash on the Zee map",
                 default: false,
             },
+            show_epa_tracker: {
+                description: "Show EPA tracker in the left sidebar",
+                default: false,
+            },
         },
     },
     {
