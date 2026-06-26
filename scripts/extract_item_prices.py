@@ -40,6 +40,10 @@ def main():
         "Whispered Hint": 0.01,
     }
 
+    # Pennies should be convertable to themselves
+    print(f"    // Pennies")
+    print(f"    [22390, 0.01],")
+
     for name, item in wiki_info["results"].items():
         if not item["printouts"]["ID"]:
             continue

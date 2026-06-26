@@ -1,4 +1,6 @@
 const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
+    // Pennies
+    [22390, 0.01],
     // A Blue and Shining Stone
     [22523, 12.5],
     // A Boxed Cat?
