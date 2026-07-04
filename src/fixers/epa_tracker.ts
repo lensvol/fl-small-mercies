@@ -183,7 +183,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     applySettings(settings: SettingsObject): void {
-        this.showEpaTracker = settings.show_treasure_marker as boolean;
+        this.showEpaTracker = settings.show_epa_tracker as boolean;
     }
 
     linkState(state: GameStateController): void {
