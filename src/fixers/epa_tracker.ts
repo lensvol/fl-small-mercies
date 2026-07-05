@@ -179,7 +179,6 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
         this.trackerReset.addEventListener("click", () => {
             this.resetTracker();
             this.saveTrackerState();
-            this.updateTrackerUI();
         });
 
         this.trackerToggle.addEventListener("click", () => {
@@ -267,8 +266,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
     private resetTracker() {
         this.epaTracker.reset();
-        this.epaIndicator.textContent = "0,0";
-        this.epaInfoLine.textContent = "0E / ??? Action(s)";
+        this.updateTrackerUI();
     }
 
     private updateTrackerUI() {
