@@ -222,7 +222,6 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                 }
             }
 
-            const epa = this.epaTracker.getEPA().toFixed(2);
             this.updateTrackerUI();
         });
     }
@@ -234,10 +233,11 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     private updateTrackerUI() {
-        this.epaIndicator.textContent = String(this.epaTracker.getEPA());
+        this.epaIndicator.textContent = String(this.epaTracker.getEPA().toFixed(2));
         this.epaInfoLine.textContent = `${this.epaTracker
             .getWealth()
             .toFixed(2)}E / ${this.epaTracker.getActionCount()} Action(s)`;
+        this.trackerToggle.textContent = this.areWeTracking ? "Stop" : "Start";
     }
 
     checkEligibility(node: HTMLElement): boolean {
@@ -245,11 +245,15 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     onNodeAdded(node: HTMLElement): void {
+        if (!this.showEpaTracker) {
+            return;
+        }
+
         const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
         if (!currencyList) return;
 
         currencyList.appendChild(this.trackerUiMimic);
-        this.resetTracker();
+        this.updateTrackerUI();
     }
 
     onNodeRemoved(node: HTMLElement): void {}
