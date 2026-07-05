@@ -63,14 +63,14 @@ function createEpaTrackerMimic(): [
 
     const img = document.createElement("img");
     img.classList.add("media__object");
-    img.setAttribute("height", "78");
-    img.setAttribute("width", "60");
+    img.setAttribute("height", "45");
+    img.setAttribute("width", "45");
     img.setAttribute("alt", "");
-    img.setAttribute("src", "//images.fallenlondon.com/currencies/echoes.png");
+    img.setAttribute("src", "//images.fallenlondon.com/icons/nibsmall.png");
     img.setAttribute("aria-label", "");
 
     const containingDiv = document.createElement("div");
-    containingDiv.classList.add("icon--currency", "sidebar__echoes-button", "sidebar__button--has-focus-outline");
+    containingDiv.classList.add("icon--circular", "icon", "sidebar__button--has-focus-outline");
 
     const textSpan = document.createElement("span");
     textSpan.classList.add("u-visually-hidden");
@@ -100,9 +100,9 @@ function createEpaTrackerMimic(): [
 
     const paragraph = document.createElement("br");
 
-    const text3 = document.createTextNode("7,4");
+    const text3 = document.createTextNode("0.00");
 
-    const text4 = document.createTextNode("123 Echoes / 14 Actions");
+    const text4 = document.createTextNode("0 Echoes / ??? Actions");
 
     // Weird hyperlink here is used to prevent window frame from "jumping" to the
     // top when the link is clicked upon (https://stackoverflow.com/a/39112476)
@@ -270,9 +270,11 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
     private updateTrackerUI() {
         this.epaIndicator.textContent = String(this.epaTracker.getEPA().toFixed(2));
-        this.epaInfoLine.textContent = `${this.epaTracker
-            .getWealth()
-            .toFixed(2)}E / ${this.epaTracker.getActionCount()} Action(s)`;
+
+        const actions = this.epaTracker.getActionCount();
+        const wealth = this.epaTracker.getWealth().toFixed(2);
+
+        this.epaInfoLine.textContent = `${wealth}E / ${actions > 0 ? actions : "???"} Action(s)`;
         this.trackerToggle.textContent = this.areWeTracking ? "Stop" : "Start";
     }
 
