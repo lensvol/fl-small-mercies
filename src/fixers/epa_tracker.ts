@@ -4,8 +4,10 @@ import {GameStateController} from "../game_state";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
+import {debug} from "../logging";
 
 const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x ([\s\w]+) \(new total ([\d,]+)\)./;
+const STORED_STATE_KEY = "fl_sm_epa_tracker";
 
 class EPATracker {
     private sessionActions: number = 0;
@@ -174,12 +176,44 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
         this.trackerReset.addEventListener("click", () => {
             this.resetTracker();
+            this.updateTrackerUI();
         });
 
         this.trackerToggle.addEventListener("click", () => {
             this.areWeTracking = !this.areWeTracking;
-            this.trackerToggle.textContent = this.areWeTracking ? "Stop" : "Start";
+            this.updateTrackerUI();
         });
+
+        this.loadSavedState();
+    }
+
+    // TODO: Ugliest hack possible, but I am not motivated enough right now
+    // to implement a proper subsystem-agnostic storage backend
+    private saveTrackerState() {
+        const serializedState = [
+            this.areWeTracking,
+            this.epaTracker.getWealth().toFixed(2),
+            this.epaTracker.getActionCount(),
+        ].join("|");
+
+        localStorage.setItem(STORED_STATE_KEY, serializedState);
+    }
+
+    private loadSavedState() {
+        const saved_epa_info = localStorage.getItem(STORED_STATE_KEY);
+        debug(`Saved EPA state: ${saved_epa_info}`);
+        if (saved_epa_info) {
+            const parts = saved_epa_info.split("|");
+            if (parts.length == 3) {
+                // We just silently ignore things that seem corrupted
+                debug("Loaded state:", parts);
+                this.areWeTracking = parts[0] == "true";
+                this.epaTracker.increaseWealth(Number(parts[1]));
+                this.epaTracker.increaseActions(Number(parts[2]));
+            } else {
+                debug(`Saved EPA state looks corrupted: ${saved_epa_info}`);
+            }
+        }
     }
 
     applySettings(settings: SettingsObject): void {
@@ -219,6 +253,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
                     this.epaTracker.increaseWealth(amountChanged);
                     this.updateTrackerUI();
+                    this.saveTrackerState();
                 }
             }
 
