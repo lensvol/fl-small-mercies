@@ -20,7 +20,7 @@ class EPATracker {
     }
 
     public increaseActions(count: number) {
-        if (count < 1) {
+        if (count < 0) {
             throw new Error("Negative action count reported to EPA tracker!");
         }
 
@@ -176,6 +176,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
         this.trackerReset.addEventListener("click", () => {
             this.resetTracker();
+            this.saveTrackerState();
             this.updateTrackerUI();
         });
 
