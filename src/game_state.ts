@@ -1,6 +1,8 @@
 import {FLApiInterceptor} from "./api_interceptor";
 import {
     IEquipResponse,
+    IOpportunityCard,
+    IOpportunityResponse,
     IPlanResponse,
     IQualityRequirement,
     IShopResponse,
@@ -35,6 +37,7 @@ enum StateChangeTypes {
     ActionsCountChanged = "ActionsCountChanged",
     LocationChanged = "LocationChanged",
     EquipmentChanged = "EquipmentChanged",
+    OpportunityDeckChanged = "OpportunityDeckChanged",
 }
 
 export class FLUser {
@@ -126,6 +129,65 @@ export class Quality {
     }
 }
 
+class QualityRequirement {
+    id: number;
+    allowedOn: string;
+    category: string;
+    nature: string;
+    qualityId: number;
+    qualityName: string;
+    tooltip: string;
+
+    constructor(
+        id: number,
+        allowedOn: string,
+        category: string,
+        nature: string,
+        qualityId: number,
+        qualityName: string,
+        tooltip: string
+    ) {
+        this.id = id;
+        this.allowedOn = allowedOn;
+        this.category = category;
+        this.nature = nature;
+        this.qualityId = qualityId;
+        this.qualityName = qualityName;
+        this.tooltip = tooltip;
+    }
+}
+
+class OpportunityCard {
+    category: string;
+    eventId: number;
+    name: string;
+    qualityRequirements: QualityRequirement[];
+
+    constructor(eventId: number, name: string, category: string, qualityRequirements: QualityRequirement[]) {
+        this.category = category;
+        this.eventId = eventId;
+        this.name = name;
+        this.qualityRequirements = qualityRequirements;
+    }
+}
+
+class OpportunityDeck {
+    cards: OpportunityCard[];
+    deckSize: number;
+    handSize: number;
+    cardsLeft: number;
+    // TODO: Convert to timestamp
+    nextCardAt: string;
+
+    constructor(cards: OpportunityCard[], deckSize: number, handSize: number, cardsLeft: number, nextCardAt: string) {
+        this.cards = cards;
+        this.deckSize = deckSize;
+        this.handSize = handSize;
+        this.cardsLeft = cardsLeft;
+        this.nextCardAt = nextCardAt;
+    }
+}
+
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
@@ -133,6 +195,7 @@ export class GameState {
 
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
     public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
+    public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, "");
 
     public actionsLeft = 0;
 
@@ -204,6 +267,7 @@ export class GameStateController {
         [StateChangeTypes.StoryletPhaseChanged]: [],
         [StateChangeTypes.LocationChanged]: [],
         [StateChangeTypes.EquipmentChanged]: [],
+        [StateChangeTypes.OpportunityDeckChanged]: [],
     };
 
     private upsertQuality(
@@ -524,6 +588,37 @@ export class GameStateController {
         });
     }
 
+    private parseOpportunityResponse(response: IOpportunityResponse) {
+        if (!response.isSuccess) {
+            return;
+        }
+
+        const currentCards = response.displayCards.map((card) => {
+            const requirements = card.qualityRequirements.map((qualityRequirement) => {
+                return new QualityRequirement(
+                    qualityRequirement.id,
+                    qualityRequirement.allowedOn,
+                    qualityRequirement.category,
+                    qualityRequirement.nature,
+                    qualityRequirement.qualityId,
+                    qualityRequirement.qualityName,
+                    qualityRequirement.tooltip
+                );
+            });
+            return new OpportunityCard(card.eventId, card.name, card.category, requirements);
+        });
+
+        this.state.opportunityDeck = new OpportunityDeck(
+            currentCards,
+            response.maxDeckSize,
+            response.maxHandSize,
+            response.eligibleForCardsCount,
+            response.nextActionAt
+        );
+
+        this.triggerListeners(StateChangeTypes.OpportunityDeckChanged);
+    }
+
     public onStoryletChanged(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.StoryletChanged].push(handler);
     }
@@ -558,6 +653,10 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.EquipmentChanged].push(handler);
     }
 
+    public onOpportunityDeckChanged(handler: (g: GameState) => void) {
+        this.changeListeners[StateChangeTypes.OpportunityDeckChanged].push(handler);
+    }
+
     private triggerListeners(changeType: StateChangeTypes, ...additionalArgs: any[]): void {
         this.changeListeners[changeType].map((handler) => {
             try {
@@ -590,5 +689,12 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/exchange/sell", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/exchange/buy", (_, response) => this.parseShopResponse(response));
         interceptor.onResponseReceived("/api/plan", (_, response) => this.parsePlanResponse(response));
+        interceptor.onResponseReceived("/api/opportunity", (_, response) => this.parseOpportunityResponse(response));
+        interceptor.onResponseReceived("/api/opportunity/discard", (_, response) =>
+            this.parseOpportunityResponse(response)
+        );
+        interceptor.onResponseReceived("/api/opportunity/draw", (_, response) =>
+            this.parseOpportunityResponse(response)
+        );
     }
 }
