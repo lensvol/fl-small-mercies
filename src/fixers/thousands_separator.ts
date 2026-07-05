@@ -1,12 +1,6 @@
 import {SettingsObject} from "../settings";
 import {IMutationAware} from "./base";
-import {getSingletonByClassName} from "../utils";
-
-// Shamelessly taken from https://stackoverflow.com/a/2901298
-function numberWithCommas(x: string): string {
-    const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
-    return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
-}
+import {getSingletonByClassName, numberWithCommas} from "../utils";
 
 export class ThousandSeparatorFixer implements IMutationAware {
     private separateThousands = false;

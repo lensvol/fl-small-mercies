@@ -11,4 +11,10 @@ function getSingletonByClassName(node: HTMLElement, className: string): HTMLElem
     return null;
 }
 
-export {getSingletonByClassName};
+// Shamelessly taken from https://stackoverflow.com/a/2901298
+function numberWithCommas(x: string): string {
+    const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
+    return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
+}
+
+export {getSingletonByClassName, numberWithCommas};
