@@ -5,6 +5,7 @@ import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
+import {numberWithCommas} from "../utils";
 
 const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x ([\s\w]+) \(new total ([\d,]+)\)./;
 const STORED_STATE_KEY = "fl_sm_epa_tracker";
@@ -165,6 +166,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     private epaInfoLine: HTMLSpanElement;
     private trackerToggle: HTMLAnchorElement;
     private trackerReset: HTMLAnchorElement;
+    private useCommaForThousands: boolean = false;
 
     constructor() {
         const mimicParts = createEpaTrackerMimic();
@@ -219,6 +221,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
     applySettings(settings: SettingsObject): void {
         this.showEpaTracker = settings.show_epa_tracker as boolean;
+        this.useCommaForThousands = settings.add_thousands_separator as boolean;
     }
 
     linkState(state: GameStateController): void {
@@ -269,10 +272,15 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     private updateTrackerUI() {
-        this.epaIndicator.textContent = String(this.epaTracker.getEPA().toFixed(2));
+        const epa = String(this.epaTracker.getEPA().toFixed(2));
+        this.epaIndicator.textContent = this.useCommaForThousands ? epa : numberWithCommas(epa);
 
         const actions = this.epaTracker.getActionCount();
-        const wealth = this.epaTracker.getWealth().toFixed(2);
+        let wealth = this.epaTracker.getWealth().toFixed(2);
+
+        if (this.useCommaForThousands) {
+            wealth = numberWithCommas(wealth);
+        }
 
         this.epaInfoLine.textContent = `${wealth}E / ${actions > 0 ? actions : "???"} Action(s)`;
         this.trackerToggle.textContent = this.areWeTracking ? "Stop" : "Start";
