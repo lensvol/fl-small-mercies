@@ -44,7 +44,12 @@ def main():
     print(f"    // Pennies")
     print(f"    [22390, 0.01],")
 
-    for name, item in wiki_info["results"].items():
+    # For some reason nautical items are not listed by our query to Wiki ¯\_(ツ)_/¯
+    print(f"    // Stashed Treasure")
+    print(f"    [144025, 0.01],")
+    print(f"    // Editing Pieces of Plunder Weighing Down Your Hold")
+    print(f"    [144024, 0.01],")
+
     for name, item in sorted(wiki_info["results"].items(), key=lambda k: k[0]):
         if not item["printouts"]["ID"]:
             continue
