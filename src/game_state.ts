@@ -176,15 +176,23 @@ class OpportunityDeck {
     deckSize: number;
     handSize: number;
     cardsLeft: number;
-    // TODO: Convert to timestamp
-    nextCardAt: string;
+    nextCardAt: number;
+    currentTime: number;
 
-    constructor(cards: OpportunityCard[], deckSize: number, handSize: number, cardsLeft: number, nextCardAt: string) {
+    constructor(
+        cards: OpportunityCard[],
+        deckSize: number,
+        handSize: number,
+        cardsLeft: number,
+        nextCardAt: number,
+        currentTime: number
+    ) {
         this.cards = cards;
         this.deckSize = deckSize;
         this.handSize = handSize;
         this.cardsLeft = cardsLeft;
         this.nextCardAt = nextCardAt;
+        this.currentTime = currentTime;
     }
 }
 
@@ -195,7 +203,7 @@ export class GameState {
 
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
     public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
-    public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, "");
+    public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, 0, 0);
 
     public actionsLeft = 0;
 
@@ -613,7 +621,9 @@ export class GameStateController {
             response.maxDeckSize,
             response.maxHandSize,
             response.eligibleForCardsCount,
-            response.nextActionAt
+            // TODO: We probably want to handle possible date conversion exceptions here
+            Date.parse(response.nextActionAt),
+            Date.parse(response.currentTime)
         );
 
         this.triggerListeners(StateChangeTypes.OpportunityDeckChanged);
