@@ -35,6 +35,7 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
         if (!this.useOldCardCounter) return;
 
         const newCardCounter = getSingletonByClassName(node, "deck-info__cards-in-deck");
+        debug("New card counter: ", newCardCounter);
         if (newCardCounter) {
             newCardCounter.style.display = "none";
         }
@@ -129,20 +130,24 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
     private updateCardCounter() {
         if (this.cardsLeft === 2147483647) {
             this.cardCounterSpan.textContent = "No draw limit.";
+            this.cardCountdownSpan.textContent = "";
         } else if (this.cardsLeft > 1) {
             this.cardCounterSpan.textContent = `${this.cardsLeft} cards waiting!`;
         } else if (this.cardsLeft == 1) {
             this.cardCounterSpan.textContent = "1 card waiting!";
         } else {
             this.cardCounterSpan.textContent = "No cards waiting.";
+            this.cardCountdownSpan.textContent = "";
         }
 
-        const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
-        if (nextInSeconds > 0) {
-            const minutesLeft = String(Math.trunc(nextInSeconds / 60));
-            const secondsLeft = String(nextInSeconds % 60).padStart(2, "0");
+        if (this.cardsLeft > 0 && this.cardsLeft !== 2147483647) {
+            const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
+            if (nextInSeconds > 0) {
+                const minutesLeft = String(Math.trunc(nextInSeconds / 60));
+                const secondsLeft = String(nextInSeconds % 60).padStart(2, "0");
 
-            this.cardCountdownSpan.textContent = `Next in ${minutesLeft}:${secondsLeft}`;
+                this.cardCountdownSpan.textContent = `Next in ${minutesLeft}:${secondsLeft}`;
+            }
         }
     }
 }
