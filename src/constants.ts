@@ -68,6 +68,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Use old art for icons of Advanced Skills.",
                 default: false,
             },
+            old_card_counter: {
+                description: "Use old-style card counter in Opportunity Deck",
+                default: false,
+            },
         },
     },
     {
