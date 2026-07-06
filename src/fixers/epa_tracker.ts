@@ -240,6 +240,11 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
             for (const message of response.messages) {
                 if (message.type === "StandardQualityChangeMessage" && message.changeType !== "Unaltered") {
+                    if (message.possession.category === "Progress") {
+                        // Only things that can be meaningfully measured in Pennies should be considered
+                        continue;
+                    }
+
                     // Due to the quirk of the game's code change types for increase and decrease are swapped ¯\_(ツ)_/¯
                     const wasIncreased = message.changeType === "Decreased";
                     const extractedTexts = message.message.match(QUALITY_MESSAGE_REGEX);
@@ -250,7 +255,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                     }
 
                     const amountChanged =
-                        (ITEM_PRICES_BY_ID.get(message.possession.id) || 1) *
+                        (ITEM_PRICES_BY_ID.get(message.possession.id) || 0) *
                         Number(extractedTexts[2]) *
                         (wasIncreased ? 1 : -1);
 
