@@ -15,6 +15,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [102578, 6],
     // A Partially Unwrapped Cat?
     [635, 0.5],
+    // A River In A Box
+    [16677, 32.5],
     // A Sealed Copy of the Crimson Book (via Touching Love Story)
     [107903, 625 * 2.5],
     // A Seat at the Board
@@ -247,6 +249,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [311, 62.5],
     // Exceptional Short Story
     [18310, 60],
+    // Exigent Note
+    [143056, 62.5],
     // Exquisite Ivory Gown
     [326, 230.4],
     // Extraordinary Hat
@@ -273,6 +277,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [344, 6.4],
     // False Hagiotoponym
     [142249, 62.5],
+    // False Lead
+    [813, 0.02],
     // Far Khanate Lacquered Armour
     [21892, 200],
     // Favour in High Places
@@ -329,6 +335,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [305, 2.5],
     // Gift of Scorn
     [560, 0.2],
+    // Gift of Transcendent Devotion
+    [561, 2],
     // Glim-Encrusted Carapace (via Stuiver)
     [145008, 1250 * 0.05],
     // Glimpse of Anathema
@@ -399,6 +407,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [441, 0.2],
     // Lump of Lamplighter Beeswax
     [384, 0.01],
+    // M. Demeaux's Advice for Captains: Commemorative Edition
+    [116011, 5],
     // Magisterial Lager (via Hinterland Scrip)
     [141574, 1 * 0.5],
     // Magnificent Diamond
@@ -429,6 +439,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [144983, 250 * 0.05],
     // Memory of a Shadow in Varchas (via Hinterland Scrip)
     [142659, 25 * 0.5],
+    // Meticulously Altered Stocking (via Primordial Shriek)
+    [106571, 2000 * 2.5],
     // Midnight Matriarch
     [21898, 200],
     // Mirthless Compendium of Statistical Observations
@@ -485,8 +497,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [754, 62.5],
     // Nodule of Trembling Amber
     [949, 12.5],
-    // Nodule of Warm Amber (via Stuiver)
-    [328, 1 * 0.05],
     // O'Boyle's Practical Primer in the Various Languages of Nippon, Tartary, Cathay and the Princedoms of the Raj
     [756, 27.5],
     // Obdurate Stallion
@@ -841,8 +851,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [21897, 200],
     // Twelve-Carat Diamond Ring
     [730, 225],
-    // Übergoat
-    [102305, 11712.8],
     // Uncanny Incunabulum
     [812, 12.5],
     // Unearthly Fossil
@@ -881,6 +889,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [12350, 312.5],
     // Vienna Opening (via Hinterland Scrip)
     [140978, 5 * 0.5],
+    // Virginia's Spare Pillbox Hat
+    [140608, 35],
     // Vision of the Surface
     [827, 0.5],
     // Vital Intelligence
@@ -911,20 +921,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [345, 32.4],
     // Zee-Ztory
     [831, 0.5],
-    // Meticulously Altered Stocking (via Primordial Shriek)
-    [106571, 2000 * 2.5],
-    // A River In A Box
-    [16677, 32.5],
-    // Virginia's Spare Pillbox Hat
-    [140608, 35],
-    // Exigent Note
-    [143056, 62.5],
-    // M. Demeaux's Advice for Captains: Commemorative Edition
-    [116011, 5],
-    // Gift of Transcendent Devotion
-    [561, 2],
-    // False Lead
-    [813, 0.02],
+    // Übergoat
+    [102305, 11712.8],
 ]);
-
-export {ITEM_PRICES_BY_ID};

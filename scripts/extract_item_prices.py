@@ -45,6 +45,7 @@ def main():
     print(f"    [22390, 0.01],")
 
     for name, item in wiki_info["results"].items():
+    for name, item in sorted(wiki_info["results"].items(), key=lambda k: k[0]):
         if not item["printouts"]["ID"]:
             continue
 
