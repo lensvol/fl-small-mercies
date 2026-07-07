@@ -175,7 +175,7 @@ class OpportunityDeck {
     cards: OpportunityCard[];
     deckSize: number;
     handSize: number;
-    cardsLeft: number;
+    cardsLeftInDeck: number;
     nextCardAt: number;
     currentTime: number;
 
@@ -183,14 +183,14 @@ class OpportunityDeck {
         cards: OpportunityCard[],
         deckSize: number,
         handSize: number,
-        cardsLeft: number,
+        cardsLeftInDeck: number,
         nextCardAt: number,
         currentTime: number
     ) {
         this.cards = cards;
         this.deckSize = deckSize;
         this.handSize = handSize;
-        this.cardsLeft = cardsLeft;
+        this.cardsLeftInDeck = cardsLeftInDeck;
         this.nextCardAt = nextCardAt;
         this.currentTime = currentTime;
     }

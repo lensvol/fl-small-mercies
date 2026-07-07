@@ -8,6 +8,7 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
     private useOldCardCounter: boolean = false;
     private counterIntervalID: ReturnType<typeof setInterval> | undefined;
     private cardsLeft: number = 0;
+    private cardsInDeck: number = 0;
     private nextCardTs: number = 0;
     private cardCounterMimic: HTMLDivElement;
     private cardCounterSpan: HTMLSpanElement;
@@ -102,10 +103,11 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
                 this.counterIntervalID = undefined;
             }
 
-            if (state.opportunityDeck.cardsLeft < state.opportunityDeck.deckSize) {
+            if (state.opportunityDeck.cardsLeftInDeck < state.opportunityDeck.deckSize) {
                 // Still some cards may be added to the deck, we need to initiate a countdown!
                 this.nextCardTs = state.opportunityDeck.nextCardAt;
-                this.cardsLeft = state.opportunityDeck.deckSize - state.opportunityDeck.cardsLeft;
+                this.cardsLeft = state.opportunityDeck.deckSize - state.opportunityDeck.cardsLeftInDeck;
+                this.cardsInDeck = state.opportunityDeck.cardsLeftInDeck;
 
                 this.counterIntervalID = setInterval(() => {
                     const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
@@ -122,7 +124,7 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
                         }
                     }
                 }, 1000);
-            } else if (state.opportunityDeck.cardsLeft === 2147483647) {
+            } else if (state.opportunityDeck.cardsLeftInDeck === 2147483647) {
                 // Infinite draw area!
                 this.cardsLeft = 2147483647;
             } else {
@@ -134,12 +136,13 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
     }
 
     private updateCardCounter() {
-        if (this.cardsLeft === 2147483647) {
+        debug(`In deck: ${this.cardsInDeck}, missing: ${this.cardsLeft}`);
+        if (this.cardsInDeck === 2147483647) {
             this.cardCounterSpan.textContent = "No draw limit.";
             this.cardCountdownSpan.textContent = "";
-        } else if (this.cardsLeft > 1) {
-            this.cardCounterSpan.textContent = `${this.cardsLeft} cards waiting!`;
-        } else if (this.cardsLeft == 1) {
+        } else if (this.cardsInDeck > 1) {
+            this.cardCounterSpan.textContent = `${this.cardsInDeck} cards waiting!`;
+        } else if (this.cardsInDeck == 1) {
             this.cardCounterSpan.textContent = "1 card waiting!";
         } else {
             this.cardCounterSpan.textContent = "No cards waiting.";
