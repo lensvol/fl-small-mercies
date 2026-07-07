@@ -278,3 +278,26 @@ export interface IPlanResponse extends IApiResponse {
     active: IPlan[];
     complete: IPlan[];
 }
+
+export interface IOpportunityCard {
+    category: string;
+    eventId: number;
+    name: string;
+    unlockedWithDescription: string;
+    teaser: string;
+    image: string;
+    isAutoFire: boolean;
+    stickiness: string;
+    qualityRequirements: IQualityRequirement[];
+}
+
+export interface IOpportunityResponse extends IApiResponse {
+    isInAStorylet: boolean;
+    displayCards: IOpportunityCard[];
+    eligibleForCardsCount: number;
+    maxHandSize: number;
+    maxDeckSize: number;
+    currency: number;
+    nextActionAt: string;
+    currentTime: string;
+}

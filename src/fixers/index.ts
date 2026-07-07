@@ -28,6 +28,7 @@ import {BranchResultsFixer} from "./branch_results";
 import {AdvancedArtFixer} from "./advanced_art";
 import {TreasureMapFixer} from "./treasure_map";
 import {EpaTrackerFixer} from "./epa_tracker";
+import {OldCardCounterFixer} from "./old_card_counter";
 
 export default [
     AutoScrollFixer,
@@ -61,4 +62,5 @@ export default [
     AdvancedArtFixer,
     TreasureMapFixer,
     EpaTrackerFixer,
+    OldCardCounterFixer,
 ];
