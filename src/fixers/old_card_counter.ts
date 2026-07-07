@@ -1,6 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {GameStateController} from "../game_state";
+import {GameStateController, StoryletPhases} from "../game_state";
 import {debug} from "../logging";
 import {getSingletonByClassName} from "../utils";
 
@@ -35,7 +35,6 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
         if (!this.useOldCardCounter) return;
 
         const newCardCounter = getSingletonByClassName(node, "deck-info__cards-in-deck");
-        debug("New card counter: ", newCardCounter);
         if (newCardCounter) {
             newCardCounter.style.display = "none";
         }
@@ -88,6 +87,13 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
     }
 
     linkState(controller: GameStateController): void {
+        controller.onStoryletPhaseChanged((state) => {
+            // This should prevent old counter value re-appearing when we already
+            // have entered infinite draw zone, but API response has not arrived yet.
+            this.cardCounterSpan.textContent = "";
+            this.cardCountdownSpan.textContent = "";
+        });
+
         controller.onOpportunityDeckChanged((state) => {
             if (!this.useOldCardCounter) return;
 
