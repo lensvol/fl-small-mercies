@@ -46,7 +46,6 @@ export default [
     SocialEmptyReqsFixer,
     AfterFallYearFixer,
     KhanateOracleFixer,
-    TopExitButtonsFixer,
     LocationQualitiesFixer,
     MoreCurrencyDisplaysFixer,
     TwoStepConfirmationsFixer,
