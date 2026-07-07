@@ -39,10 +39,8 @@ export class TreasureMapFixer implements INetworkAware, IStateAware {
 
             for (const area of response.areas) {
                 if (area.name.toLowerCase() === this.currentTreasureLocation.toLowerCase()) {
-                    debug(`Modified area name: ${area.name}`);
                     area.name = "💎 " + area.name;
                     area.unavailableDescription += "<br><br><i>Your treasure map points here!</i>";
-                    debug(area.description);
                 }
             }
         });
@@ -52,7 +50,6 @@ export class TreasureMapFixer implements INetworkAware, IStateAware {
         state.onUserDataLoaded((gameState: GameState) => {
             const locationQuality = gameState.getQuality("Circumstance", "Directions to a Hidden Stash");
             if (!locationQuality) {
-                debug("Treasure location is not known at this time");
                 return;
             }
 

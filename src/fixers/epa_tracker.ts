@@ -208,7 +208,6 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             const parts = saved_epa_info.split("|");
             if (parts.length == 3) {
                 // We just silently ignore things that seem corrupted
-                debug("Loaded state:", parts);
                 this.areWeTracking = parts[0] == "true";
                 this.epaTracker.increaseWealth(Number(parts[1]));
                 this.epaTracker.increaseActions(Number(parts[2]));
