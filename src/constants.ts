@@ -149,6 +149,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show EPA tracker in the left sidebar",
                 default: false,
             },
+            remove_contacts_snippet: {
+                description: "Hide 'Make Contacts' snippet in the right sidebar.",
+                default: true,
+            },
         },
     },
     {
