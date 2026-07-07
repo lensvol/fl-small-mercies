@@ -13,7 +13,6 @@ import {FavourTrackerFixer} from "./favour_tracker";
 import {SocialEmptyReqsFixer} from "./empty_requirements";
 import {AfterFallYearFixer} from "./af_year";
 import {KhanateOracleFixer} from "./khanate_oracle";
-import {TopExitButtonsFixer} from "./top_exit_buttons";
 import {LocationQualitiesFixer} from "./location_qualities";
 import {MoreCurrencyDisplaysFixer} from "./currency_displays";
 import {TwoStepConfirmationsFixer} from "./two_step_confirmations";
