@@ -78,6 +78,9 @@ def main():
         print(f"    // {name}" + (f" (via {other_currency})" if other_currency else ""))
         print(f"    [{item['printouts']['ID'][0]}, {echo_price}],")
     print("]);")
+    print();
+    print("export {ITEM_PRICES_BY_ID};")
+    print()
 
 if __name__ == "__main__":
     main()

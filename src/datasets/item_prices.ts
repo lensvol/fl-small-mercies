@@ -928,3 +928,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Übergoat
     [102305, 11712.8],
 ]);
+
+export {ITEM_PRICES_BY_ID};
+
