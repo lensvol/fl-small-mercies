@@ -15,6 +15,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [142710, 20.00],
     // Hiding Place of a Peculiar Item
     [142447, 102.50],
+    // Traces of the Tabernacle
+    [146438, 0.01],
     // A Blue and Shining Stone
     [22523, 12.5],
     // A Boxed Cat?

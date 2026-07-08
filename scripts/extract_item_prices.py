@@ -53,6 +53,7 @@ def main():
         "Shard of Glim the Size of a Small Child": [142094, 16.50],
         "Unassuming Crate": [142710, 20.00],
         "Hiding Place of a Peculiar Item": [142447, 102.50],
+        "Traces of the Tabernacle": [146438, 0.01],
     })
 
     for name, (item_id, price) in hardcoded_items.items():
