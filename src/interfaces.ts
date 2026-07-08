@@ -43,6 +43,49 @@ export interface IChooseBranchRequest {
     secondChanceIds: number[];
 }
 
+export interface IMyselfPossessionSection {
+    categories: string[];
+    name: string;
+    possessions: IPossession[];
+}
+
+export interface IPlayerDomicile {
+    name: string;
+    description: string;
+    image: string;
+    maxHandSize: number;
+}
+
+export interface IOutfit {
+    name: string;
+    selected: boolean;
+    type: "Standard" | "Exceptional" | "GivenInGame";
+    id: number;
+}
+
+export interface ICharacterInfo {
+    name: string;
+    description: string;
+    descriptiveText: string;
+    avatarImage: string;
+    currentDomicile: IPlayerDomicile;
+    outfits: IOutfit[];
+    mantelpieceItem: IQuality;
+    scrapbookStatus: IQuality;
+    actions: number;
+    journalIsPrivate: boolean;
+    user: IUserData;
+    canChangeOutfit: boolean;
+    setting: ISetting;
+    id: number;
+}
+
+export interface IMyselfResponse {
+    character: ICharacterInfo;
+    possessions: IMyselfPossessionSection[];
+    restrictedUserInterfaceElements: string[];
+}
+
 export interface IMessage {
     message: string;
     image: string;
@@ -59,7 +102,7 @@ export interface IRollFailureMessage extends IMessage {
 
 export interface IQualityCapMessage extends IMessage {
     type: "QualityCapMessage";
-    possession: IQuality;
+    possession: IPossession;
     priority: number;
     isSidebar: boolean;
     changeType: "Unaltered" | "Increased" | "Decreased";
@@ -67,12 +110,75 @@ export interface IQualityCapMessage extends IMessage {
 
 export interface IStandardQualityChangeMessage extends IMessage {
     type: "StandardQualityChangeMessage";
-    possession: IQuality;
+    possession: IPossession;
     priority: number;
     changeType: "Unaltered" | "Increased" | "Decreased";
     message: string;
     image: string;
     tooltip: string;
+}
+
+export interface IProgressBar {
+    type: "Pyramid";
+    leftScore: number;
+    rightScore: number;
+    startPercentage: number;
+    endPercentage: number;
+}
+
+export interface IEnhancement {
+    qualityName: string;
+    qualityId: number;
+    level: number;
+    category: string;
+    affectsPyramid: boolean;
+}
+
+export interface IPossession {
+    cap?: number;
+    enhancements: IEnhancement[];
+    qualityPossessedId: number;
+    name: string;
+    nameAndLevel: string;
+    levelDescription: string;
+    description: string;
+    nature: string;
+    category: string;
+    effectiveLevel: number;
+    level: number;
+    himbleLevel: number;
+    availableAt: string;
+    equippable: boolean;
+    progressAsPercentage: number;
+    allowedOn: string;
+    image: string;
+    id: number;
+}
+
+export interface IPyramidQualityChangeMessage extends IMessage {
+    type: "PyramidQualityChangeMessage";
+    changeType: "Unaltered" | "Increased" | "Decreased";
+    priority: number;
+    progressBar: IProgressBar;
+    possession: IPossession;
+}
+
+export interface IQualityExplicitlySetMessage extends IMessage {
+    type: "QualityExplicitlySetMessage";
+    changeType: "Gained" | "Lost";
+    possession: IQuality;
+    priority: number;
+}
+
+export interface IAreaChangeMessage extends IMessage {
+    type: "AreaChangeMessage";
+    area: IArea;
+}
+
+export interface ISettingChangeMessage {
+    type: "SettingChangeMessage";
+    setting: ISetting;
+    message: string;
 }
 
 export interface ISetting {
@@ -107,16 +213,26 @@ export type IMessageResult =
     | IRollSuccessMessage
     | IRollFailureMessage
     | IQualityCapMessage
-    | IStandardQualityChangeMessage;
+    | IStandardQualityChangeMessage
+    | IPyramidQualityChangeMessage
+    | IQualityExplicitlySetMessage
+    | IAreaChangeMessage
+    | ISettingChangeMessage;
 
 export interface IChooseBranchResponse extends IApiResponse {
     actions: number;
     phase: string;
-    endStorylet: IEndStorylet;
+    endStorylet?: IEndStorylet;
+    // TODO: Verify that this one really exists?
+    storylet?: IStorylet;
     hasUpdatedCharacter: boolean;
     canChangeOutfit: boolean;
     messages: IMessageResult[];
     setting: ISetting;
+}
+
+export interface IMapMoveResponse extends IApiResponse {
+    area: IArea;
 }
 
 export interface IBeginStoryletRequest {
@@ -300,4 +416,11 @@ export interface IOpportunityResponse extends IApiResponse {
     currency: number;
     nextActionAt: string;
     currentTime: string;
+}
+
+export interface IActionsResponse {
+    nextActionAt: string;
+    currentTime: string;
+    actionBankSize: number;
+    actions: number;
 }

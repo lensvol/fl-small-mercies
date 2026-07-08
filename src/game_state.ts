@@ -1,6 +1,11 @@
 import {FLApiInterceptor} from "./api_interceptor";
 import {
+    IActionsResponse,
+    IChooseBranchResponse,
     IEquipResponse,
+    IMapMoveResponse,
+    IMapResponse,
+    IMyselfResponse,
     IOpportunityCard,
     IOpportunityResponse,
     IPlanResponse,
@@ -330,13 +335,11 @@ export class GameStateController {
         }
     }
 
-    public parseMyselfResponse(response: Record<string, unknown>) {
+    public parseMyselfResponse(response: IMyselfResponse) {
         if (!("character" in response)) return;
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         this.state.character = new FLCharacter(response.character.id, response.character.name);
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         const currentGeoSetting = new GeoSetting(response.character.setting.id, response.character.setting.name);
         if (this.state.location.setting !== currentGeoSetting) {
             this.state.location.setting = currentGeoSetting;
@@ -344,7 +347,6 @@ export class GameStateController {
         }
 
         this.state.resetQualities();
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
                 this.upsertQuality(
@@ -361,9 +363,7 @@ export class GameStateController {
             }
         }
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         if (response.character.actions != undefined && response.character.actions !== this.state.actionsLeft) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.actionsLeft = response.character.actions;
             this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
         }
@@ -371,12 +371,10 @@ export class GameStateController {
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
     }
 
-    public parseActionsResponse(response: Record<string, unknown>) {
+    public parseActionsResponse(response: IActionsResponse) {
         if (!("actions" in response)) return;
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         if (response.actions !== this.state.actionsLeft) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.actionsLeft = response.actions;
             this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
         }
@@ -398,8 +396,7 @@ export class GameStateController {
         return StoryletPhases.Unknown;
     }
 
-    public parseChooseBranchResponse(response: Record<string, unknown>) {
-        // @ts-ignore: There is hell and then there is writing types for external APIs
+    public parseChooseBranchResponse(response: IChooseBranchResponse) {
         for (const message of response.messages || []) {
             if (
                 message.type === "StandardQualityChangeMessage" ||
@@ -432,29 +429,23 @@ export class GameStateController {
             }
         }
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         if (response.phase != undefined) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             const currentPhase = this.decodePhase(response.phase);
             if (currentPhase != this.state.storyletPhase) {
                 this.state.storyletPhase = currentPhase;
                 this.triggerListeners(StateChangeTypes.StoryletPhaseChanged);
             }
             if (response.endStorylet) {
-                // @ts-ignore: There is hell and then there is writing types for external APIs
                 this.state.currentStorylet = response.endStorylet.event;
                 this.triggerListeners(StateChangeTypes.StoryletChanged);
             }
             if (response.storylet) {
-                // @ts-ignore: There is hell and then there is writing types for external APIs
                 this.state.currentStorylet = response.storylet;
                 this.triggerListeners(StateChangeTypes.StoryletChanged);
             }
         }
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         if (response.actions != undefined && response.actions !== this.state.actionsLeft) {
-            // @ts-ignore: There is hell and then there is writing types for external APIs
             this.state.actionsLeft = response.actions;
             this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
         }
@@ -504,11 +495,9 @@ export class GameStateController {
         }
     }
 
-    public parseMapResponse(response: Record<string, unknown>) {
-        // @ts-ignore: There is hell and then there is writing types for external APIs
+    public parseMapResponse(response: IMapResponse) {
         if (!response.isSuccess) return;
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         const newArea = new Area(response.currentArea.id, response.currentArea.name);
         if (this.state.location.area != newArea) {
             this.state.location.area = newArea;
@@ -516,11 +505,9 @@ export class GameStateController {
         }
     }
 
-    public parseMapMoveResponse(response: Record<string, unknown>) {
-        // @ts-ignore: There is hell and then there is writing types for external APIs
+    public parseMapMoveResponse(response: IMapMoveResponse) {
         if (!response.isSuccess) return;
 
-        // @ts-ignore: There is hell and then there is writing types for external APIs
         const newArea = new Area(response.area.id, response.area.name);
         if (this.state.location.area != newArea) {
             this.state.location.area = newArea;
