@@ -1,10 +1,20 @@
 const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Pennies
     [22390, 0.01],
+    // Crystallised Curio
+    [142359, 2.50],
     // Stashed Treasure
     [144025, 0.01],
-    // Editing Pieces of Plunder Weighing Down Your Hold
+    // Pieces of Plunder Weighing Down Your Hold
     [144024, 0.01],
+    // Hillmover
+    [140900, 12.50],
+    // Shard of Glim the Size of a Small Child
+    [142094, 16.50
+    // Unassuming Crate
+    [142710, 20.00],
+    // Hiding Place of a Peculiar Item
+    [142447, 102.50],
     // A Blue and Shining Stone
     [22523, 12.5],
     // A Boxed Cat?

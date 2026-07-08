@@ -44,11 +44,22 @@ def main():
     print(f"    // Pennies")
     print(f"    [22390, 0.01],")
 
-    # For some reason nautical items are not listed by our query to Wiki ¯\_(ツ)_/¯
+    # Some items have monetary value, but are traded in _storylets_ and not in Bazaar,
+    # so our current dump query will not be able to extract them (╯°□°)╯︵ ┻━┻
+    print(f"    // Crystallised Curio")
+    print(f"    [142359, 2.50],")
     print(f"    // Stashed Treasure")
     print(f"    [144025, 0.01],")
-    print(f"    // Editing Pieces of Plunder Weighing Down Your Hold")
+    print(f"    // Pieces of Plunder Weighing Down Your Hold")
     print(f"    [144024, 0.01],")
+    print(f"    // Hillmover")
+    print(f"    [140900, 12.50],")
+    print(f"    // Shard of Glim the Size of a Small Child")
+    print(f"    [142094, 16.50")
+    print(f"    // Unassuming Crate")
+    print(f"    [142710, 20.00],")
+    print(f"    // Hiding Place of a Peculiar Item")
+    print(f"    [142447, 102.50],")
 
     for name, item in sorted(wiki_info["results"].items(), key=lambda k: k[0]):
         if not item["printouts"]["ID"]:
