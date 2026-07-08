@@ -77,7 +77,9 @@ def main():
             # Convert other currencies into Echoes
             for other_currency, value in item_prices.items():
                 if other_currency in conversion_rates:
-                    echo_price = f"{value} * {conversion_rates[other_currency]}"
+                    multiplier = f"{value} * " if value > 1 else ""
+                    formatted_price = f"{conversion_rates[other_currency]:.2f}"
+                    echo_price = f"{multiplier}{formatted_price}"
                     break
         else:
             echo_price = str(item_prices["Echo"])

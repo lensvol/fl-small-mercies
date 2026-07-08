@@ -22,7 +22,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // A Headful of Picaresque Tales
     [22522, 12.5],
     // A Miniature Model Ship (via Certifiable Scrap)
-    [108650, 10 * 0.4875],
+    [108650, 10 * 0.49],
     // A Mislaid Diamond
     [144306, 12.5],
     // A Monstrous Orb
@@ -32,13 +32,13 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // A River In A Box
     [16677, 32.5],
     // A Sealed Copy of the Crimson Book (via Touching Love Story)
-    [107903, 625 * 2.5],
+    [107903, 625 * 2.50],
     // A Seat at the Board
     [144796, 1562.5],
     // A Tasting Flight of Targeted Toxins
     [142504, 1562.5],
     // Admiral-in-a-Box (via Certifiable Scrap)
-    [141644, 5 * 0.4875],
+    [141644, 5 * 0.49],
     // Aeolian Scream
     [773, 2.5],
     // Albatross Wing
@@ -58,9 +58,9 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Ancient Hunting Rifle
     [329, 12.5],
     // Anning's Patent Ribcage Breastplate (via Hinterland Scrip)
-    [142588, 1750 * 0.5],
+    [142588, 1750 * 0.50],
     // Annings' Complete and Reliable Kit for the Preservation and Display of Skeletons (via Hinterland Scrip)
-    [141546, 62 * 0.5],
+    [141546, 62 * 0.50],
     // Anticandle (via Bone Fragments)
     [142750, 250 * 0.01],
     // Antique Constable's Badge
@@ -80,7 +80,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Baited Riddle (via Whispered Hint)
     [143912, 6250 * 0.01],
     // Bandage Scrap (via Shard of Glim)
-    [144247, 1 * 0.01],
+    [144247, 0.01],
     // Baptised Rattus Faber Corpse
     [14620, 2.5],
     // Basket of Rubbery Pies
@@ -98,7 +98,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Bengal Tigress
     [728, 312.5],
     // Bessemer Steel Ingot (via Tempestuous Tale)
-    [141159, 1 * 0.5],
+    [141159, 0.50],
     // Bifurcated Owl
     [899, 200],
     // Blackmail Material
@@ -152,7 +152,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Caustic Apocryphon (via Stuiver)
     [144751, 250 * 0.05],
     // Cave-Aged Code of Honour (via Legal Document)
-    [141883, 1 * 12.5],
+    [141883, 12.50],
     // Celebrated Short Story
     [18396, 130],
     // Cellar of Wine
@@ -164,7 +164,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Classic Short Story
     [18381, 180],
     // Clockwork Drownie (via Certifiable Scrap)
-    [141643, 5 * 0.4875],
+    [141643, 5 * 0.49],
     // Collection of Curiosities
     [743, 6],
     // Compelling Short Story
@@ -212,7 +212,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Devilish Probability Distributor
     [141281, 62.5],
     // Devilishly Slinky Evening Gown (via Hinterland Scrip)
-    [141680, 500 * 0.5],
+    [141680, 500 * 0.50],
     // Devious Henchman
     [348, 12.5],
     // Devious Raven Advisor
@@ -224,7 +224,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Direful Reflection
     [105858, 12.5],
     // Dismal Victuals (via Touching Love Story)
-    [144241, 1 * 2.5],
+    [144241, 2.50],
     // Distinguished Gentleman's Outfit
     [322, 62.5],
     // Dove Mask Shard
@@ -258,7 +258,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Entry in Slowcake's Exceptionals
     [752, 27.5],
     // Epaulette Mate (via Hinterland Scrip)
-    [140971, 50 * 0.5],
+    [140971, 50 * 0.50],
     // Exceptional Hat
     [311, 62.5],
     // Exceptional Short Story
@@ -300,13 +300,13 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Fecund Amber Tiara
     [21845, 200],
     // Femur of a Jurassic Beast (via Hinterland Scrip)
-    [140773, 2 * 0.5],
+    [140773, 2 * 0.50],
     // Femur of a Surface Deer
     [140771, 0.1],
     // Final Breath
     [141161, 0.5],
     // Fingerking Scale (via Correspondence Plaque)
-    [144217, 1 * 0.5],
+    [144217, 0.50],
     // Firkin of Hesperidean Cider
     [410, 80000],
     // First City Coin
@@ -318,7 +318,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Flawed Diamond
     [449, 0.12],
     // Fluke Spine, Freely Given (via Knotted Humerus)
-    [144215, 1 * 3.0],
+    [144215, 3.00],
     // Fluke-Core
     [106683, 1560],
     // Focused Albatross
@@ -326,9 +326,9 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Formidable Gown
     [720, 12.5],
     // Fossilised Forelimb (via Hinterland Scrip)
-    [141540, 25 * 0.5],
+    [141540, 25 * 0.50],
     // Fourth-City Echo (via Rat-Shilling)
-    [142797, 125 * 0.1],
+    [142797, 125 * 0.10],
     // Foxfire Candle Stub
     [374, 0.01],
     // Fragment of White Gold
@@ -338,9 +338,9 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Fraught Research Assistant
     [118788, 12.5],
     // Frayed Thread (via Silk Scrap)
-    [144315, 1 * 0.01],
+    [144315, 0.01],
     // Fungal Dangers and Poisons: A Guide for New Growers (via Hinterland Scrip)
-    [141569, 40 * 0.5],
+    [141569, 40 * 0.50],
     // Gay Bonnet
     [308, 2.5],
     // Gentleman's Athletic Support
@@ -358,13 +358,13 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Grubby Urchin
     [346, 14.4],
     // Hand-picked Peppercaps (via Hinterland Scrip)
-    [141541, 1 * 0.5],
+    [141541, 0.50],
     // Haunted-looking Dog
     [818, 2],
     // Helical Thighbone (via Hinterland Scrip)
-    [141480, 2 * 0.5],
+    [141480, 2 * 0.50],
     // Highwayman's Cloak (via Hinterland Scrip)
-    [141627, 400 * 0.5],
+    [141627, 400 * 0.50],
     // Horsehead Amulet
     [468, 2],
     // Impossible Theorem
@@ -376,7 +376,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Infernal Sharpshooter's Rifle
     [21896, 210],
     // Infernally Well-cut Suit (via Hinterland Scrip)
-    [141681, 500 * 0.5],
+    [141681, 500 * 0.50],
     // Inkling of Identity
     [656, 0.1],
     // Insatiable Glove
@@ -392,7 +392,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Irresistible Drum
     [338, 25.6],
     // Ivory Humerus (via Hinterland Scrip)
-    [140849, 25 * 0.5],
+    [140849, 25 * 0.50],
     // Jade Fragment
     [377, 0.01],
     // Jasmine Leaves
@@ -410,9 +410,9 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Light-Drinking Cravat
     [145126, 6.25],
     // Limpid Soul (via Knob of Scintillack)
-    [144219, 1 * 2.5],
+    [144219, 2.50],
     // Lithification Liquid (via Hinterland Scrip)
-    [141548, 12 * 0.5],
+    [141548, 12 * 0.50],
     // Live Specimen
     [122488, 2.5],
     // London Street Sign
@@ -424,7 +424,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // M. Demeaux's Advice for Captains: Commemorative Edition
     [116011, 5],
     // Magisterial Lager (via Hinterland Scrip)
-    [141574, 1 * 0.5],
+    [141574, 0.50],
     // Magnificent Diamond
     [12188, 12.5],
     // Magnificent Midnight-Blue Evening Gown
@@ -448,21 +448,21 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Memory of Moonlight (via Stuiver)
     [144977, 250 * 0.05],
     // Memory of Sunlight (via Mourning Candle)
-    [144218, 1 * 2.5],
+    [144218, 2.50],
     // Memory of a Much Stranger Self (via Stuiver)
     [144983, 250 * 0.05],
     // Memory of a Shadow in Varchas (via Hinterland Scrip)
-    [142659, 25 * 0.5],
+    [142659, 25 * 0.50],
     // Meticulously Altered Stocking (via Primordial Shriek)
-    [106571, 2000 * 2.5],
+    [106571, 2000 * 2.50],
     // Midnight Matriarch
     [21898, 200],
     // Mirthless Compendium of Statistical Observations
     [141283, 12.5],
     // Misplaced Ring (via Hinterland Scrip)
-    [142589, 1750 * 0.5],
+    [142589, 1750 * 0.50],
     // Model Infernal Locomotive (via Certifiable Scrap)
-    [141641, 5 * 0.4875],
+    [141641, 5 * 0.49],
     // Modish Bonnet
     [465, 0.5],
     // Moon-Pearl
@@ -476,7 +476,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Moves in the Great Game
     [122490, 0.5],
     // Much-Needed Gap (via Assortment of Khaganian Coinage)
-    [142855, 125 * 0.5],
+    [142855, 125 * 0.50],
     // Muscaria Brandy
     [927, 2.5],
     // Mystery of the Elder Continent
@@ -486,7 +486,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Neddy Suit
     [1043, 6],
     // Neo-Echo (via Jasmine Leaves)
-    [144213, 1 * 0.1],
+    [144213, 0.10],
     // Nevercold Brass Sliver
     [387, 0.01],
     // Nicatorean Relic
@@ -498,11 +498,11 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Night-Whisper
     [933, 62.5],
     // Nightsoil of the Bazaar (via Hinterland Scrip)
-    [141158, 1 * 0.5],
+    [141158, 0.50],
     // Nikolas & Sons Instant Ablution Absolution
     [523, 0.25],
     // No Currency (via Venom-Ruby)
-    [144214, 1 * 0.1],
+    [144214, 0.10],
     // Nodule of Deep Amber
     [385, 0.01],
     // Nodule of Fecund Amber
@@ -520,7 +520,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Old Bone Skeleton Key
     [753, 57.5],
     // Oneiric Pearl (via Assortment of Khaganian Coinage)
-    [142666, 125 * 0.5],
+    [142666, 125 * 0.50],
     // Oneiromantic Revelation
     [142662, 62.5],
     // Ornate Typewriter
@@ -528,7 +528,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Ostentatious Diamond
     [12186, 0.5],
     // Ounce of Lily-Balm (via Brilliant Soul)
-    [144243, 1 * 0.5],
+    [144243, 0.50],
     // Outfit of Black Felt Garments
     [317, 2.88],
     // Overgoat
@@ -536,7 +536,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Page from the Liber Visionis
     [619, 0.5],
     // Pair of Balmoral Boots (via Hinterland Scrip)
-    [141538, 125 * 0.5],
+    [141538, 125 * 0.50],
     // Pair of Cracksman's Mittens
     [296, 6.4],
     // Pair of Cutpurse's Mittens
@@ -602,7 +602,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Partial Map
     [956, 2.5],
     // Patent Osteological Sand and Wax (via Hinterland Scrip)
-    [141543, 12 * 0.5],
+    [141543, 12 * 0.50],
     // Patent Scrutinizer
     [339, 6.4],
     // Patent Scrutinizer Deluxe!
@@ -642,11 +642,11 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Puzzling Map
     [959, 12.5],
     // Queen Mate (via Hinterland Scrip)
-    [140970, 50 * 0.5],
+    [140970, 50 * 0.50],
     // Queer Soul
     [122798, 2.5],
     // Railway Steel (via Hinterland Scrip)
-    [141162, 19 * 0.5],
+    [141162, 19 * 0.50],
     // Rat on a String
     [376, 0.01],
     // Ratskin Suit
@@ -728,7 +728,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Sample of Roof-Drip (via Stuiver)
     [144821, 2 * 0.05],
     // Sap of the Cedar at the Crossroads (via Hinterland Scrip)
-    [143050, 125 * 0.5],
+    [143050, 125 * 0.50],
     // Sapphire
     [643, 0.12],
     // Sausage About Which No One Complains
@@ -744,9 +744,9 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Secluded Address
     [658, 0.5],
     // Secret College (via Searing Enigma)
-    [118813, 25 * 62.5],
+    [118813, 25 * 62.50],
     // Selenitic Fragment (via Aeolian Scream)
-    [144296, 1 * 2.5],
+    [144296, 2.50],
     // Semiotic Monocle
     [727, 312.5],
     // Set of Intricate Kifers
@@ -762,7 +762,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Shard of Glim
     [378, 0.01],
     // Shard of Lightless Glim (via Piece of Rostygold)
-    [144216, 1 * 0.01],
+    [144216, 0.01],
     // Short Story
     [18101, 2],
     // Shrivelled Ball
@@ -790,7 +790,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Solacefruit
     [122491, 0.5],
     // Soothe & Cooper Long-Box (via An Identity Uncovered!)
-    [114982, 25 * 2.5],
+    [114982, 25 * 2.50],
     // Soul
     [386, 0.02],
     // Sporing Bonnet
@@ -798,7 +798,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Stained Red Velvet Gown
     [316, 6.4],
     // Stalemate (via Hinterland Scrip)
-    [140980, 125 * 0.5],
+    [140980, 125 * 0.50],
     // Starry-Eyed Scoundrel
     [140648, 14],
     // Starstone Demark
@@ -824,7 +824,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Surface-Silk Scrap
     [907, 0.1],
     // Survey of the Neath's Bones (via Hinterland Scrip)
-    [141170, 1 * 0.5],
+    [141170, 0.50],
     // Sworn Statement
     [13928, 2.5],
     // Tailfeather Brilliant as Flame
@@ -842,7 +842,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Tempestuous Tale (via Stuiver)
     [144955, 10 * 0.05],
     // Tentacle Mitts (via Hinterland Scrip)
-    [141628, 400 * 0.5],
+    [141628, 400 * 0.50],
     // Thirsty Bombazine Scrap
     [922, 2.5],
     // Thrilling Short Story
@@ -858,7 +858,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Trace of Viric
     [141914, 0.5],
     // Tracklayer's Helmet (via Hinterland Scrip)
-    [141539, 125 * 0.5],
+    [141539, 125 * 0.50],
     // Trade Secret
     [13640, 60],
     // Tub of Gloam-Foam
@@ -870,7 +870,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Unearthly Fossil
     [810, 2.5],
     // Unidentified Thigh Bone (via Hinterland Scrip)
-    [140756, 1 * 0.5],
+    [140756, 0.50],
     // Unjustifiable Necktie
     [145129, 75],
     // Unlawful Device
@@ -902,7 +902,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Vial of Tears of the Bazaar
     [12350, 312.5],
     // Vienna Opening (via Hinterland Scrip)
-    [140978, 5 * 0.5],
+    [140978, 5 * 0.50],
     // Virginia's Spare Pillbox Hat
     [140608, 35],
     // Vision of the Surface
