@@ -55,7 +55,7 @@ def main():
     print(f"    // Hillmover")
     print(f"    [140900, 12.50],")
     print(f"    // Shard of Glim the Size of a Small Child")
-    print(f"    [142094, 16.50")
+    print(f"    [142094, 16.50],")
     print(f"    // Unassuming Crate")
     print(f"    [142710, 20.00],")
     print(f"    // Hiding Place of a Peculiar Item")

@@ -10,7 +10,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Hillmover
     [140900, 12.50],
     // Shard of Glim the Size of a Small Child
-    [142094, 16.50
+    [142094, 16.50],
     // Unassuming Crate
     [142710, 20.00],
     // Hiding Place of a Peculiar Item
