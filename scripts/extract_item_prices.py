@@ -1,5 +1,6 @@
 import json
 import sys
+from collections import OrderedDict
 
 def main():
     with open(sys.argv[1], "r") as fp:
@@ -40,26 +41,26 @@ def main():
         "Whispered Hint": 0.01,
     }
 
-    # Pennies should be convertable to themselves
-    print(f"    // Pennies")
-    print(f"    [22390, 0.01],")
+    hardcoded_items = OrderedDict({
+        # Pennies should be convertable to themselves
+        "Pennies": [22390, 0.01],
+        # Some items have monetary value, but are traded in _storylets_ and not in Bazaar,
+        # so our current dump query will not be able to extract them (╯°□°)╯︵ ┻━┻
+        "Crystallised Curio": [142359, 2.50],
+        "Stashed Treasure": [144025, 0.01],
+        "Pieces of Plunder Weighing Down Your Hold": [144024, 0.01],
+        "Hillmover": [140900, 12.50],
+        "Shard of Glim the Size of a Small Child": [142094, 16.50],
+        "Unassuming Crate": [142710, 20.00],
+        "Hiding Place of a Peculiar Item": [142447, 102.50],
+    })
+
+    for name, (item_id, price) in hardcoded_items.items():
+        print(f"    // {name}")
+        print(f"    [{item_id}, {price:.2f}],")
 
     # Some items have monetary value, but are traded in _storylets_ and not in Bazaar,
     # so our current dump query will not be able to extract them (╯°□°)╯︵ ┻━┻
-    print(f"    // Crystallised Curio")
-    print(f"    [142359, 2.50],")
-    print(f"    // Stashed Treasure")
-    print(f"    [144025, 0.01],")
-    print(f"    // Pieces of Plunder Weighing Down Your Hold")
-    print(f"    [144024, 0.01],")
-    print(f"    // Hillmover")
-    print(f"    [140900, 12.50],")
-    print(f"    // Shard of Glim the Size of a Small Child")
-    print(f"    [142094, 16.50],")
-    print(f"    // Unassuming Crate")
-    print(f"    [142710, 20.00],")
-    print(f"    // Hiding Place of a Peculiar Item")
-    print(f"    [142447, 102.50],")
 
     for name, item in sorted(wiki_info["results"].items(), key=lambda k: k[0]):
         if not item["printouts"]["ID"]:
@@ -78,8 +79,7 @@ def main():
             for other_currency, value in item_prices.items():
                 if other_currency in conversion_rates:
                     multiplier = f"{value} * " if value > 1 else ""
-                    formatted_price = f"{conversion_rates[other_currency]:.2f}"
-                    echo_price = f"{multiplier}{formatted_price}"
+                    echo_price = f"{multiplier}{conversion_rates[other_currency]:.2f}"
                     break
         else:
             echo_price = str(item_prices["Echo"])
