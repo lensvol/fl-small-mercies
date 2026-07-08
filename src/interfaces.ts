@@ -88,8 +88,8 @@ export interface IMyselfResponse {
 
 export interface IMessage {
     message: string;
-    image: string;
-    tooltip: string;
+    image?: string;
+    tooltip?: string;
 }
 
 export interface IRollSuccessMessage extends IMessage {
@@ -175,10 +175,9 @@ export interface IAreaChangeMessage extends IMessage {
     area: IArea;
 }
 
-export interface ISettingChangeMessage {
+export interface ISettingChangeMessage extends IMessage {
     type: "SettingChangeMessage";
     setting: ISetting;
-    message: string;
 }
 
 export interface ISetting {

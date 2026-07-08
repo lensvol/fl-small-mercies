@@ -11,7 +11,6 @@ import {
     IQualityRequirement,
     IStoryletResponse,
 } from "../interfaces";
-import {getSingletonByClassName} from "../utils";
 
 const OLD_SKILLS_ART = new Map([
     ["kataleptictoxicology_sidebar", "honeyjar"],
@@ -106,8 +105,9 @@ export class AdvancedArtFixer implements IMutationAware, INetworkAware {
             }
 
             response.messages.map((message: IMessageResult) => {
-                if (OLD_SKILLS_ART.has(message.image)) {
-                    message.image = OLD_SKILLS_ART.get(message.image)!!;
+                const replacement = OLD_SKILLS_ART.get(message?.image || "");
+                if (replacement) {
+                    message.image = replacement;
                 }
             });
         };
