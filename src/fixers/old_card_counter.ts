@@ -1,7 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
 import {GameStateController, StoryletPhases} from "../game_state";
-import {debug} from "../logging";
 import {getSingletonByClassName} from "../utils";
 
 export class OldCardCounterFixer implements IMutationAware, IStateAware {
@@ -103,16 +102,15 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
                 this.counterIntervalID = undefined;
             }
 
-            if (state.opportunityDeck.cardsLeftInDeck < state.opportunityDeck.deckSize) {
-                // Still some cards may be added to the deck, we need to initiate a countdown!
-                this.nextCardTs = state.opportunityDeck.nextCardAt;
-                this.cardsLeft = state.opportunityDeck.deckSize - state.opportunityDeck.cardsLeftInDeck;
-                this.cardsInDeck = state.opportunityDeck.cardsLeftInDeck;
+            this.nextCardTs = state.opportunityDeck.nextCardAt;
+            this.cardsInDeck = state.opportunityDeck.cardsLeftInDeck;
+            this.cardsLeft = state.opportunityDeck.deckSize - this.cardsInDeck;
 
+            const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
+            // Still some cards may be added to the deck, we need to initiate a countdown!
+            if (this.cardsInDeck < state.opportunityDeck.deckSize) {
                 this.counterIntervalID = setInterval(() => {
                     const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
-
-                    this.updateCardCounter();
                     if (nextInSeconds <= 0) {
                         this.cardsLeft -= 1;
                         if (this.cardsLeft == 0) {
@@ -123,6 +121,7 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
                             this.nextCardTs += 60 * 10 * 1000;
                         }
                     }
+                    this.updateCardCounter();
                 }, 1000);
             } else if (state.opportunityDeck.cardsLeftInDeck === 2147483647) {
                 // Infinite draw area!
@@ -136,7 +135,6 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
     }
 
     private updateCardCounter() {
-        debug(`In deck: ${this.cardsInDeck}, missing: ${this.cardsLeft}`);
         if (this.cardsInDeck === 2147483647) {
             this.cardCounterSpan.textContent = "No draw limit.";
             this.cardCountdownSpan.textContent = "";
@@ -146,10 +144,9 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
             this.cardCounterSpan.textContent = "1 card waiting!";
         } else {
             this.cardCounterSpan.textContent = "No cards waiting.";
-            this.cardCountdownSpan.textContent = "";
         }
 
-        if (this.cardsLeft > 0 && this.cardsLeft !== 2147483647) {
+        if (this.cardsLeft > 0 && this.cardsInDeck !== 2147483647) {
             const nextInSeconds = Math.trunc((this.nextCardTs - Date.now()) / 1000);
             if (nextInSeconds > 0) {
                 const minutesLeft = String(Math.trunc(nextInSeconds / 60));
@@ -157,6 +154,8 @@ export class OldCardCounterFixer implements IMutationAware, IStateAware {
 
                 this.cardCountdownSpan.textContent = `Next in ${minutesLeft}:${secondsLeft}`;
             }
+        } else {
+            this.cardCountdownSpan.textContent = "";
         }
     }
 }
