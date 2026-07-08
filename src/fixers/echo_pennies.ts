@@ -4,7 +4,7 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IBeginStoryletRequest, IBranch, IQualityRequirement, IStoryletResponse} from "../interfaces";
 
 const PENNY_MESSAGE_REGEX = /You've (lost|gained) ([0-9,]+) x Penny \(new total ([0-9,]+)\)./;
-const PENNY_REQUIREMENT_REGEX = /.*\s([0-9,]+)\s.*\s([0-9,]+).*/;
+const PENNY_REQUIREMENT_REGEX = /You\s(\w+).*\s([0-9,]+)\s.*\s([0-9,]+).*/;
 
 export class EchoPenniesFixer implements INetworkAware {
     convertPenniesToEchoes = false;
@@ -34,7 +34,7 @@ export class EchoPenniesFixer implements INetworkAware {
                             return;
                         }
 
-                        const [_, current_amount_str, needed_amount_str] = matches;
+                        const [_, verb, current_amount_str, needed_amount_str] = matches;
                         const neededAmount = parseInt(needed_amount_str.replace(/,/g, ""), 10) / 100;
                         let currentAmount = parseInt(current_amount_str.replace(/,/g, ""), 10) / 100;
 
@@ -44,7 +44,11 @@ export class EchoPenniesFixer implements INetworkAware {
                             currentAmount = Math.floor(currentAmount);
                         }
 
-                        req.tooltip = `You unlocked this with ${currentAmount} Echoes (you needed ${neededAmount})`;
+                        if (verb === "unlocked") {
+                            req.tooltip = `You unlocked this with ${currentAmount} Echoes (you needed ${neededAmount})`;
+                        } else {
+                            req.tooltip = `You need ${neededAmount} Echoes (you have ${currentAmount})`;
+                        }
                     }
                 });
             });
