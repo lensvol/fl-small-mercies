@@ -19,7 +19,7 @@ assemble_zip: build_dist
 	cp $(MANIFEST) $(TMPDIR)/manifest.json
 	cp -rf images $(TMPDIR)
 	cp LICENSE $(TMPDIR)
-	cd $(TMPDIR) && zip -r -FS $(PWD)/$(NAME)-v$(VERSION)$(SUFFIX).zip . --exclude '*.git*' -x '*.idea*' -x '*screenshot*'
+	cd $(TMPDIR) && zip -r -FS $(PWD)/$(NAME)-v$(VERSION)$(SUFFIX).zip . --exclude '*.git*' -x '*.idea*' -x '*screenshot*' -x 'node-compile-cache/*'
 	rm -rf $(TMPDIR)
 
 extension: MANIFEST := "manifest.json"
