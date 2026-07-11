@@ -183,6 +183,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
         this.trackerToggle.addEventListener("click", () => {
             this.areWeTracking = !this.areWeTracking;
+            this.saveTrackerState();
             this.updateTrackerUI();
         });
 
