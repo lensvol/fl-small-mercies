@@ -522,7 +522,7 @@ export class GameStateController {
 
         for (const requirement of worldQualities) {
             const valueStartIdx = requirement.tooltip.indexOf("<li class='current'>");
-            const valueEndIdx = requirement.tooltip.indexOf("</li></ul>");
+            const valueEndIdx = requirement.tooltip.indexOf("</li>", valueStartIdx);
 
             if (valueStartIdx === -1 || valueEndIdx === -1) continue;
 
