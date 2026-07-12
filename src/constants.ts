@@ -149,6 +149,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Hide 'Make Contacts' snippet in the right sidebar.",
                 default: true,
             },
+            compact_ability_sidebar: {
+                description: "Show sidebar abilities in a compact way.",
+                default: false,
+            },
         },
     },
     {
