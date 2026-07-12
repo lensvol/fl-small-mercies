@@ -675,6 +675,9 @@ export class GameStateController {
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
         interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipmentResponse(response));
         interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipmentResponse(response));
+        interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response) => {
+            this.parseEquipmentResponse(response);
+        });
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) =>
             this.parseChooseBranchResponse(response)
         );

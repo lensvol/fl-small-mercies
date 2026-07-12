@@ -343,6 +343,22 @@ export interface IEquipmentSlot {
     isOutfit: true;
 }
 
+export interface IEquipHighestResponse extends IApiResponse {
+    slots: IEquipmentSlot[];
+    dirty: boolean;
+    maxOutfits: number;
+    isFavourite: boolean;
+}
+
+export interface IAgentReportResponse extends IApiResponse {
+    agentId: number;
+    canChangeOutfit: boolean;
+    actions: number;
+    phase: string;
+    storylet: IStorylet;
+    hasUpdatedCharacter: boolean;
+}
+
 export interface IEquipResponse extends IApiResponse {
     slots: IEquipmentSlot[];
     dirty: boolean;
