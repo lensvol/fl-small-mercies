@@ -223,6 +223,10 @@ export class GameState {
         return this.qualityIdMapping.get(qualityId);
     }
 
+    public getQualityCategory(category: string): IterableIterator<Quality> | undefined {
+        return this.qualities.get(category)?.values();
+    }
+
     public getQuality(category: string, name: string): Quality | undefined {
         const existingCategory = this.qualities.get(category);
         if (existingCategory == undefined) {
