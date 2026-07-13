@@ -326,6 +326,9 @@ export class GameStateController {
             const previousLevel = existingQuality.level;
             existingQuality.effectiveLevel = effectiveLevel;
             existingQuality.level = level;
+
+            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, level);
+
             return [existingQuality, previousLevel];
         } else {
             const quality = new Quality(
@@ -442,7 +445,6 @@ export class GameStateController {
                     thing.cap || 0,
                     thing.nature
                 );
-                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
             }
 
             if (message.type === "AreaChangeMessage") {
@@ -607,7 +609,7 @@ export class GameStateController {
         }
 
         response.possessionsChanged.forEach((changed) => {
-            const [quality, previous] = this.upsertQuality(
+            this.upsertQuality(
                 changed.id,
                 changed.category,
                 changed.name,
@@ -619,10 +621,6 @@ export class GameStateController {
                 changed.nature,
                 changed.enhancements
             );
-
-            if (quality.level != previous) {
-                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
-            }
         });
     }
 
