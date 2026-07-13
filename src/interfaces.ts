@@ -11,6 +11,11 @@ export interface IQuality {
     category: string;
     effectiveLevel: number;
     cap?: number;
+    bonusOrPenaltyDisplay?: string;
+    progressAsPercentage: number;
+    allowedOn: string;
+    himbleLevel: string;
+    qualityPossessedId: number;
     enhancements: IEnhancement[];
     nature: string;
     image: string;
