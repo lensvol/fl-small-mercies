@@ -11,6 +11,7 @@ export interface IQuality {
     category: string;
     effectiveLevel: number;
     cap?: number;
+    enhancements: IEnhancement[];
     nature: string;
     image: string;
 }

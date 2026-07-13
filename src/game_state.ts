@@ -100,6 +100,22 @@ export class FLPlayerLocation {
 const UNKNOWN_AREA = new Area(UNKNOWN, "<UNKNOWN AREA>");
 const UNKNOWN_GEO_SETTING = new GeoSetting(UNKNOWN, "<UNKNOWN SETTING>");
 
+export class Enhancement {
+    qualityName: string;
+    qualityId: number;
+    level: number;
+    category: string;
+    affectsPyramid: boolean;
+
+    constructor(qualityName: string, qualityId: number, level: number, category: string, affectsPyramid: boolean) {
+        this.qualityName = qualityName;
+        this.qualityId = qualityId;
+        this.level = level;
+        this.category = category;
+        this.affectsPyramid = affectsPyramid;
+    }
+}
+
 export class Quality {
     qualityId: number;
     name: string;
@@ -110,6 +126,7 @@ export class Quality {
     image: string;
     cap: number;
     nature: string;
+    enhancements: Enhancement[];
 
     constructor(
         qualityId: number,
@@ -120,7 +137,8 @@ export class Quality {
         levelDescription: string,
         image: string,
         cap: number,
-        nature: string
+        nature: string,
+        enhancements: Enhancement[] = []
     ) {
         this.qualityId = qualityId;
         this.category = category;
@@ -131,6 +149,7 @@ export class Quality {
         this.image = image;
         this.cap = cap;
         this.nature = nature;
+        this.enhancements = enhancements;
     }
 }
 
@@ -297,7 +316,8 @@ export class GameStateController {
         levelDescription: string,
         image: string,
         cap: number,
-        nature: string
+        nature: string,
+        enhancements: Enhancement[] = []
     ): [Quality, number] {
         const existingQuality = this.state.getQuality(categoryName, qualityName);
 
@@ -317,7 +337,8 @@ export class GameStateController {
                 levelDescription,
                 image,
                 cap,
-                nature
+                nature,
+                enhancements
             );
             this.state.setQuality(categoryName, qualityName, quality);
             return [quality, 0];
@@ -363,7 +384,8 @@ export class GameStateController {
                     thing.levelDescription,
                     thing.image,
                     thing.cap || 0,
-                    thing.nature
+                    thing.nature,
+                    thing.enhancements
                 );
             }
         }
@@ -594,7 +616,8 @@ export class GameStateController {
                 changed.levelDescription,
                 changed.image,
                 changed.cap || 0,
-                changed.nature
+                changed.nature,
+                changed.enhancements
             );
 
             if (quality.level != previous) {
