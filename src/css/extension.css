@@ -113,3 +113,19 @@
         box-shadow: 0 0 2px rgba(255, 165, 0, 0.6);
     }
 }
+
+/* Taken from https://css-tricks.com/animating-number-counters/ */
+@property --num {
+    syntax: '<integer>';
+    initial-value: 0;
+    inherits: false;
+}
+
+.shield-value {
+    transition: --num 1s;
+    counter-reset: num var(--num);
+}
+
+.shield-value::after {
+    content: counter(num);
+}

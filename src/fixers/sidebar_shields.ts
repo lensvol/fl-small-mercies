@@ -23,8 +23,9 @@ class SidebarShield {
     setLevel(level: number, modifier: number) {
         this.level = level;
         this.modifier = modifier;
+        debug(`Setting ${this.imageName} to ${level} + ${modifier}`);
         if (this.levelDisplay) {
-            this.levelDisplay.textContent = (this.level + this.modifier).toString();
+            this.levelDisplay.style.setProperty("--num", (this.level + this.modifier).toString());
         }
     }
 
@@ -55,17 +56,14 @@ class SidebarShield {
         img.setAttribute("src", `//images.fallenlondon.com/icons/${this.imageName}small.png`);
 
         const textSpan = document.createElement("span");
-        textSpan.classList.add("agent-stat-level");
-        this.levelDisplay = textSpan;
+        textSpan.classList.add("agent-stat-level", "shield-value");
 
-        const text = document.createTextNode((this.level + this.modifier).toString());
+        this.levelDisplay = textSpan;
 
         container.appendChild(container2);
 
         container2.appendChild(img);
         container2.appendChild(textSpan);
-
-        textSpan.appendChild(text);
 
         return container;
     }
