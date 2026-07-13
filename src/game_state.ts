@@ -504,7 +504,9 @@ export class GameStateController {
                 }
             } else if (itemInSlot) {
                 // Equipment slot was cleared
-                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, null);
+                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, itemInSlot, null);
+                // TODO: Make a placeholder quality?
+                this.state.outfit.delete(equipmentSlot.name);
             }
         }
     }
