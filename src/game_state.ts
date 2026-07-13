@@ -16,7 +16,7 @@ import {
     IStoryletResponse,
     IUserResponse,
 } from "./interfaces";
-import {debug} from "./logging";
+import {debug, error} from "./logging";
 
 export const UNKNOWN = -1;
 
@@ -209,6 +209,7 @@ export class GameState {
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
     public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
     public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, 0, 0);
+    public outfit: Map<string, Quality> = new Map<string, Quality>();
 
     public actionsLeft = 0;
 
@@ -458,11 +459,26 @@ export class GameStateController {
     public parseEquipmentResponse(response: IEquipResponse) {
         for (const equipmentSlot of response.slots) {
             // TODO: Only trigger listeners on actual _changes_ to slot contents
+            const itemInSlot = this.state.outfit.get(equipmentSlot.name);
             if (equipmentSlot.qualityId != null) {
                 // Item was equipped into the inventory slot
                 const itemQuality = this.state.getQualityById(equipmentSlot.qualityId);
-                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, itemQuality);
-            } else {
+                if (!itemQuality) {
+                    error(`Attempt to equip item ${equipmentSlot.qualityId} into ${equipmentSlot.name} failed.`);
+                    continue;
+                }
+
+                if (itemInSlot == null || itemInSlot.qualityId != itemQuality.qualityId) {
+                    this.triggerListeners(
+                        StateChangeTypes.EquipmentChanged,
+                        equipmentSlot.name,
+                        itemInSlot,
+                        itemQuality
+                    );
+                    // Make proper abstractions for this
+                    this.state.outfit.set(equipmentSlot.name, itemQuality);
+                }
+            } else if (itemInSlot) {
                 // Equipment slot was cleared
                 this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, null);
             }
@@ -650,7 +666,9 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.ActionsCountChanged].push(handler);
     }
 
-    public onEquipmentChanged(handler: (g: GameState, slotName: string, item: Quality | null) => void) {
+    public onEquipmentChanged(
+        handler: (g: GameState, slotName: string, previousItem: Quality | null, equippedItem: Quality | null) => void
+    ) {
         this.changeListeners[StateChangeTypes.EquipmentChanged].push(handler);
     }
 
@@ -677,6 +695,7 @@ export class GameStateController {
         });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
+        interceptor.onResponseReceived("/api/outfit", (_, response) => this.parseEquipmentResponse(response));
         interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipmentResponse(response));
         interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipmentResponse(response));
         interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response) => {
