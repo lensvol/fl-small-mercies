@@ -91,3 +91,25 @@
     margin: 0 0 -0.8em;
     background-size: 1.75em;
 }
+
+.pulse-golden-light {
+    /* Golden light gradient with an orange glow */
+    background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,165,0,0.8) 70%, rgba(255,140,0,0) 100%);
+    box-shadow: 0 0 2px rgba(255, 165, 0, 0.6);
+    animation: pulse-glow 0.4s 1 ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 2px rgba(255, 165, 0, 0.6);
+    }
+    50% {
+        transform: scale(1);
+        box-shadow: 0 0 4px rgba(255, 215, 0, 0.9);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 2px rgba(255, 165, 0, 0.6);
+    }
+}
