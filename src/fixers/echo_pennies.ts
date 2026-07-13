@@ -35,8 +35,13 @@ export class EchoPenniesFixer implements INetworkAware {
                         }
 
                         const [_, verb, current_amount_str, needed_amount_str] = matches;
-                        const neededAmount = parseInt(needed_amount_str.replace(/,/g, ""), 10) / 100;
+                        let neededAmount = parseInt(needed_amount_str.replace(/,/g, ""), 10) / 100;
                         let currentAmount = parseInt(current_amount_str.replace(/,/g, ""), 10) / 100;
+
+                        if (verb !== "unlocked") {
+                            // Since order of amounts is reversed in the source message, we need to account for it as well.
+                            [neededAmount, currentAmount] = [currentAmount, neededAmount];
+                        }
 
                         // In the interest of aesthetics, we will remove fraction part if the needed amount
                         // does not have them.
