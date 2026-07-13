@@ -12,18 +12,21 @@ class SidebarShield {
     private levelDisplay: HTMLSpanElement;
     private animationTimerId: number;
 
-    constructor(image: string, level: number = 0, modifier: number = 0) {
+    constructor(image: string, level: number = 0) {
         this.imageName = image;
-        this.setLevel(level, modifier);
+        this.setLevel(level);
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
         this.animationTimerId = 0;
     }
 
-    setLevel(level: number, modifier: number) {
+    getLevel(): number {
+        return this.level;
+    }
+
+    setLevel(level: number) {
         this.level = level;
-        this.modifier = modifier;
-        debug(`Setting ${this.imageName} to ${level} + ${modifier}`);
+        debug(`Setting ${this.imageName} to ${level}`);
         if (this.levelDisplay) {
             this.levelDisplay.style.setProperty("--num", (this.level + this.modifier).toString());
         }
@@ -107,11 +110,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     return;
                 }
                 for (const quality of sidebarCategory) {
-                    const shield = new SidebarShield(
-                        quality.image,
-                        quality.level,
-                        quality.effectiveLevel - quality.level
-                    );
+                    const shield = new SidebarShield(quality.image, quality.level);
                     this.abilityToShield.set(quality.qualityId, shield);
                     this.shieldWall.addShield(shield);
                 }
@@ -121,9 +120,8 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         state.onQualityChanged((state, quality, _prevLevel, _curLevel) => {
             const existingShield = this.abilityToShield.get(quality.qualityId);
             if (existingShield) {
-                existingShield.setLevel(quality.effectiveLevel, quality.effectiveLevel - quality.level);
+                existingShield.setLevel(quality.effectiveLevel);
                 existingShield.pulse();
-                debug("Quality should be updated", quality);
             }
         });
 
@@ -134,18 +132,43 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             const removedEnhancements = previous ? previous.enhancements : [];
             const addedEnhancements = current ? current.enhancements : [];
 
-            for (const enhancement of [...removedEnhancements, ...addedEnhancements]) {
-                const existingShield = this.abilityToShield.get(enhancement.qualityId);
-                if (!existingShield) continue;
+            // Prepare list of qualities that will be affected by this equipment change
+            const affectedQualities: Map<number, number> = new Map(
+                [...removedEnhancements, ...addedEnhancements].map((enh) => {
+                    const existingShield = this.abilityToShield.get(enh.qualityId);
+                    const quality = state.getQualityById(enh.qualityId);
 
-                const quality = state.getQualityById(enhancement.qualityId);
-                if (!quality) {
-                    debug("Something went wrong, shield was found in enhancement but quality was not", quality);
+                    if (existingShield) {
+                        return [enh.qualityId, existingShield.getLevel()];
+                    } else if (quality) {
+                        return [enh.qualityId, quality.level];
+                    } else {
+                        return [enh.qualityId, 0];
+                    }
+                })
+            );
+
+            // Process removal of the equipment
+            for (const removed of removedEnhancements) {
+                affectedQualities.set(removed.qualityId, affectedQualities.get(removed.qualityId)!! - removed.level);
+            }
+
+            // Process newly equipped item (if any)
+            for (const added of addedEnhancements) {
+                affectedQualities.set(added.qualityId, affectedQualities.get(added.qualityId)!! + added.level);
+                debug(`After addition ${added.qualityId} = ${affectedQualities.get(added.qualityId)!!}`);
+            }
+
+            debug(`Enhancements for ${slotName}`, removedEnhancements, addedEnhancements);
+
+            for (const [qualityId, value] of affectedQualities.entries()) {
+                const existingShield = this.abilityToShield.get(qualityId);
+                if (!existingShield) {
+                    // FIXME: This means that a new quality needs to displayed, possibly need to re-render and re-attach
                     continue;
                 }
 
-                debug(`Updating shield for "${quality.name}"`, quality.level);
-                existingShield.setLevel(quality.level, quality.effectiveLevel - quality.level);
+                existingShield.setLevel(value);
                 existingShield.pulse();
             }
         });
