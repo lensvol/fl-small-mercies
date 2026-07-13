@@ -10,12 +10,14 @@ class SidebarShield {
     private imageName: string;
     private container: HTMLDivElement;
     private levelDisplay: HTMLSpanElement;
+    private animationTimerId: number;
 
     constructor(image: string, level: number = 0, modifier: number = 0) {
         this.imageName = image;
         this.setLevel(level, modifier);
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
+        this.animationTimerId = 0;
     }
 
     setLevel(level: number, modifier: number) {
@@ -28,9 +30,14 @@ class SidebarShield {
 
     pulse() {
         this.container.classList.add("pulse-golden-light");
-        setTimeout(() => {
+
+        if (this.animationTimerId) {
+            window.clearTimeout(this.animationTimerId);
+        }
+        this.animationTimerId = window.setTimeout(() => {
             this.container.classList.remove("pulse-golden-light");
-        }, 500);
+            this.animationTimerId = 0;
+        }, 1000);
     }
 
     private render(): HTMLDivElement {
