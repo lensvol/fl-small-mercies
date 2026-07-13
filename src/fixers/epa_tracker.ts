@@ -51,14 +51,12 @@ class EPATracker {
 }
 
 function createEpaTrackerMimic(): [
-    HTMLDivElement,
+    HTMLLIElement,
     HTMLSpanElement,
     HTMLSpanElement,
     HTMLAnchorElement,
     HTMLAnchorElement
 ] {
-    const root = document.createElement("div");
-
     const li = document.createElement("li");
     li.classList.add("item");
 
@@ -119,8 +117,6 @@ function createEpaTrackerMimic(): [
 
     const text7 = document.createTextNode("Reset");
 
-    root.appendChild(li);
-
     li.appendChild(containingDiv);
     li.appendChild(textSpan);
     li.appendChild(container);
@@ -152,7 +148,7 @@ function createEpaTrackerMimic(): [
 
     trackerReset.appendChild(text7);
 
-    return [root, epa, info, trackerToggle, trackerReset];
+    return [li, epa, info, trackerToggle, trackerReset];
 }
 
 export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAware {
@@ -161,7 +157,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     private currentActions = 0;
     private epaTracker = new EPATracker();
 
-    private trackerUiMimic: HTMLDivElement;
+    private trackerUiMimic: HTMLLIElement;
     private epaIndicator: HTMLSpanElement;
     private epaInfoLine: HTMLSpanElement;
     private trackerToggle: HTMLAnchorElement;
