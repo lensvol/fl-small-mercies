@@ -53,6 +53,8 @@ class SidebarShield {
 
         const container2 = document.createElement("div");
         container2.classList.add("agent-stat");
+        // TODO: Move into our own CSS
+        container2.style.cssText = "border: 1px solid rgb(29 29 29)";
 
         const img = document.createElement("img");
         img.classList.add("cursor-default");
