@@ -6,8 +6,8 @@ import {
     IMapMoveResponse,
     IMapResponse,
     IMyselfResponse,
-    IOpportunityCard,
     IOpportunityResponse,
+    IOutfitChangeRequest,
     IPlanResponse,
     IQualityRequirement,
     IShopResponse,
@@ -33,6 +33,12 @@ export enum StoryletPhases {
     Unknown = "<UNKNOWN>",
 }
 
+export enum OutfitTypes {
+    Standard = "Standard",
+    GivenInGame = "GivenInGame",
+    Exceptional = "Exceptional",
+}
+
 enum StateChangeTypes {
     QualityChanged = "QualityChanged",
     CharacterDataLoaded = "CharacterDataLoaded",
@@ -43,6 +49,8 @@ enum StateChangeTypes {
     LocationChanged = "LocationChanged",
     EquipmentChanged = "EquipmentChanged",
     OpportunityDeckChanged = "OpportunityDeckChanged",
+    OutfitChanged = "OutfitChanged",
+    OutfitContentsLoaded = "OutfitContentsLoaded",
 }
 
 export class FLUser {
@@ -220,6 +228,18 @@ class OpportunityDeck {
     }
 }
 
+class Outfit {
+    id: number;
+    name: string;
+    type: OutfitTypes;
+
+    constructor(id: number, name: string, type: OutfitTypes) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
+}
+
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
@@ -228,7 +248,9 @@ export class GameState {
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
     public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
     public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, 0, 0);
-    public outfit: Map<string, Quality> = new Map<string, Quality>();
+    public outfit: Map<string, Quality> = new Map();
+    public availableOutfits: Map<number, Outfit> = new Map();
+    public currentOutfit: Outfit | null = null;
 
     public actionsLeft = 0;
 
@@ -306,6 +328,8 @@ export class GameStateController {
         [StateChangeTypes.LocationChanged]: [],
         [StateChangeTypes.EquipmentChanged]: [],
         [StateChangeTypes.OpportunityDeckChanged]: [],
+        [StateChangeTypes.OutfitChanged]: [],
+        [StateChangeTypes.OutfitContentsLoaded]: [],
     };
 
     private upsertQuality(
@@ -397,6 +421,33 @@ export class GameStateController {
         if (response.character.actions != undefined && response.character.actions !== this.state.actionsLeft) {
             this.state.actionsLeft = response.character.actions;
             this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
+        }
+
+        this.state.availableOutfits.clear();
+        for (const receivedOutfit of response.character.outfits) {
+            let outfitType = null;
+
+            switch (receivedOutfit.type) {
+                case "Standard":
+                    outfitType = OutfitTypes.Standard;
+                    break;
+                case "Exceptional":
+                    outfitType = OutfitTypes.Exceptional;
+                    break;
+                case "GivenInGame":
+                    outfitType = OutfitTypes.GivenInGame;
+                    break;
+            }
+
+            const outfit = new Outfit(receivedOutfit.id, receivedOutfit.name, outfitType);
+            this.state.availableOutfits.set(receivedOutfit.id, outfit);
+            if (receivedOutfit.selected) {
+                if (!this.state.currentOutfit || receivedOutfit.id !== this.state.currentOutfit.id) {
+                    this.triggerListeners(StateChangeTypes.OutfitChanged, this.state.currentOutfit, outfit);
+                }
+
+                this.state.currentOutfit = outfit;
+            }
         }
 
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
@@ -696,6 +747,14 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.EquipmentChanged].push(handler);
     }
 
+    public onOutfitChanged(handler: (g: GameState, oldOutfit: Outfit | null, newOutfit: Outfit | null) => void) {
+        this.changeListeners[StateChangeTypes.OutfitChanged].push(handler);
+    }
+
+    public onOutfitContentsLoaded(handler: (g: GameState, current: Outfit | null) => void) {
+        this.changeListeners[StateChangeTypes.OutfitContentsLoaded].push(handler);
+    }
+
     public onOpportunityDeckChanged(handler: (g: GameState) => void) {
         this.changeListeners[StateChangeTypes.OpportunityDeckChanged].push(handler);
     }
@@ -719,10 +778,28 @@ export class GameStateController {
         });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
-        interceptor.onResponseReceived("/api/outfit", (_, response) => this.parseEquipmentResponse(response));
-        interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipmentResponse(response));
-        interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipmentResponse(response));
-        interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response) => {
+        interceptor.onResponseReceived("/api/outfit", (request, response) => {
+            this.parseEquipmentResponse(response);
+            this.triggerListeners(StateChangeTypes.OutfitContentsLoaded);
+        });
+        interceptor.onResponseReceived(
+            "/api/outfit/change",
+            (request: IOutfitChangeRequest, response: IEquipResponse) => {
+                if (request) {
+                    const newOutfit = this.state.availableOutfits.get(request.outfitId);
+                    this.triggerListeners(StateChangeTypes.OutfitChanged, this.state.currentOutfit, newOutfit);
+                }
+                this.parseEquipmentResponse(response);
+                this.triggerListeners(StateChangeTypes.OutfitContentsLoaded);
+            }
+        );
+        interceptor.onResponseReceived("/api/outfit/equip", (_, response: IEquipResponse) =>
+            this.parseEquipmentResponse(response)
+        );
+        interceptor.onResponseReceived("/api/outfit/unequip", (_, response: IEquipResponse) =>
+            this.parseEquipmentResponse(response)
+        );
+        interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response: IEquipResponse) => {
             this.parseEquipmentResponse(response);
         });
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) =>
