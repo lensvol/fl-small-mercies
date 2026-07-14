@@ -4,6 +4,23 @@ import {getSingletonByClassName} from "../utils";
 import {GameStateController} from "../game_state";
 import {debug} from "../logging";
 
+const ADDITIONAL_QUALITY_IDS = [
+    // Wounds
+    214,
+    // Scandal
+    215,
+    // Suspicion
+    216,
+    // Nightmares
+    217,
+    // Inerrant
+    144845,
+    // Insubstantial
+    144846,
+    // Neathproofed
+    142591,
+];
+
 class SidebarShield {
     private level: number = 0;
     private modifier: number = 0;
@@ -106,27 +123,41 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((state) => {
             const abilityCategories = ["BasicAbility", "SidebarAbility", "Skills"];
+            const relevantQualityIds: number[] = [];
 
             abilityCategories.map((categoryCode) => {
                 const sidebarCategory = state.getQualityCategory(categoryCode);
                 if (!sidebarCategory) {
                     return;
                 }
+
                 for (const quality of sidebarCategory) {
-                    const existingShield = this.abilityToShield.get(quality.qualityId);
-                    if (!existingShield) {
-                        const shield = new SidebarShield(quality.image, quality.effectiveLevel);
-                        this.abilityToShield.set(quality.qualityId, shield);
-                        this.shieldWall.addShield(shield);
-                    } else {
-                        if (existingShield.getLevel() !== quality.effectiveLevel) {
-                            existingShield.setLevel(quality.effectiveLevel);
-                        }
-                    }
+                    relevantQualityIds.push(quality.qualityId);
                 }
             });
 
-            this.firstLoad = false;
+            relevantQualityIds.push(...ADDITIONAL_QUALITY_IDS);
+
+            for (const qualityId of relevantQualityIds) {
+                const quality = state.getQualityById(qualityId);
+                const existingShield = this.abilityToShield.get(qualityId);
+
+                if (!existingShield && quality) {
+                    const shield = new SidebarShield(quality.image, quality.effectiveLevel);
+                    this.abilityToShield.set(quality.qualityId, shield);
+                    this.shieldWall.addShield(shield);
+
+                    if (!this.firstLoad) {
+                        shield.pulse();
+                    }
+                } else if (existingShield) {
+                    if (!quality) {
+                        existingShield.setLevel(0);
+                    } else {
+                        existingShield.setLevel(quality.effectiveLevel);
+                    }
+                }
+            }
         });
 
         state.onQualityChanged((state, quality, _prevLevel, _curLevel) => {
@@ -141,10 +172,6 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             // Usually the sequence of operations is "equip", then "myself" to reload character state. But on the first
             // load it is actually backwards! To prevent us from adding all the modifiers again to the existing values
             // we will use this very hackish way to avoit that scenario.
-            if (this.firstLoad) {
-                debug("This is the first outfit processed after the load, skipping.");
-                return;
-            }
 
             debug(`Equipment changed in slot ${slotName}: ${previous} -> ${current}`);
 
