@@ -237,6 +237,7 @@ export class GameState {
 
     public resetQualities() {
         this.qualities.clear();
+        this.qualityIdMapping.clear();
     }
 
     public getQualityById(qualityId: number): Quality | undefined {
