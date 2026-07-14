@@ -168,12 +168,19 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             }
         });
 
-        state.onEquipmentChanged((state, slotName, previous, current) => {
-            // Usually the sequence of operations is "equip", then "myself" to reload character state. But on the first
-            // load it is actually backwards! To prevent us from adding all the modifiers again to the existing values
-            // we will use this very hackish way to avoit that scenario.
+        state.onOutfitContentsLoaded((_state, _current) => {
+            this.firstLoad = false;
+        });
 
-            debug(`Equipment changed in slot ${slotName}: ${previous} -> ${current}`);
+        state.onEquipmentChanged((state, slotName, previous, current) => {
+            if (this.firstLoad) {
+                // Usually the sequence of operations is "equip", then "myself" to reload character state. But on the
+                // first load it is actually backwards ("outfit" => "myself")! To prevent us from adding all the
+                // modifiers again to the existing values we will use this very hackish way to avoid that scenario.
+                return;
+            }
+
+            debug(`Equipment changed in slot ${slotName}: ${previous?.name} -> ${current?.name}`);
 
             // TODO: Pulse different colors for addition and removal
             const removedEnhancements = previous ? previous.enhancements : [];
