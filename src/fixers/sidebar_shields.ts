@@ -97,20 +97,35 @@ class SidebarShield {
 
 class SidebarShieldWall {
     private shields: SidebarShield[] = [];
+    private wall: HTMLDivElement;
+
+    constructor() {
+        this.wall = this.render();
+    }
 
     addShield(shield: SidebarShield) {
         this.shields.push(shield);
     }
 
-    render(): HTMLDivElement {
+    private render(): HTMLDivElement {
         const container = document.createElement("div");
         container.classList.add("agent-stat-container");
         container.style.marginTop = "10px";
         container.style.gridTemplateColumns = "repeat(auto-fill,minmax(32px,1fr))";
 
-        this.shields.forEach((shield) => container.appendChild(shield.getElement()));
-
         return container;
+    }
+
+    renderShields() {
+        while (this.wall.firstChild) {
+            this.wall.removeChild(this.wall.lastChild as Node);
+        }
+
+        this.shields.forEach((shield) => this.wall.appendChild(shield.getElement()));
+    }
+
+    getElement(): HTMLDivElement {
+        return this.wall;
     }
 }
 
@@ -158,6 +173,8 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     }
                 }
             }
+
+            this.shieldWall.renderShields();
         });
 
         state.onQualityChanged((state, quality, _prevLevel, _curLevel) => {
@@ -218,7 +235,15 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             for (const [qualityId, value] of affectedQualities.entries()) {
                 const existingShield = this.abilityToShield.get(qualityId);
                 if (!existingShield) {
-                    // FIXME: This means that a new quality needs to displayed, possibly need to re-render and re-attach
+                    const quality = state.getQualityById(qualityId);
+                    if (!quality) {
+                        continue;
+                    }
+
+                    const newShield = new SidebarShield(quality.image);
+                    this.shieldWall.addShield(newShield);
+                    newShield.setLevel(value);
+                    newShield.pulse();
                     continue;
                 }
 
@@ -244,7 +269,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         const firstQuality = getSingletonByClassName(node, "sidebar-quality");
         if (firstQuality && firstQuality.parentElement) {
             // TODO: Make it more elegant
-            firstQuality.parentElement.parentNode?.insertBefore(this.shieldWall.render(), firstQuality.parentNode);
+            firstQuality.parentElement.parentNode?.insertBefore(this.shieldWall.getElement(), firstQuality.parentNode);
             firstQuality.parentElement.style.display = "none";
         }
     }
