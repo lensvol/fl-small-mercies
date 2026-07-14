@@ -14,9 +14,9 @@ class SidebarShield {
 
     constructor(image: string, level: number = 0) {
         this.imageName = image;
-        this.setLevel(level);
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
+        this.setLevel(level);
         this.animationTimerId = 0;
     }
 
@@ -99,9 +99,10 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private showShieldWall: boolean = false;
     private shieldWall = new SidebarShieldWall();
     private abilityToShield: Map<number, SidebarShield> = new Map();
+    private firstLoad: boolean = true;
 
     linkState(state: GameStateController): void {
-        state.onUserDataLoaded((state) => {
+        state.onCharacterDataLoaded((state) => {
             const abilityCategories = ["BasicAbility", "SidebarAbility", "Skills"];
 
             abilityCategories.map((categoryCode) => {
@@ -110,11 +111,20 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     return;
                 }
                 for (const quality of sidebarCategory) {
-                    const shield = new SidebarShield(quality.image, quality.level);
-                    this.abilityToShield.set(quality.qualityId, shield);
-                    this.shieldWall.addShield(shield);
+                    const existingShield = this.abilityToShield.get(quality.qualityId);
+                    if (!existingShield) {
+                        const shield = new SidebarShield(quality.image, quality.effectiveLevel);
+                        this.abilityToShield.set(quality.qualityId, shield);
+                        this.shieldWall.addShield(shield);
+                    } else {
+                        if (existingShield.getLevel() !== quality.effectiveLevel) {
+                            existingShield.setLevel(quality.effectiveLevel);
+                        }
+                    }
                 }
             });
+
+            this.firstLoad = false;
         });
 
         state.onQualityChanged((state, quality, _prevLevel, _curLevel) => {
@@ -126,6 +136,14 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         });
 
         state.onEquipmentChanged((state, slotName, previous, current) => {
+            // Usually the sequence of operations is "equip", then "myself" to reload character state. But on the first
+            // load it is actually backwards! To prevent us from adding all the modifiers again to the existing values
+            // we will use this very hackish way to avoit that scenario.
+            if (this.firstLoad) {
+                debug("This is the first outfit processed after the load, skipping.");
+                return;
+            }
+
             debug(`Equipment changed in slot ${slotName}: ${previous} -> ${current}`);
 
             // TODO: Pulse different colors for addition and removal
