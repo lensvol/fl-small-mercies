@@ -43,7 +43,6 @@ class SidebarShield {
 
     setLevel(level: number) {
         this.level = level;
-        debug(`Setting ${this.imageName} to ${level}`);
         if (this.levelDisplay) {
             this.levelDisplay.style.setProperty("--num", (this.level + this.modifier).toString());
         }
@@ -175,14 +174,6 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             }
 
             this.shieldWall.renderShields();
-        });
-
-        state.onQualityChanged((state, quality, _prevLevel, _curLevel) => {
-            const existingShield = this.abilityToShield.get(quality.qualityId);
-            if (existingShield) {
-                existingShield.setLevel(quality.effectiveLevel);
-                existingShield.pulse();
-            }
         });
 
         state.onOutfitContentsLoaded((_state, _current) => {
