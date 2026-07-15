@@ -27,8 +27,9 @@ export class DiscordanceChecksFixer implements IMutationAware {
 
                 if (heading) {
                     const challengeClass = heading.children[0];
+                    const article = heading.firstChild?.textContent || "A";
                     heading.removeChild(heading.firstChild as Node);
-                    heading.textContent = "Not a ";
+                    heading.textContent = `Not ${article.toLowerCase()} `;
                     heading.appendChild(challengeClass);
                     heading.appendChild(document.createTextNode(" challenge"));
                 }
