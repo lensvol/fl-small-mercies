@@ -203,7 +203,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     if (existingShield) {
                         return [enh.qualityId, existingShield.getLevel()];
                     } else if (quality) {
-                        return [enh.qualityId, quality.level];
+                        return [enh.qualityId, quality.effectiveLevel];
                     } else {
                         return [enh.qualityId, 0];
                     }
@@ -233,6 +233,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
 
                     const newShield = new SidebarShield(quality.image);
                     this.shieldWall.addShield(newShield);
+                    this.abilityToShield.set(quality.qualityId, newShield);
                     newShield.setLevel(value);
                     newShield.pulse();
                     continue;
@@ -241,6 +242,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 existingShield.setLevel(value);
                 existingShield.pulse();
             }
+            this.shieldWall.renderShields();
         });
     }
 
