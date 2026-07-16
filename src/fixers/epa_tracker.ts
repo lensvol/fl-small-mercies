@@ -154,7 +154,6 @@ function createEpaTrackerMimic(): [
 export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAware {
     private showEpaTracker = false;
     private areWeTracking = false;
-    private currentActions = 0;
     private epaTracker = new EPATracker();
     private characterId = 0;
 
@@ -238,17 +237,6 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     linkState(state: GameStateController): void {
-        state.onActionsChanged((g, actionsLeft) => {
-            const actionDiff = this.currentActions - actionsLeft;
-            if (actionDiff > 0) {
-                this.epaTracker.increaseActions(actionDiff);
-            }
-
-            this.currentActions = actionsLeft;
-            this.updateTrackerUI();
-            this.saveTrackerState();
-        });
-
         state.onUserDataLoaded((state) => {
             if (state.character instanceof FLCharacter) {
                 this.characterId = state.character.characterId;
@@ -284,10 +272,11 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                         (wasIncreased ? 1 : -1);
 
                     this.epaTracker.increaseWealth(amountChanged);
-                    this.saveTrackerState();
                 }
             }
 
+            this.epaTracker.increaseActions(response.elapsed);
+            this.saveTrackerState();
             this.updateTrackerUI();
         });
     }

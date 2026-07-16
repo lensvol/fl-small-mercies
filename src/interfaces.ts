@@ -227,6 +227,7 @@ export interface IChooseBranchResponse extends IApiResponse {
     hasUpdatedCharacter: boolean;
     canChangeOutfit: boolean;
     messages: IMessageResult[];
+    elapsed: number;
     setting: ISetting;
 }
 
@@ -298,6 +299,7 @@ export interface IBranch {
     image: string;
     isLocked: boolean;
     actionLocked: boolean;
+    actionCost: number;
     qualityLocked: boolean;
     currencyLocked: boolean;
     qualityRequirements: IQualityRequirement[];
