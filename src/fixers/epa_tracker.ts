@@ -262,7 +262,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
             if (!this.showEpaTracker || !this.areWeTracking || !response.isSuccess) return;
 
-            for (const message of response.messages) {
+            for (const message of response.messages || []) {
                 if (message.type === "StandardQualityChangeMessage" && message.changeType !== "Unaltered") {
                     if (message.possession.category === "Progress") {
                         // Only things that can be meaningfully measured in Pennies should be considered
@@ -284,7 +284,6 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                         (wasIncreased ? 1 : -1);
 
                     this.epaTracker.increaseWealth(amountChanged);
-                    this.updateTrackerUI();
                     this.saveTrackerState();
                 }
             }
