@@ -7,7 +7,7 @@ import {IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
 import {numberWithCommas} from "../utils";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (\S+) \(new total ([\d,]+)\)./;
+const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)\)./;
 const STORED_STATE_KEY = "fl_sm_epa_tracker";
 
 class EPATracker {
