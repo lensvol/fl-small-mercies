@@ -1,6 +1,6 @@
 import {IMutationAware, INetworkAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {GameStateController} from "../game_state";
+import {FLCharacter, GameStateController} from "../game_state";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
@@ -156,6 +156,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     private areWeTracking = false;
     private currentActions = 0;
     private epaTracker = new EPATracker();
+    private characterId = 0;
 
     private trackerUiMimic: HTMLLIElement;
     private epaIndicator: HTMLSpanElement;
@@ -195,19 +196,36 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             this.epaTracker.getActionCount(),
         ].join("|");
 
-        localStorage.setItem(STORED_STATE_KEY, serializedState);
+        if (this.characterId) {
+            // To differentiate between EPA stats for different characters we will save them into separate keys
+            localStorage.setItem(`${STORED_STATE_KEY}_${this.characterId}`, serializedState);
+        } else {
+            // This really should not happen, but in this case we will save this information to a shared fallback key
+            localStorage.setItem(`${STORED_STATE_KEY}`, serializedState);
+        }
     }
 
     private loadSavedState() {
-        const saved_epa_info = localStorage.getItem(STORED_STATE_KEY);
-        debug(`Saved EPA state: ${saved_epa_info}`);
+        const legacySavedEpaInfo = localStorage.getItem(STORED_STATE_KEY);
+        const userSpecificStorageKey = `${STORED_STATE_KEY}_${this.characterId}`;
+
+        if (this.characterId && legacySavedEpaInfo) {
+            localStorage.setItem(userSpecificStorageKey, legacySavedEpaInfo);
+            localStorage.removeItem(STORED_STATE_KEY);
+            debug(`Moved undifferentiated EPA stats into ${userSpecificStorageKey}, removing legacy one.`);
+        }
+
+        const saved_epa_info = localStorage.getItem(this.characterId ? userSpecificStorageKey : STORED_STATE_KEY);
+
+        debug(`Saved EPA state for user ${this.characterId}: ${saved_epa_info}`);
         if (saved_epa_info) {
             const parts = saved_epa_info.split("|");
+            // We just silently ignore things that seem corrupted
             if (parts.length == 3) {
-                // We just silently ignore things that seem corrupted
                 this.areWeTracking = parts[0] == "true";
                 this.epaTracker.increaseWealth(Number(parts[1]));
                 this.epaTracker.increaseActions(Number(parts[2]));
+                this.updateTrackerUI();
             } else {
                 debug(`Saved EPA state looks corrupted: ${saved_epa_info}`);
             }
@@ -227,6 +245,16 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             }
 
             this.currentActions = actionsLeft;
+            this.updateTrackerUI();
+            this.saveTrackerState();
+        });
+
+        state.onUserDataLoaded((state) => {
+            if (state.character instanceof FLCharacter) {
+                this.characterId = state.character.characterId;
+                debug(`Detected user character ID to be ${this.characterId}`);
+                this.loadSavedState();
+            }
         });
     }
 
