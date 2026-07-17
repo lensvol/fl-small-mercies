@@ -120,7 +120,9 @@ class SidebarShieldWall {
             this.wall.removeChild(this.wall.lastChild as Node);
         }
 
-        this.shields.forEach((shield) => this.wall.appendChild(shield.getElement()));
+        this.shields
+            .filter((shield) => shield.getLevel() > 0)
+            .forEach((shield) => this.wall.appendChild(shield.getElement()));
     }
 
     getElement(): HTMLDivElement {
