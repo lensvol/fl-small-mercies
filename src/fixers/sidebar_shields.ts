@@ -69,6 +69,7 @@ const QUALITY_ID_ORDER = [
 
 class SidebarShield {
     private qualityId: number;
+    private previousLevel: number = 0;
     private level: number = 0;
     private imageName: string;
     private container: HTMLDivElement;
@@ -93,9 +94,21 @@ class SidebarShield {
     }
 
     setLevel(level: number) {
+        this.previousLevel = this.level;
         this.level = level;
+    }
+
+    display() {
         if (this.levelDisplay) {
-            this.levelDisplay.style.setProperty("--num", this.level.toString());
+            if (this.previousLevel !== this.level) {
+                this.levelDisplay.style.setProperty("--num", this.previousLevel.toString());
+                setTimeout(() => {
+                    this.levelDisplay.style.setProperty("--num", this.level.toString());
+                    this.previousLevel = this.level;
+                }, 100);
+            } else {
+                this.levelDisplay.style.setProperty("--num", this.level.toString());
+            }
         }
     }
 
@@ -179,7 +192,10 @@ class SidebarShieldWall {
 
                 return (pos1 >= 0 ? pos1 : 777 + a.getQualityId()) - (pos2 >= 0 ? pos2 : 777 + b.getQualityId());
             })
-            .forEach((shield) => this.wall.appendChild(shield.getElement()));
+            .forEach((shield) => {
+                this.wall.appendChild(shield.getElement());
+                shield.display();
+            });
     }
 
     getElement(): HTMLDivElement {
@@ -217,7 +233,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     const shield = new SidebarShield(qualityId, quality.image, quality.effectiveLevel);
                     this.abilityToShield.set(quality.qualityId, shield);
                     this.shieldWall.addShield(shield);
-
+                    shield.display();
                     if (!this.firstLoad) {
                         shield.pulse();
                     }
@@ -288,10 +304,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                         continue;
                     }
 
-                    const newShield = new SidebarShield(qualityId, quality.image);
+                    const newShield = new SidebarShield(qualityId, quality.image, value);
                     this.shieldWall.addShield(newShield);
                     this.abilityToShield.set(quality.qualityId, newShield);
                     newShield.setLevel(value);
+                    newShield.display();
                     newShield.pulse();
                     continue;
                 }
