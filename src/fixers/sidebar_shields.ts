@@ -4,7 +4,15 @@ import {getSingletonByClassName} from "../utils";
 import {GameStateController} from "../game_state";
 import {debug} from "../logging";
 
-const ADDITIONAL_QUALITY_IDS = [
+const QUALITY_ID_ORDER = [
+    // Watchful
+    209,
+    // Shadowy
+    210,
+    // Dangerous
+    211,
+    // Persuasive
+    212,
     // Wounds
     214,
     // Scandal
@@ -13,6 +21,44 @@ const ADDITIONAL_QUALITY_IDS = [
     216,
     // Nightmares
     217,
+    // Unaccountably Peckish
+    462,
+    // Respectable
+    950,
+    // Dreaded
+    957,
+    // Bizzare
+    958,
+    // Making Waves
+    545,
+    // Notability
+    101305,
+    // Savage!
+    18736,
+    // Elusive!
+    18737,
+    // Baroque!
+    18738,
+    // A Player of Chess
+    140873,
+    // Artisan of the Red Science
+    140969,
+    // Chthonosophy
+    144818,
+    // Glasswork
+    140896,
+    // Kataleptic Toxicology
+    140826,
+    // Mithridacy
+    140998,
+    // Monstrous Anatomy
+    140830,
+    // Shapeling Arts
+    140897,
+    // Steward of the Discordance
+    141623,
+    // Zeefaring
+    142291,
     // Inerrant
     144845,
     // Insubstantial
@@ -22,19 +68,24 @@ const ADDITIONAL_QUALITY_IDS = [
 ];
 
 class SidebarShield {
+    private qualityId: number;
     private level: number = 0;
-    private modifier: number = 0;
     private imageName: string;
     private container: HTMLDivElement;
     private levelDisplay: HTMLSpanElement;
     private animationTimerId: number;
 
-    constructor(image: string, level: number = 0) {
+    constructor(qualityId: number, image: string, level: number = 0) {
+        this.qualityId = qualityId;
         this.imageName = image;
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
         this.setLevel(level);
         this.animationTimerId = 0;
+    }
+
+    getQualityId(): number {
+        return this.qualityId;
     }
 
     getLevel(): number {
@@ -44,7 +95,7 @@ class SidebarShield {
     setLevel(level: number) {
         this.level = level;
         if (this.levelDisplay) {
-            this.levelDisplay.style.setProperty("--num", (this.level + this.modifier).toString());
+            this.levelDisplay.style.setProperty("--num", this.level.toString());
         }
     }
 
@@ -122,6 +173,12 @@ class SidebarShieldWall {
 
         this.shields
             .filter((shield) => shield.getLevel() > 0)
+            .sort((a, b) => {
+                const pos1 = QUALITY_ID_ORDER.findIndex((qid) => qid === a.getQualityId());
+                const pos2 = QUALITY_ID_ORDER.findIndex((qid) => qid === b.getQualityId());
+
+                return (pos1 >= 0 ? pos1 : 777 + a.getQualityId()) - (pos2 >= 0 ? pos2 : 777 + b.getQualityId());
+            })
             .forEach((shield) => this.wall.appendChild(shield.getElement()));
     }
 
@@ -138,8 +195,8 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
 
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((state) => {
-            const abilityCategories = ["BasicAbility", "SidebarAbility", "Skills"];
-            const relevantQualityIds: number[] = [];
+            const abilityCategories = ["SidebarTransient"];
+            const relevantQualityIds: number[] = [...QUALITY_ID_ORDER];
 
             abilityCategories.map((categoryCode) => {
                 const sidebarCategory = state.getQualityCategory(categoryCode);
@@ -152,14 +209,12 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 }
             });
 
-            relevantQualityIds.push(...ADDITIONAL_QUALITY_IDS);
-
             for (const qualityId of relevantQualityIds) {
                 const quality = state.getQualityById(qualityId);
                 const existingShield = this.abilityToShield.get(qualityId);
 
                 if (!existingShield && quality) {
-                    const shield = new SidebarShield(quality.image, quality.effectiveLevel);
+                    const shield = new SidebarShield(qualityId, quality.image, quality.effectiveLevel);
                     this.abilityToShield.set(quality.qualityId, shield);
                     this.shieldWall.addShield(shield);
 
@@ -233,7 +288,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                         continue;
                     }
 
-                    const newShield = new SidebarShield(quality.image);
+                    const newShield = new SidebarShield(qualityId, quality.image);
                     this.shieldWall.addShield(newShield);
                     this.abilityToShield.set(quality.qualityId, newShield);
                     newShield.setLevel(value);
