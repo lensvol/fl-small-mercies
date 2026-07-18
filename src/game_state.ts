@@ -127,6 +127,8 @@ export class Enhancement {
 export class Quality {
     qualityId: number;
     name: string;
+    description: string;
+    availableAt: string;
     level: number;
     levelDescription: string;
     effectiveLevel: number;
@@ -140,6 +142,8 @@ export class Quality {
         qualityId: number,
         category: string,
         name: string,
+        description: string,
+        availableAt: string,
         effectiveLevel: number,
         level: number,
         levelDescription: string,
@@ -151,6 +155,8 @@ export class Quality {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
+        this.description = description;
+        this.availableAt = availableAt;
         this.level = level;
         this.levelDescription = levelDescription;
         this.effectiveLevel = effectiveLevel;
@@ -336,6 +342,8 @@ export class GameStateController {
         qualityId: number,
         categoryName: string,
         qualityName: string,
+        description: string,
+        availableAt: string,
         effectiveLevel: number,
         level: number,
         levelDescription: string,
@@ -360,6 +368,8 @@ export class GameStateController {
                 qualityId,
                 categoryName,
                 qualityName,
+                description,
+                availableAt,
                 effectiveLevel,
                 level,
                 levelDescription,
@@ -407,6 +417,8 @@ export class GameStateController {
                     thing.id,
                     thing.category,
                     thing.name,
+                    thing.description,
+                    thing.availableAt,
                     thing.effectiveLevel,
                     thing.level,
                     thing.levelDescription,
@@ -490,6 +502,8 @@ export class GameStateController {
                     thing.id,
                     thing.category,
                     thing.name,
+                    thing.description,
+                    thing.availableAt,
                     thing.effectiveLevel,
                     thing.level,
                     thing.levelDescription,
@@ -671,6 +685,8 @@ export class GameStateController {
                 changed.id,
                 changed.category,
                 changed.name,
+                changed.description,
+                changed.availableAt,
                 changed.effectiveLevel,
                 changed.level,
                 changed.levelDescription,
