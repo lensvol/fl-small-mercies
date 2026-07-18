@@ -363,6 +363,10 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         });
 
         state.onQualityChanged((state, quality, _prevLevel, currentLevel) => {
+            if (!QUALITY_ID_ORDER.includes(quality.qualityId) && quality.category != "SidebarTransient") {
+                return;
+            }
+
             // Some qualities can also change as a result of your branch choices.
             let shield = this.abilityToShield.get(quality.qualityId);
             if (!shield) {
