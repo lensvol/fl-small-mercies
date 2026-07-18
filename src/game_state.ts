@@ -652,6 +652,8 @@ export class GameStateController {
                     requirement.qualityId,
                     requirement.category,
                     cleanedName,
+                    "<no description available>",
+                    "",
                     777,
                     777,
                     currentValue,
