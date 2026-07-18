@@ -238,9 +238,7 @@ class SidebarShield {
         container2.appendChild(textSpan);
 
         container.addEventListener("mouseenter", (ev) => {
-            const bodyRect = document.body.getBoundingClientRect();
             const rect = container.getBoundingClientRect();
-            debug("Rectangle for container", rect);
             const tooltip = createTippyMimic(
                 ev.x + window.screenX - rect.width,
                 ev.y + window.scrollY - rect.height,
