@@ -253,6 +253,20 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             this.firstLoad = false;
         });
 
+        state.onQualityChanged((state, quality, _prevLevel, currentLevel) => {
+            // Some qualities can also change as a result of your branch choices.
+            let shield = this.abilityToShield.get(quality.qualityId);
+            if (!shield) {
+                shield = new SidebarShield(quality.qualityId, quality.image, currentLevel);
+                this.shieldWall.addShield(shield);
+                this.abilityToShield.set(quality.qualityId, shield);
+            }
+
+            shield.setLevel(currentLevel);
+            shield.pulse();
+            this.shieldWall.renderShields();
+        });
+
         state.onEquipmentChanged((state, slotName, previous, current) => {
             if (this.firstLoad) {
                 // Usually the sequence of operations is "equip", then "myself" to reload character state. But on the
@@ -308,13 +322,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     this.shieldWall.addShield(newShield);
                     this.abilityToShield.set(quality.qualityId, newShield);
                     newShield.setLevel(value);
-                    newShield.display();
                     newShield.pulse();
-                    continue;
+                } else {
+                    existingShield.setLevel(value);
+                    existingShield.pulse();
                 }
-
-                existingShield.setLevel(value);
-                existingShield.pulse();
             }
             this.shieldWall.renderShields();
         });
