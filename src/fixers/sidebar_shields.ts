@@ -1,7 +1,7 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
-import {GameStateController} from "../game_state";
+import {GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
 
 const QUALITY_ID_ORDER = [
@@ -67,18 +67,102 @@ const QUALITY_ID_ORDER = [
     142591,
 ];
 
+function createTippyMimic(
+    posX: number,
+    posY: number,
+    title: string,
+    description: string,
+    secondaryDescription: string | undefined
+) {
+    const fauxTippy = document.createElement("div");
+    fauxTippy.classList.add("faux-tippy-box");
+    fauxTippy.dataset.dataTippyRoot = "";
+    fauxTippy.style.cssText = `pointer-events: none; z-index: 9999; visibility: visible; position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(${posX.toFixed()}px, ${posY.toFixed()}px, 0px); width: 350px;`;
+
+    const container = document.createElement("div");
+    container.setAttribute("id", "fl-sm-faux-tooltip");
+    container.classList.add("tippy-box");
+    container.setAttribute("role", "tooltip");
+    container.dataset.dataState = "visible";
+    container.dataset.dataPlacement = "bottom";
+    container.dataset.dataAnimation = "fade";
+    container.style.cssText = "max-width: 500px; transition-duration: 0ms;";
+    container.setAttribute("tabindex", "-1");
+
+    const container2 = document.createElement("div");
+    container2.classList.add("tippy-content");
+    container2.dataset.dataState = "visible";
+    container2.style.cssText = "transition-duration: 0ms;";
+
+    const container3 = document.createElement("div");
+    container3.classList.add("tippy-arrow");
+    container3.style.cssText = "position: absolute; left: 0px; transform: translate3d(62px, 0px, 0px);";
+
+    const container4 = document.createElement("div");
+
+    const container5 = document.createElement("div");
+    container5.classList.add("tooltip");
+
+    const container6 = document.createElement("div");
+    container6.classList.add("tooltip__desc__noImage");
+
+    const textSpan = document.createElement("span");
+    textSpan.classList.add("item__name");
+
+    const textSpan2 = document.createElement("span");
+    textSpan2.classList.add("item__value");
+
+    const paragraph = document.createElement("p");
+
+    const container7 = document.createElement("div");
+    container7.classList.add("tooltip__secondary-description");
+
+    const text = document.createTextNode(title);
+
+    const textSpan3 = document.createElement("span");
+
+    const text3 = document.createTextNode(description);
+
+    fauxTippy.appendChild(container);
+
+    container.appendChild(container2);
+    container.appendChild(container3);
+
+    container2.appendChild(container4);
+
+    container4.appendChild(container5);
+
+    container5.appendChild(container6);
+
+    container6.appendChild(textSpan);
+    container6.appendChild(textSpan2);
+    container6.appendChild(paragraph);
+    container6.appendChild(container7);
+
+    textSpan.appendChild(text);
+
+    paragraph.appendChild(textSpan3);
+
+    if (secondaryDescription) {
+        const text2 = document.createTextNode(secondaryDescription);
+        container7.appendChild(text2);
+    }
+
+    textSpan3.appendChild(text3);
+
+    return fauxTippy;
+}
+
 class SidebarShield {
-    private qualityId: number;
+    private linkedQuality: Quality;
     private previousLevel: number = 0;
     private level: number = 0;
-    private imageName: string;
     private container: HTMLDivElement;
     private levelDisplay: HTMLSpanElement;
     private animationTimerId: number;
 
-    constructor(qualityId: number, image: string, level: number = 0) {
-        this.qualityId = qualityId;
-        this.imageName = image;
+    constructor(quality: Quality, level: number = 0) {
+        this.linkedQuality = quality;
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
         this.setLevel(level);
@@ -86,7 +170,7 @@ class SidebarShield {
     }
 
     getQualityId(): number {
-        return this.qualityId;
+        return this.linkedQuality.qualityId;
     }
 
     getLevel(): number {
@@ -130,6 +214,8 @@ class SidebarShield {
         container.setAttribute("role", "button");
         container.style.cssText = "outline: 0px; outline-offset: 0px; cursor: default;";
         container.setAttribute("tabindex", "0");
+        container.setAttribute("id", `shield-quality-${this.linkedQuality.qualityId}`);
+        container.setAttribute("aria-label", this.linkedQuality.image);
 
         const container2 = document.createElement("div");
         container2.classList.add("agent-stat");
@@ -138,7 +224,7 @@ class SidebarShield {
 
         const img = document.createElement("img");
         img.classList.add("cursor-default");
-        img.setAttribute("src", `//images.fallenlondon.com/icons/${this.imageName}small.png`);
+        img.setAttribute("src", `//images.fallenlondon.com/icons/${this.linkedQuality.image}small.png`);
 
         const textSpan = document.createElement("span");
         textSpan.classList.add("agent-stat-level", "shield-value");
@@ -149,6 +235,28 @@ class SidebarShield {
 
         container2.appendChild(img);
         container2.appendChild(textSpan);
+
+        container.addEventListener("mouseenter", (ev) => {
+            const bodyRect = document.body.getBoundingClientRect();
+            const rect = container.getBoundingClientRect();
+            debug("Rectangle for container", rect);
+            const tooltip = createTippyMimic(
+                ev.x + window.screenX - rect.width,
+                ev.y + window.scrollY - rect.height,
+                `${this.linkedQuality.name} ${this.level}` +
+                    (this.linkedQuality.cap ? ` / ${this.linkedQuality.cap}` : ""),
+                this.linkedQuality.description,
+                this.linkedQuality.availableAt
+            );
+            container.appendChild(tooltip);
+        });
+
+        container.addEventListener("mouseleave", (ev) => {
+            const existingTooltips = container.getElementsByClassName("faux-tippy-box");
+            for (const tooltip of existingTooltips) {
+                tooltip.parentElement?.removeChild(tooltip);
+            }
+        });
 
         return container;
     }
@@ -230,7 +338,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 const existingShield = this.abilityToShield.get(qualityId);
 
                 if (!existingShield && quality) {
-                    const shield = new SidebarShield(qualityId, quality.image, quality.effectiveLevel);
+                    const shield = new SidebarShield(quality, quality.effectiveLevel);
                     this.abilityToShield.set(quality.qualityId, shield);
                     this.shieldWall.addShield(shield);
                     shield.display();
@@ -239,6 +347,8 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     }
                 } else if (existingShield) {
                     if (!quality) {
+                        // We assume that we have lost the associated quality and that
+                        // is equivalent to it dropping to zero for our purposes.
                         existingShield.setLevel(0);
                     } else {
                         existingShield.setLevel(quality.effectiveLevel);
@@ -257,7 +367,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             // Some qualities can also change as a result of your branch choices.
             let shield = this.abilityToShield.get(quality.qualityId);
             if (!shield) {
-                shield = new SidebarShield(quality.qualityId, quality.image, currentLevel);
+                shield = new SidebarShield(quality, currentLevel);
                 this.shieldWall.addShield(shield);
                 this.abilityToShield.set(quality.qualityId, shield);
             }
@@ -318,7 +428,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                         continue;
                     }
 
-                    const newShield = new SidebarShield(qualityId, quality.image, value);
+                    const newShield = new SidebarShield(quality, value);
                     this.shieldWall.addShield(newShield);
                     this.abilityToShield.set(quality.qualityId, newShield);
                     newShield.setLevel(value);
