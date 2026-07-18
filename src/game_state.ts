@@ -497,6 +497,10 @@ export class GameStateController {
                     thing.cap || 0,
                     thing.nature
                 );
+
+                if (thing.level !== previousLevel) {
+                    this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, thing.level);
+                }
             }
 
             if (message.type === "AreaChangeMessage") {
