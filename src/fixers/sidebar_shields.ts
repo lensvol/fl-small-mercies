@@ -1,7 +1,7 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
-import {GameStateController, Quality} from "../game_state";
+import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
 
 const QUALITY_ID_ORDER = [
@@ -408,9 +408,14 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
 
             debug(`Equipment changed in slot ${slotName}: ${previous?.name} -> ${current?.name}`);
 
+            // This filter is needed since build-up affecting enhancements for Menaces are coded using
+            // "level" field, which screws up our level tracking.
+            const notMenace = (enhancement: Enhancement) => {
+                return enhancement.category !== "Menace";
+            };
             // TODO: Pulse different colors for addition and removal
-            const removedEnhancements = previous ? previous.enhancements : [];
-            const addedEnhancements = current ? current.enhancements : [];
+            const removedEnhancements = (previous ? previous.enhancements : []).filter(notMenace);
+            const addedEnhancements = (current ? current.enhancements : []).filter(notMenace);
 
             // Prepare list of qualities that will be affected by this equipment change
             const affectedQualities: Map<number, number> = new Map(
