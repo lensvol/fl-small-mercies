@@ -344,24 +344,31 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 const quality = state.getQualityById(qualityId);
                 const existingShield = this.abilityToShield.get(qualityId);
 
+                // TODO: Streamline this logic
                 if (!existingShield && quality) {
-                    const shield = new SidebarShield(quality, quality.effectiveLevel);
-                    this.abilityToShield.set(quality.qualityId, shield);
-                    this.shieldWall.addShield(shield);
+                    const newShield = new SidebarShield(quality, quality.effectiveLevel);
+                    this.abilityToShield.set(quality.qualityId, newShield);
+                    this.shieldWall.addShield(newShield);
                     if (!this.firstLoad) {
-                        shield.pulse();
+                        newShield.pulse();
                     }
                     if (quality.bonusOrPenaltyDisplay) {
-                        shield.enableHighlight();
+                        newShield.enableHighlight();
                     }
                 } else if (existingShield) {
-                    // If no quality found, then we assume that it has been lost the associated quality and that
-                    // is equivalent to it dropping to zero for our purposes.
-                    existingShield.setLevel(quality ? quality.effectiveLevel : 0);
-                    if (quality && quality.bonusOrPenaltyDisplay) {
-                        existingShield.enableHighlight();
-                    } else {
-                        existingShield.disableHighlight();
+                    if (quality) {
+                        existingShield.setLevel(quality.effectiveLevel);
+                        if (quality.bonusOrPenaltyDisplay) {
+                            existingShield.enableHighlight();
+                        } else {
+                            existingShield.disableHighlight();
+                        }
+                    } else if (existingShield.getLevel() > 0 && !quality) {
+                        // If no quality found, then we assume that it has been lost the associated quality and that
+                        // is equivalent to it dropping to zero for our purposes. Special case for this is qualities
+                        // that are negative right now (e.g. after equipping Woesel), since we will need to recalculate
+                        // them later.
+                        existingShield.setLevel(0);
                     }
                 }
             }
@@ -431,8 +438,6 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 affectedQualities.set(added.qualityId, affectedQualities.get(added.qualityId)!! + added.level);
                 debug(`After addition ${added.qualityId} = ${affectedQualities.get(added.qualityId)!!}`);
             }
-
-            debug(`Enhancements for ${slotName}`, removedEnhancements, addedEnhancements);
 
             for (const [qualityId, value] of affectedQualities.entries()) {
                 let shield = this.abilityToShield.get(qualityId);
