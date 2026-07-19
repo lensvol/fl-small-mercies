@@ -155,7 +155,7 @@ function createTippyMimic(
 }
 
 class SidebarShield {
-    private linkedQuality: Quality;
+    readonly linkedQuality: Quality;
     private previousLevel: number = 0;
     private level: number = 0;
     private container: HTMLDivElement;
@@ -276,6 +276,7 @@ class SidebarShield {
 class SidebarShieldWall {
     private shields: SidebarShield[] = [];
     private wall: HTMLDivElement;
+    private predicate: (shield: SidebarShield) => boolean = (shield) => true;
 
     constructor() {
         this.wall = this.render();
@@ -294,12 +295,17 @@ class SidebarShieldWall {
         return container;
     }
 
+    filterBy(predicate: (shield: SidebarShield) => boolean): void {
+        this.predicate = predicate;
+    }
+
     renderShields() {
         while (this.wall.firstChild) {
             this.wall.removeChild(this.wall.lastChild as Node);
         }
 
         this.shields
+            .filter(this.predicate)
             .filter((shield) => shield.getLevel() > 0)
             .sort((a, b) => {
                 const pos1 = QUALITY_ID_ORDER.findIndex((qid) => qid === a.getQualityId());
@@ -323,10 +329,25 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private shieldWall = new SidebarShieldWall();
     private abilityToShield: Map<number, SidebarShield> = new Map();
     private firstLoad: boolean = true;
+    private currentSettingId: number = 0;
+
+    constructor() {
+        this.shieldWall.filterBy((shield: SidebarShield) => {
+            if (!shield.linkedQuality.sidebarSettingId) {
+                return true;
+            }
+
+            return shield.linkedQuality.sidebarSettingId === this.currentSettingId;
+        });
+    }
 
     linkState(state: GameStateController): void {
+        state.onLocationChanged((_state, location) => {
+            this.currentSettingId = location.setting.settingId;
+            this.shieldWall.renderShields();
+        });
+
         state.onCharacterDataLoaded((state) => {
-            const abilityCategories = ["SidebarTransient"];
             const abilityCategories = ["SidebarTransient", "Menace"];
             const relevantQualityIds: number[] = [...QUALITY_ID_ORDER];
 
@@ -337,10 +358,15 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 }
 
                 for (const quality of sidebarCategory) {
+                    if (QUALITY_ID_ORDER.includes(quality.qualityId)) {
+                        continue;
+                    }
+
                     relevantQualityIds.push(quality.qualityId);
                 }
             });
 
+            // TODO: We should probably filter out things by setting?
             for (const qualityId of relevantQualityIds) {
                 const quality = state.getQualityById(qualityId);
                 const existingShield = this.abilityToShield.get(qualityId);

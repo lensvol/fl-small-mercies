@@ -139,6 +139,7 @@ export class Quality {
     cap: number;
     nature: string;
     enhancements: Enhancement[];
+    sidebarSettingId: number | null;
 
     constructor(
         qualityId: number,
@@ -153,7 +154,8 @@ export class Quality {
         cap: number,
         nature: string,
         enhancements: Enhancement[] = [],
-        bonusOrPenaltyDisplay: string = ""
+        bonusOrPenaltyDisplay: string = "",
+        sidebarSettingId: number | null = null
     ) {
         this.qualityId = qualityId;
         this.category = category;
@@ -168,6 +170,7 @@ export class Quality {
         this.nature = nature;
         this.enhancements = enhancements;
         this.bonusOrPenaltyDisplay = bonusOrPenaltyDisplay;
+        this.sidebarSettingId = sidebarSettingId;
     }
 }
 
@@ -368,7 +371,8 @@ export class GameStateController {
                 rawQuality.cap || 0,
                 rawQuality.nature,
                 rawQuality.enhancements,
-                rawQuality.bonusOrPenaltyDisplay || ""
+                rawQuality.bonusOrPenaltyDisplay || "",
+                rawQuality.sidebarSettingId
             );
             this.state.setQuality(rawQuality.category, rawQuality.name, quality);
             return [quality, 0];

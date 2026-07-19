@@ -22,6 +22,7 @@ export interface IQuality {
     enhancements: IEnhancement[];
     nature: string;
     image: string;
+    sidebarSettingId?: number;
 }
 
 export interface IPossession extends IQuality {}
