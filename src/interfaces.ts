@@ -8,19 +8,23 @@ export interface IQuality {
     levelDescription: string;
     availableAt: string;
     name: string;
+    nameAndLevel: string;
     description: string;
     category: string;
     effectiveLevel: number;
     cap?: number;
+    equippable: boolean;
     bonusOrPenaltyDisplay?: string;
     progressAsPercentage: number;
     allowedOn: string;
-    himbleLevel: string;
+    himbleLevel: number;
     qualityPossessedId: number;
     enhancements: IEnhancement[];
     nature: string;
     image: string;
 }
+
+export interface IPossession extends IQuality {}
 
 export interface IShopResponse extends IApiResponse {
     possessionsChanged: IQuality[];
@@ -139,27 +143,6 @@ export interface IEnhancement {
     level: number;
     category: string;
     affectsPyramid: boolean;
-}
-
-export interface IPossession {
-    cap?: number;
-    enhancements: IEnhancement[];
-    qualityPossessedId: number;
-    name: string;
-    nameAndLevel: string;
-    levelDescription: string;
-    description: string;
-    nature: string;
-    category: string;
-    effectiveLevel: number;
-    level: number;
-    himbleLevel: number;
-    availableAt: string;
-    equippable: boolean;
-    progressAsPercentage: number;
-    allowedOn: string;
-    image: string;
-    id: number;
 }
 
 export interface IPyramidQualityChangeMessage extends IMessage {
