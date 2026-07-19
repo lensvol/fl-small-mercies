@@ -9,6 +9,7 @@ import {
     IOpportunityResponse,
     IOutfitChangeRequest,
     IPlanResponse,
+    IQuality,
     IQualityRequirement,
     IShopResponse,
     IStorylet,
@@ -129,6 +130,7 @@ export class Quality {
     name: string;
     description: string;
     availableAt: string;
+    bonusOrPenaltyDisplay: string;
     level: number;
     levelDescription: string;
     effectiveLevel: number;
@@ -150,7 +152,8 @@ export class Quality {
         image: string,
         cap: number,
         nature: string,
-        enhancements: Enhancement[] = []
+        enhancements: Enhancement[] = [],
+        bonusOrPenaltyDisplay: string = ""
     ) {
         this.qualityId = qualityId;
         this.category = category;
@@ -164,6 +167,7 @@ export class Quality {
         this.cap = cap;
         this.nature = nature;
         this.enhancements = enhancements;
+        this.bonusOrPenaltyDisplay = bonusOrPenaltyDisplay;
     }
 }
 
@@ -338,47 +342,35 @@ export class GameStateController {
         [StateChangeTypes.OutfitContentsLoaded]: [],
     };
 
-    private upsertQuality(
-        qualityId: number,
-        categoryName: string,
-        qualityName: string,
-        description: string,
-        availableAt: string,
-        effectiveLevel: number,
-        level: number,
-        levelDescription: string,
-        image: string,
-        cap: number,
-        nature: string,
-        enhancements: Enhancement[] = []
-    ): [Quality, number] {
-        const existingQuality = this.state.getQuality(categoryName, qualityName);
+    private upsertQuality(rawQuality: IQuality): [Quality, number] {
+        const existingQuality = this.state.getQuality(rawQuality.category, rawQuality.name);
 
-        if (existingQuality && existingQuality.level != effectiveLevel) {
+        if (existingQuality && existingQuality.level != rawQuality.effectiveLevel) {
             // We save previous value here so that we can update quality value in-place and still pass it on.
             const previousLevel = existingQuality.level;
-            existingQuality.effectiveLevel = effectiveLevel;
-            existingQuality.level = level;
+            existingQuality.effectiveLevel = rawQuality.effectiveLevel;
+            existingQuality.level = rawQuality.level;
 
-            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, level);
+            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, rawQuality.level);
 
             return [existingQuality, previousLevel];
         } else {
             const quality = new Quality(
-                qualityId,
-                categoryName,
-                qualityName,
-                description,
-                availableAt,
-                effectiveLevel,
-                level,
-                levelDescription,
-                image,
-                cap,
-                nature,
-                enhancements
+                rawQuality.id,
+                rawQuality.category,
+                rawQuality.name,
+                rawQuality.description,
+                rawQuality.availableAt,
+                rawQuality.effectiveLevel,
+                rawQuality.level,
+                rawQuality.levelDescription,
+                rawQuality.image,
+                rawQuality.cap || 0,
+                rawQuality.nature,
+                rawQuality.enhancements,
+                rawQuality.bonusOrPenaltyDisplay || ""
             );
-            this.state.setQuality(categoryName, qualityName, quality);
+            this.state.setQuality(rawQuality.category, rawQuality.name, quality);
             return [quality, 0];
         }
     }
@@ -413,20 +405,7 @@ export class GameStateController {
         this.state.resetQualities();
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(
-                    thing.id,
-                    thing.category,
-                    thing.name,
-                    thing.description,
-                    thing.availableAt,
-                    thing.effectiveLevel,
-                    thing.level,
-                    thing.levelDescription,
-                    thing.image,
-                    thing.cap || 0,
-                    thing.nature,
-                    thing.enhancements
-                );
+                this.upsertQuality(thing as IQuality);
             }
         }
 
@@ -498,19 +477,7 @@ export class GameStateController {
                 message.type === "QualityExplicitlySetMessage"
             ) {
                 const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(
-                    thing.id,
-                    thing.category,
-                    thing.name,
-                    thing.description,
-                    thing.availableAt,
-                    thing.effectiveLevel,
-                    thing.level,
-                    thing.levelDescription,
-                    thing.image,
-                    thing.cap || 0,
-                    thing.nature
-                );
+                const [quality, previousLevel] = this.upsertQuality(thing as IQuality);
 
                 if (thing.level !== previousLevel) {
                     this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, thing.level);
@@ -683,20 +650,7 @@ export class GameStateController {
         }
 
         response.possessionsChanged.forEach((changed) => {
-            this.upsertQuality(
-                changed.id,
-                changed.category,
-                changed.name,
-                changed.description,
-                changed.availableAt,
-                changed.effectiveLevel,
-                changed.level,
-                changed.levelDescription,
-                changed.image,
-                changed.cap || 0,
-                changed.nature,
-                changed.enhancements
-            );
+            this.upsertQuality(changed);
         });
     }
 
