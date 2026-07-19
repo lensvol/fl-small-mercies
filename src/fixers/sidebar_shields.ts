@@ -21,6 +21,8 @@ const QUALITY_ID_ORDER = [
     216,
     // Nightmares
     217,
+    // Troubled Waters
+    808,
     // Unaccountably Peckish
     462,
     // Respectable
