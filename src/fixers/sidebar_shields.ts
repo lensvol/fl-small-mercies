@@ -327,6 +327,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((state) => {
             const abilityCategories = ["SidebarTransient"];
+            const abilityCategories = ["SidebarTransient", "Menace"];
             const relevantQualityIds: number[] = [...QUALITY_ID_ORDER];
 
             abilityCategories.map((categoryCode) => {
