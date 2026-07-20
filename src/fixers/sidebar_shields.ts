@@ -226,7 +226,7 @@ class SidebarShield {
         container.style.cssText = "outline: 0px; outline-offset: 0px; cursor: default;";
         container.setAttribute("tabindex", "0");
         container.setAttribute("id", `shield-quality-${this.linkedQuality.qualityId}`);
-        container.setAttribute("aria-label", this.linkedQuality.image);
+        container.setAttribute("aria-label", this.linkedQuality.name);
 
         const container2 = document.createElement("div");
         container2.classList.add("agent-stat");
