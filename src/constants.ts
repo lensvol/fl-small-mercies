@@ -219,6 +219,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Only show completed vanities in the 'Vanities' section.",
                 default: true,
             },
+            shield_golden_pulse: {
+                description: "Highlight changed qualities in the compact sidebar with a golden 'pulse'.",
+                default: true,
+            },
         },
     },
 ];

@@ -328,6 +328,7 @@ class SidebarShieldWall {
 
 export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private showShieldWall: boolean = false;
+    private pulseChangedValues: boolean = true;
     private shieldWall = new SidebarShieldWall();
     private abilityToShield: Map<number, SidebarShield> = new Map();
     private firstLoad: boolean = true;
@@ -378,7 +379,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     const newShield = new SidebarShield(quality, quality.effectiveLevel);
                     this.abilityToShield.set(quality.qualityId, newShield);
                     this.shieldWall.addShield(newShield);
-                    if (!this.firstLoad) {
+                    if (!this.firstLoad && this.pulseChangedValues) {
                         newShield.pulse();
                     }
                     if (quality.bonusOrPenaltyDisplay) {
@@ -423,7 +424,9 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             }
 
             shield.setLevel(currentLevel);
-            shield.pulse();
+            if (this.pulseChangedValues) {
+                shield.pulse();
+            }
             this.shieldWall.renderShields();
         });
 
@@ -486,7 +489,9 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     this.abilityToShield.set(quality.qualityId, shield);
                 }
                 shield.setLevel(value);
-                shield.pulse();
+                if (this.pulseChangedValues) {
+                    shield.pulse();
+                }
                 if (shield.getLevel() != state.getQualityById(qualityId)?.level) {
                     shield.enableHighlight();
                 } else {
@@ -499,6 +504,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
 
     applySettings(settings: SettingsObject): void {
         this.showShieldWall = settings.compact_ability_sidebar as boolean;
+        this.pulseChangedValues = settings.shield_golden_pulse as boolean;
     }
 
     checkEligibility(node: HTMLElement): boolean {
