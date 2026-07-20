@@ -329,6 +329,7 @@ class SidebarShieldWall {
 export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private showShieldWall: boolean = false;
     private pulseChangedValues: boolean = true;
+    private highlightModifiedLevels: boolean = false;
     private shieldWall = new SidebarShieldWall();
     private abilityToShield: Map<number, SidebarShield> = new Map();
     private firstLoad: boolean = true;
@@ -382,16 +383,15 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     if (!this.firstLoad && this.pulseChangedValues) {
                         newShield.pulse();
                     }
-                    if (quality.bonusOrPenaltyDisplay) {
+                    if (quality.bonusOrPenaltyDisplay && this.highlightModifiedLevels) {
                         newShield.enableHighlight();
                     }
                 } else if (existingShield) {
                     if (quality) {
                         existingShield.setLevel(quality.effectiveLevel);
-                        if (quality.bonusOrPenaltyDisplay) {
+                        existingShield.disableHighlight();
+                        if (quality.bonusOrPenaltyDisplay && this.highlightModifiedLevels) {
                             existingShield.enableHighlight();
-                        } else {
-                            existingShield.disableHighlight();
                         }
                     } else if (existingShield.getLevel() > 0 && !quality) {
                         // If no quality found, then we assume that it has been lost the associated quality and that
@@ -492,10 +492,12 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 if (this.pulseChangedValues) {
                     shield.pulse();
                 }
-                if (shield.getLevel() != state.getQualityById(qualityId)?.level) {
-                    shield.enableHighlight();
-                } else {
-                    shield.disableHighlight();
+                if (this.highlightModifiedLevels) {
+                    if (shield.getLevel() != state.getQualityById(qualityId)?.level) {
+                        shield.enableHighlight();
+                    } else {
+                        shield.disableHighlight();
+                    }
                 }
             }
             this.shieldWall.renderShields();
@@ -505,6 +507,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     applySettings(settings: SettingsObject): void {
         this.showShieldWall = settings.compact_ability_sidebar as boolean;
         this.pulseChangedValues = settings.shield_golden_pulse as boolean;
+        this.highlightModifiedLevels = settings.shield_highlight_modifier as boolean;
     }
 
     checkEligibility(node: HTMLElement): boolean {
@@ -519,6 +522,15 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         const firstQuality = getSingletonByClassName(node, "sidebar-quality");
         if (firstQuality && firstQuality.parentElement) {
             // TODO: Make it more elegant
+            for (const shield of this.abilityToShield.values()) {
+                if (!this.highlightModifiedLevels) {
+                    shield.disableHighlight();
+                } else if (shield.getLevel() !== shield.linkedQuality.level) {
+                    // TODO: Probably can be moved inside the shield itself.
+                    shield.enableHighlight();
+                }
+            }
+
             firstQuality.parentElement.parentNode?.insertBefore(this.shieldWall.getElement(), firstQuality.parentNode);
             firstQuality.parentElement.style.display = "none";
         }

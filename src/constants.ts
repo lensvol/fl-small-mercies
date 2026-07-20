@@ -223,6 +223,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Highlight changed qualities in the compact sidebar with a golden 'pulse'.",
                 default: true,
             },
+            shield_highlight_modifier: {
+                description: "Display values for qualities modified by equipment in different color.",
+                default: false,
+            },
         },
     },
 ];
