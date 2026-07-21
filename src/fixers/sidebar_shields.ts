@@ -68,6 +68,19 @@ const QUALITY_ID_ORDER = [
     // Neathproofed
     142591,
 ];
+const UNKNOWN_QUALITY = new Quality(
+    -777,
+    "Unknown",
+    "Unknown quality",
+    "Nothing to say here, we're still retrieving information...",
+    "everywhere",
+    0,
+    0,
+    "Zero",
+    "question",
+    0,
+    "Status"
+);
 
 function createTippyMimic(
     posX: number,
@@ -157,19 +170,29 @@ function createTippyMimic(
 }
 
 class SidebarShield {
-    readonly linkedQuality: Quality;
+    private linkedQuality: Quality;
     private previousLevel: number = 0;
     private level: number = 0;
     private container: HTMLDivElement;
     private levelDisplay: HTMLSpanElement;
     private animationTimerId: number;
 
-    constructor(quality: Quality, level: number = 0) {
+    constructor(quality: Quality = UNKNOWN_QUALITY, level: number = 0) {
         this.linkedQuality = quality;
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
         this.setLevel(level);
         this.animationTimerId = 0;
+    }
+
+    linkQuality(quality: Quality): void {
+        this.linkedQuality = quality;
+        // Image of the quality and its name may have been updated
+        this.container = this.render();
+    }
+
+    getQuality(): Quality {
+        return this.linkedQuality;
     }
 
     getQualityId(): number {
@@ -342,11 +365,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
 
     constructor() {
         this.shieldWall.filterBy((shield: SidebarShield) => {
-            if (!shield.linkedQuality.sidebarSettingId) {
+            if (!shield.getQuality().sidebarSettingId) {
                 return true;
             }
 
-            return shield.linkedQuality.sidebarSettingId === this.currentSettingId;
+            return shield.getQuality().sidebarSettingId === this.currentSettingId;
         });
     }
 
@@ -393,6 +416,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     }
                 } else if (existingShield) {
                     if (quality) {
+                        existingShield.linkQuality(quality);
                         existingShield.setLevel(quality.effectiveLevel);
                         existingShield.disableHighlight();
                         if (quality.bonusOrPenaltyDisplay && this.highlightModifiedLevels) {
@@ -470,13 +494,17 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 })
             );
 
+            const qualityIdToName: Map<number, string> = new Map();
+
             // Process removal of the equipment
             for (const removed of removedEnhancements) {
+                qualityIdToName.set(removed.qualityId, removed.qualityName);
                 affectedQualities.set(removed.qualityId, affectedQualities.get(removed.qualityId)!! - removed.level);
             }
 
             // Process newly equipped item (if any)
             for (const added of addedEnhancements) {
+                qualityIdToName.set(added.qualityId, added.qualityName);
                 affectedQualities.set(added.qualityId, affectedQualities.get(added.qualityId)!! + added.level);
                 debug(`After addition ${added.qualityId} = ${affectedQualities.get(added.qualityId)!!}`);
             }
@@ -484,15 +512,21 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             for (const [qualityId, value] of affectedQualities.entries()) {
                 let shield = this.abilityToShield.get(qualityId);
                 if (!shield) {
-                    const quality = state.getQualityById(qualityId);
+                    // Sometimes equipment will introduce a quality that we know nothing about
+                    // until `myself` response arrives, so to counter that we use a placeholder
+                    // for better experience.
+                    shield = new SidebarShield();
+                    let quality = state.getQualityById(qualityId);
                     if (!quality) {
-                        continue;
+                        quality = {...UNKNOWN_QUALITY};
+                        quality.qualityId = qualityId;
+                        quality.name = qualityIdToName.get(qualityId)!!;
                     }
-
-                    shield = new SidebarShield(quality, value);
+                    shield.linkQuality(quality);
                     this.shieldWall.addShield(shield);
                     this.abilityToShield.set(quality.qualityId, shield);
                 }
+
                 shield.setLevel(value);
                 if (this.pulseChangedValues) {
                     shield.pulse();
@@ -530,7 +564,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             for (const shield of this.abilityToShield.values()) {
                 if (!this.highlightModifiedLevels) {
                     shield.disableHighlight();
-                } else if (shield.getLevel() !== shield.linkedQuality.level) {
+                } else if (shield.getLevel() !== shield.getQuality().level) {
                     // TODO: Probably can be moved inside the shield itself.
                     shield.enableHighlight();
                 }
