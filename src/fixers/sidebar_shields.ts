@@ -248,6 +248,11 @@ class SidebarShield {
         container2.appendChild(textSpan);
 
         container.addEventListener("mouseenter", (ev) => {
+            const existingTooltips = container.getElementsByClassName("faux-tippy-box");
+            for (const tooltip of existingTooltips) {
+                tooltip.parentElement?.removeChild(tooltip);
+            }
+
             const rect = container.getBoundingClientRect();
             const tooltip = createTippyMimic(
                 ev.x + window.screenX - rect.width,
