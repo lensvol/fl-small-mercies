@@ -227,6 +227,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Display values for qualities modified by equipment in different color.",
                 default: false,
             },
+            shield_counter_animation: {
+                description: "Animate value changes in the compact sidebar.",
+                default: true,
+            },
         },
     },
 ];

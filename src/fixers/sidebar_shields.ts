@@ -175,14 +175,15 @@ class SidebarShield {
     private level: number = 0;
     private container: HTMLDivElement;
     private levelDisplay: HTMLSpanElement;
-    private animationTimerId: number;
+    private animationTimerId: number = 0;
+    private counterAnimationEnabled: boolean = true;
+    private counterAnimationTimerId: number = 0;
 
     constructor(quality: Quality = UNKNOWN_QUALITY, level: number = 0) {
         this.linkedQuality = quality;
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
         this.setLevel(level);
-        this.animationTimerId = 0;
     }
 
     linkQuality(quality: Quality): void {
@@ -208,6 +209,14 @@ class SidebarShield {
         this.level = level;
     }
 
+    enableCounterAnimation() {
+        this.counterAnimationEnabled = true;
+    }
+
+    disableCounterAnimation() {
+        this.counterAnimationEnabled = false;
+    }
+
     enableHighlight() {
         this.levelDisplay.classList.add("item__adjust");
     }
@@ -218,14 +227,26 @@ class SidebarShield {
 
     display() {
         if (this.levelDisplay) {
-            if (this.previousLevel !== this.level) {
-                this.levelDisplay.style.setProperty("--num", this.previousLevel.toString());
-                setTimeout(() => {
+            if (this.counterAnimationEnabled) {
+                this.levelDisplay.classList.add("shield-value");
+                this.levelDisplay.textContent = "";
+                if (this.previousLevel !== this.level) {
+                    this.levelDisplay.style.setProperty("--num", this.previousLevel.toString());
+                    if (this.counterAnimationTimerId) {
+                        window.clearTimeout(this.counterAnimationTimerId);
+                    }
+
+                    this.counterAnimationTimerId = window.setTimeout(() => {
+                        this.levelDisplay.style.setProperty("--num", this.level.toString());
+                        this.previousLevel = this.level;
+                    }, 100);
+                } else {
                     this.levelDisplay.style.setProperty("--num", this.level.toString());
-                    this.previousLevel = this.level;
-                }, 100);
+                }
             } else {
-                this.levelDisplay.style.setProperty("--num", this.level.toString());
+                this.levelDisplay.style.removeProperty("--num");
+                this.levelDisplay.classList.remove("shield-value");
+                this.levelDisplay.textContent = this.level.toString();
             }
         }
     }
@@ -356,12 +377,14 @@ class SidebarShieldWall {
 
 export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private showShieldWall: boolean = false;
-    private pulseChangedValues: boolean = true;
-    private highlightModifiedLevels: boolean = false;
     private shieldWall = new SidebarShieldWall();
     private abilityToShield: Map<number, SidebarShield> = new Map();
     private firstLoad: boolean = true;
     private currentSettingId: number = 0;
+
+    private pulseChangedValues: boolean = true;
+    private highlightModifiedLevels: boolean = false;
+    private enableCounterAnimation: boolean = true;
 
     constructor() {
         this.shieldWall.filterBy((shield: SidebarShield) => {
@@ -414,6 +437,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     if (quality.bonusOrPenaltyDisplay && this.highlightModifiedLevels) {
                         newShield.enableHighlight();
                     }
+                    if (this.enableCounterAnimation) {
+                        newShield.enableCounterAnimation();
+                    } else {
+                        newShield.disableCounterAnimation();
+                    }
                 } else if (existingShield) {
                     if (quality) {
                         existingShield.linkQuality(quality);
@@ -450,6 +478,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 shield = new SidebarShield(quality, currentLevel);
                 this.shieldWall.addShield(shield);
                 this.abilityToShield.set(quality.qualityId, shield);
+                if (this.enableCounterAnimation) {
+                    shield.enableCounterAnimation();
+                } else {
+                    shield.disableCounterAnimation();
+                }
             }
 
             shield.setLevel(currentLevel);
@@ -524,6 +557,11 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     }
                     shield.linkQuality(quality);
                     this.shieldWall.addShield(shield);
+                    if (this.enableCounterAnimation) {
+                        shield.enableCounterAnimation();
+                    } else {
+                        shield.disableCounterAnimation();
+                    }
                     this.abilityToShield.set(quality.qualityId, shield);
                 }
 
@@ -547,6 +585,15 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         this.showShieldWall = settings.compact_ability_sidebar as boolean;
         this.pulseChangedValues = settings.shield_golden_pulse as boolean;
         this.highlightModifiedLevels = settings.shield_highlight_modifier as boolean;
+        this.enableCounterAnimation = settings.shield_counter_animation as boolean;
+
+        for (const shield of this.abilityToShield.values()) {
+            if (this.enableCounterAnimation) {
+                shield.enableCounterAnimation();
+            } else {
+                shield.disableCounterAnimation();
+            }
+        }
     }
 
     checkEligibility(node: HTMLElement): boolean {
