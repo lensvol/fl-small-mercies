@@ -149,6 +149,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Hide 'Make Contacts' snippet in the right sidebar.",
                 default: true,
             },
+            compact_ability_sidebar: {
+                description: "Show sidebar abilities in a compact way.",
+                default: false,
+            },
         },
     },
     {
@@ -213,6 +217,22 @@ const SETTINGS_SCHEMA: SettingsSchema = [
             },
             only_completed_vanities: {
                 description: "Only show completed vanities in the 'Vanities' section.",
+                default: true,
+            },
+            shield_golden_pulse: {
+                description: "Highlight changed qualities in the compact sidebar with a golden 'pulse'.",
+                default: true,
+            },
+            shield_highlight_modifier: {
+                description: "Display values for qualities modified by equipment in different color.",
+                default: false,
+            },
+            shield_counter_animation: {
+                description: "Animate value changes in the compact sidebar.",
+                default: true,
+            },
+            shield_eager_load: {
+                description: "Apply changes to shield values based on changed equipment.",
                 default: true,
             },
         },

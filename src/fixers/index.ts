@@ -29,6 +29,7 @@ import {AdvancedArtFixer} from "./advanced_art";
 import {TreasureMapFixer} from "./treasure_map";
 import {EpaTrackerFixer} from "./epa_tracker";
 import {ContactsSnippetFixer} from "./remove_contacts_snippet";
+import {SidebarShieldsFixer} from "./sidebar_shields";
 
 export default [
     AutoScrollFixer,
@@ -62,4 +63,5 @@ export default [
     TreasureMapFixer,
     EpaTrackerFixer,
     ContactsSnippetFixer,
+    SidebarShieldsFixer,
 ];

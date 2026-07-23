@@ -6,9 +6,10 @@ import {
     IMapMoveResponse,
     IMapResponse,
     IMyselfResponse,
-    IOpportunityCard,
     IOpportunityResponse,
+    IOutfitChangeRequest,
     IPlanResponse,
+    IQuality,
     IQualityRequirement,
     IShopResponse,
     IStorylet,
@@ -16,7 +17,7 @@ import {
     IStoryletResponse,
     IUserResponse,
 } from "./interfaces";
-import {debug} from "./logging";
+import {debug, error} from "./logging";
 
 export const UNKNOWN = -1;
 
@@ -33,6 +34,12 @@ export enum StoryletPhases {
     Unknown = "<UNKNOWN>",
 }
 
+export enum OutfitTypes {
+    Standard = "Standard",
+    GivenInGame = "GivenInGame",
+    Exceptional = "Exceptional",
+}
+
 enum StateChangeTypes {
     QualityChanged = "QualityChanged",
     CharacterDataLoaded = "CharacterDataLoaded",
@@ -43,6 +50,8 @@ enum StateChangeTypes {
     LocationChanged = "LocationChanged",
     EquipmentChanged = "EquipmentChanged",
     OpportunityDeckChanged = "OpportunityDeckChanged",
+    OutfitChanged = "OutfitChanged",
+    OutfitContentsLoaded = "OutfitContentsLoaded",
 }
 
 export class FLUser {
@@ -100,9 +109,28 @@ export class FLPlayerLocation {
 const UNKNOWN_AREA = new Area(UNKNOWN, "<UNKNOWN AREA>");
 const UNKNOWN_GEO_SETTING = new GeoSetting(UNKNOWN, "<UNKNOWN SETTING>");
 
+export class Enhancement {
+    qualityName: string;
+    qualityId: number;
+    level: number;
+    category: string;
+    affectsPyramid: boolean;
+
+    constructor(qualityName: string, qualityId: number, level: number, category: string, affectsPyramid: boolean) {
+        this.qualityName = qualityName;
+        this.qualityId = qualityId;
+        this.level = level;
+        this.category = category;
+        this.affectsPyramid = affectsPyramid;
+    }
+}
+
 export class Quality {
     qualityId: number;
     name: string;
+    description: string;
+    availableAt: string;
+    bonusOrPenaltyDisplay: string;
     level: number;
     levelDescription: string;
     effectiveLevel: number;
@@ -110,27 +138,39 @@ export class Quality {
     image: string;
     cap: number;
     nature: string;
+    enhancements: Enhancement[];
+    sidebarSettingId: number | null;
 
     constructor(
         qualityId: number,
         category: string,
         name: string,
+        description: string,
+        availableAt: string,
         effectiveLevel: number,
         level: number,
         levelDescription: string,
         image: string,
         cap: number,
-        nature: string
+        nature: string,
+        enhancements: Enhancement[] = [],
+        bonusOrPenaltyDisplay: string = "",
+        sidebarSettingId: number | null = null
     ) {
         this.qualityId = qualityId;
         this.category = category;
         this.name = name;
+        this.description = description;
+        this.availableAt = availableAt;
         this.level = level;
         this.levelDescription = levelDescription;
         this.effectiveLevel = effectiveLevel;
         this.image = image;
         this.cap = cap;
         this.nature = nature;
+        this.enhancements = enhancements;
+        this.bonusOrPenaltyDisplay = bonusOrPenaltyDisplay;
+        this.sidebarSettingId = sidebarSettingId;
     }
 }
 
@@ -201,6 +241,18 @@ class OpportunityDeck {
     }
 }
 
+class Outfit {
+    id: number;
+    name: string;
+    type: OutfitTypes;
+
+    constructor(id: number, name: string, type: OutfitTypes) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
+}
+
 export class GameState {
     public user: UnknownUser | FLUser = new UnknownUser();
     public character: UnknownCharacter | FLCharacter = new UnknownCharacter();
@@ -209,6 +261,9 @@ export class GameState {
     public storyletPhase: StoryletPhases = StoryletPhases.Unknown;
     public currentStorylet: UnknownStorylet | IStorylet = new UnknownStorylet();
     public opportunityDeck: OpportunityDeck = new OpportunityDeck([], 0, 0, 0, 0, 0);
+    public outfit: Map<string, Quality> = new Map();
+    public availableOutfits: Map<number, Outfit> = new Map();
+    public currentOutfit: Outfit | null = null;
 
     public actionsLeft = 0;
 
@@ -217,10 +272,15 @@ export class GameState {
 
     public resetQualities() {
         this.qualities.clear();
+        this.qualityIdMapping.clear();
     }
 
     public getQualityById(qualityId: number): Quality | undefined {
         return this.qualityIdMapping.get(qualityId);
+    }
+
+    public getQualityCategory(category: string): IterableIterator<Quality> | undefined {
+        return this.qualities.get(category)?.values();
     }
 
     public getQuality(category: string, name: string): Quality | undefined {
@@ -281,40 +341,40 @@ export class GameStateController {
         [StateChangeTypes.LocationChanged]: [],
         [StateChangeTypes.EquipmentChanged]: [],
         [StateChangeTypes.OpportunityDeckChanged]: [],
+        [StateChangeTypes.OutfitChanged]: [],
+        [StateChangeTypes.OutfitContentsLoaded]: [],
     };
 
-    private upsertQuality(
-        qualityId: number,
-        categoryName: string,
-        qualityName: string,
-        effectiveLevel: number,
-        level: number,
-        levelDescription: string,
-        image: string,
-        cap: number,
-        nature: string
-    ): [Quality, number] {
-        const existingQuality = this.state.getQuality(categoryName, qualityName);
+    private upsertQuality(rawQuality: IQuality): [Quality, number] {
+        const existingQuality = this.state.getQuality(rawQuality.category, rawQuality.name);
 
-        if (existingQuality && existingQuality.level != effectiveLevel) {
+        if (existingQuality && existingQuality.level != rawQuality.effectiveLevel) {
             // We save previous value here so that we can update quality value in-place and still pass it on.
             const previousLevel = existingQuality.level;
-            existingQuality.effectiveLevel = effectiveLevel;
-            existingQuality.level = level;
+            existingQuality.effectiveLevel = rawQuality.effectiveLevel;
+            existingQuality.level = rawQuality.level;
+
+            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, rawQuality.level);
+
             return [existingQuality, previousLevel];
         } else {
             const quality = new Quality(
-                qualityId,
-                categoryName,
-                qualityName,
-                effectiveLevel,
-                level,
-                levelDescription,
-                image,
-                cap,
-                nature
+                rawQuality.id,
+                rawQuality.category,
+                rawQuality.name,
+                rawQuality.description,
+                rawQuality.availableAt,
+                rawQuality.effectiveLevel,
+                rawQuality.level,
+                rawQuality.levelDescription,
+                rawQuality.image,
+                rawQuality.cap || 0,
+                rawQuality.nature,
+                rawQuality.enhancements,
+                rawQuality.bonusOrPenaltyDisplay || "",
+                rawQuality.sidebarSettingId
             );
-            this.state.setQuality(categoryName, qualityName, quality);
+            this.state.setQuality(rawQuality.category, rawQuality.name, quality);
             return [quality, 0];
         }
     }
@@ -349,23 +409,40 @@ export class GameStateController {
         this.state.resetQualities();
         for (const category of response.possessions) {
             for (const thing of category.possessions) {
-                this.upsertQuality(
-                    thing.id,
-                    thing.category,
-                    thing.name,
-                    thing.effectiveLevel,
-                    thing.level,
-                    thing.levelDescription,
-                    thing.image,
-                    thing.cap || 0,
-                    thing.nature
-                );
+                this.upsertQuality(thing as IQuality);
             }
         }
 
         if (response.character.actions != undefined && response.character.actions !== this.state.actionsLeft) {
             this.state.actionsLeft = response.character.actions;
             this.triggerListeners(StateChangeTypes.ActionsCountChanged, this.state.actionsLeft);
+        }
+
+        this.state.availableOutfits.clear();
+        for (const receivedOutfit of response.character.outfits) {
+            let outfitType = null;
+
+            switch (receivedOutfit.type) {
+                case "Standard":
+                    outfitType = OutfitTypes.Standard;
+                    break;
+                case "Exceptional":
+                    outfitType = OutfitTypes.Exceptional;
+                    break;
+                case "GivenInGame":
+                    outfitType = OutfitTypes.GivenInGame;
+                    break;
+            }
+
+            const outfit = new Outfit(receivedOutfit.id, receivedOutfit.name, outfitType);
+            this.state.availableOutfits.set(receivedOutfit.id, outfit);
+            if (receivedOutfit.selected) {
+                if (!this.state.currentOutfit || receivedOutfit.id !== this.state.currentOutfit.id) {
+                    this.triggerListeners(StateChangeTypes.OutfitChanged, this.state.currentOutfit, outfit);
+                }
+
+                this.state.currentOutfit = outfit;
+            }
         }
 
         this.triggerListeners(StateChangeTypes.CharacterDataLoaded);
@@ -404,18 +481,11 @@ export class GameStateController {
                 message.type === "QualityExplicitlySetMessage"
             ) {
                 const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(
-                    thing.id,
-                    thing.category,
-                    thing.name,
-                    thing.effectiveLevel,
-                    thing.level,
-                    thing.levelDescription,
-                    thing.image,
-                    thing.cap || 0,
-                    thing.nature
-                );
-                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, quality.level);
+                const [quality, previousLevel] = this.upsertQuality(thing as IQuality);
+
+                if (thing.level !== previousLevel) {
+                    this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, thing.level);
+                }
             }
 
             if (message.type === "AreaChangeMessage") {
@@ -454,13 +524,30 @@ export class GameStateController {
     public parseEquipmentResponse(response: IEquipResponse) {
         for (const equipmentSlot of response.slots) {
             // TODO: Only trigger listeners on actual _changes_ to slot contents
+            const itemInSlot = this.state.outfit.get(equipmentSlot.name);
             if (equipmentSlot.qualityId != null) {
                 // Item was equipped into the inventory slot
                 const itemQuality = this.state.getQualityById(equipmentSlot.qualityId);
-                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, itemQuality);
-            } else {
+                if (!itemQuality) {
+                    error(`Attempt to equip item ${equipmentSlot.qualityId} into ${equipmentSlot.name} failed.`);
+                    continue;
+                }
+
+                if (itemInSlot == null || itemInSlot.qualityId != itemQuality.qualityId) {
+                    this.triggerListeners(
+                        StateChangeTypes.EquipmentChanged,
+                        equipmentSlot.name,
+                        itemInSlot,
+                        itemQuality
+                    );
+                    // Make proper abstractions for this
+                    this.state.outfit.set(equipmentSlot.name, itemQuality);
+                }
+            } else if (itemInSlot) {
                 // Equipment slot was cleared
-                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, null);
+                this.triggerListeners(StateChangeTypes.EquipmentChanged, equipmentSlot.name, itemInSlot, null);
+                // TODO: Make a placeholder quality?
+                this.state.outfit.delete(equipmentSlot.name);
             }
         }
     }
@@ -536,6 +623,8 @@ export class GameStateController {
                     requirement.qualityId,
                     requirement.category,
                     cleanedName,
+                    "<no description available>",
+                    "",
                     777,
                     777,
                     currentValue,
@@ -565,21 +654,7 @@ export class GameStateController {
         }
 
         response.possessionsChanged.forEach((changed) => {
-            const [quality, previous] = this.upsertQuality(
-                changed.id,
-                changed.category,
-                changed.name,
-                changed.effectiveLevel,
-                changed.level,
-                changed.levelDescription,
-                changed.image,
-                changed.cap || 0,
-                changed.nature
-            );
-
-            if (quality.level != previous) {
-                this.triggerListeners(StateChangeTypes.QualityChanged, quality, previous, quality.level);
-            }
+            this.upsertQuality(changed);
         });
     }
 
@@ -646,8 +721,18 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.ActionsCountChanged].push(handler);
     }
 
-    public onEquipmentChanged(handler: (g: GameState, slotName: string, item: Quality | null) => void) {
+    public onEquipmentChanged(
+        handler: (g: GameState, slotName: string, previousItem: Quality | null, equippedItem: Quality | null) => void
+    ) {
         this.changeListeners[StateChangeTypes.EquipmentChanged].push(handler);
+    }
+
+    public onOutfitChanged(handler: (g: GameState, oldOutfit: Outfit | null, newOutfit: Outfit | null) => void) {
+        this.changeListeners[StateChangeTypes.OutfitChanged].push(handler);
+    }
+
+    public onOutfitContentsLoaded(handler: (g: GameState, current: Outfit | null) => void) {
+        this.changeListeners[StateChangeTypes.OutfitContentsLoaded].push(handler);
     }
 
     public onOpportunityDeckChanged(handler: (g: GameState) => void) {
@@ -673,9 +758,28 @@ export class GameStateController {
         });
         interceptor.onResponseReceived("/api/character/myself", (_, response) => this.parseMyselfResponse(response));
         interceptor.onResponseReceived("/api/character/actions", (_, response) => this.parseActionsResponse(response));
-        interceptor.onResponseReceived("/api/outfit/equip", (_, response) => this.parseEquipmentResponse(response));
-        interceptor.onResponseReceived("/api/outfit/unequip", (_, response) => this.parseEquipmentResponse(response));
-        interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response) => {
+        interceptor.onResponseReceived("/api/outfit", (request, response) => {
+            this.parseEquipmentResponse(response);
+            this.triggerListeners(StateChangeTypes.OutfitContentsLoaded);
+        });
+        interceptor.onResponseReceived(
+            "/api/outfit/change",
+            (request: IOutfitChangeRequest, response: IEquipResponse) => {
+                if (request) {
+                    const newOutfit = this.state.availableOutfits.get(request.outfitId);
+                    this.triggerListeners(StateChangeTypes.OutfitChanged, this.state.currentOutfit, newOutfit);
+                }
+                this.parseEquipmentResponse(response);
+                this.triggerListeners(StateChangeTypes.OutfitContentsLoaded);
+            }
+        );
+        interceptor.onResponseReceived("/api/outfit/equip", (_, response: IEquipResponse) =>
+            this.parseEquipmentResponse(response)
+        );
+        interceptor.onResponseReceived("/api/outfit/unequip", (_, response: IEquipResponse) =>
+            this.parseEquipmentResponse(response)
+        );
+        interceptor.onResponseReceived("/api/outfit/equipHighest", (_, response: IEquipResponse) => {
             this.parseEquipmentResponse(response);
         });
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response) =>
