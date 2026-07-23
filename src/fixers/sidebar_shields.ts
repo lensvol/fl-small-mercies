@@ -160,7 +160,6 @@ function createTippyMimic(
     paragraph.appendChild(textSpan3);
 
     if (secondaryDescription) {
-        const text2 = document.createElement("span");
         container7.innerHTML = secondaryDescription;
     }
 
@@ -309,7 +308,7 @@ class SidebarShield {
             container.appendChild(tooltip);
         });
 
-        container.addEventListener("mouseleave", (ev) => {
+        container.addEventListener("mouseleave", (_) => {
             const existingTooltips = container.getElementsByClassName("faux-tippy-box");
             for (const tooltip of existingTooltips) {
                 tooltip.parentElement?.removeChild(tooltip);
@@ -326,8 +325,8 @@ class SidebarShield {
 
 class SidebarShieldWall {
     private shields: SidebarShield[] = [];
-    private wall: HTMLDivElement;
-    private predicate: (shield: SidebarShield) => boolean = (shield) => true;
+    private readonly wall: HTMLDivElement;
+    private predicate: (shield: SidebarShield) => boolean = (_shield) => true;
 
     constructor() {
         this.wall = this.render();
