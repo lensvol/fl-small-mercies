@@ -231,6 +231,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Animate value changes in the compact sidebar.",
                 default: true,
             },
+            shield_eager_load: {
+                description: "Apply changes to shield values based on changed equipment.",
+                default: true,
+            },
         },
     },
 ];

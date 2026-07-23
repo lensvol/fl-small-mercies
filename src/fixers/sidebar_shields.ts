@@ -384,6 +384,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     private pulseChangedValues: boolean = true;
     private highlightModifiedLevels: boolean = false;
     private enableCounterAnimation: boolean = true;
+    private processEquipmentChanges: boolean = true;
 
     constructor() {
         this.shieldWall.filterBy((shield: SidebarShield) => {
@@ -499,6 +500,13 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 return;
             }
 
+            if (!this.processEquipmentChanges) {
+                // This is only needed if a bug exists that causes values to periodically jump because
+                // of incorrect predictions, so we will just process definitive values received as a result
+                // of processing /myself response.
+                return;
+            }
+
             debug(`Equipment changed in slot ${slotName}: ${previous?.name} -> ${current?.name}`);
 
             // This filter is needed since build-up affecting enhancements for Menaces are coded using
@@ -585,6 +593,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
         this.pulseChangedValues = settings.shield_golden_pulse as boolean;
         this.highlightModifiedLevels = settings.shield_highlight_modifier as boolean;
         this.enableCounterAnimation = settings.shield_counter_animation as boolean;
+        this.processEquipmentChanges = settings.shield_eager_load as boolean;
 
         for (const shield of this.abilityToShield.values()) {
             if (this.enableCounterAnimation) {
