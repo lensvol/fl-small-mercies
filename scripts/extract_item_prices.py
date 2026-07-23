@@ -6,8 +6,6 @@ def main():
     with open(sys.argv[1], "r") as fp:
         wiki_info = json.load(fp)
 
-    print("const ITEM_PRICES_BY_ID: Map<number, number> = new Map([")
-
     conversion_rates = {
         "Certifiable Scrap": 0.4875,
         "Hinterland Scrip": 0.5,
@@ -56,13 +54,10 @@ def main():
         "Traces of the Tabernacle": [146438, 0.01],
     })
 
-    for name, (item_id, price) in hardcoded_items.items():
-        print(f"    // {name}")
-        print(f"    [{item_id}, {price:.2f}],")
-
     # Some items have monetary value, but are traded in _storylets_ and not in Bazaar,
     # so our current dump query will not be able to extract them (╯°□°)╯︵ ┻━┻
 
+    calculated_prices: dict[int, Tuple[str, int, str]] = {}
     for name, item in sorted(wiki_info["results"].items(), key=lambda k: k[0]):
         if not item["printouts"]["ID"]:
             continue
@@ -89,11 +84,33 @@ def main():
             print(f"Item '{name}' has no price in Echoes: {item_prices}")
             continue
 
-        print(f"    // {name}" + (f" (via {other_currency})" if other_currency else ""))
-        print(f"    [{item['printouts']['ID'][0]}, {echo_price}],")
+        comment = f"via {other_currency}" if other_currency else ""
+        calculated_prices[int(item['printouts']['ID'][0])] = (name, echo_price, comment)
+
+    # Output first mapping for general purpose calculations
+    print("const ITEM_PRICES_BY_ID: Map<number, number> = new Map([")
+    for name, (item_id, price) in hardcoded_items.items():
+        print(f"    // {name}")
+        print(f"    [{item_id}, {price:.2f}],")
+
+    for item_id, (name, echo_price, comment) in calculated_prices.items():
+        print(f"    // {name}" + (f" ({comment})" if comment else ""))
+        print(f"    [{item_id}, {echo_price}],")
     print("]);")
-    print();
-    print("export {ITEM_PRICES_BY_ID};")
+    print()
+
+    # Output second mapping for reverse search of item price by its name (e.g. for tooltips)
+    print("const ITEM_PRICES_BY_NAME: Map<string, number> = new Map([")
+    for name, (item_id, price) in hardcoded_items.items():
+        print(f'    ["{name}", {price:.2f}],')
+
+    for item_id, (name, echo_price, comment) in calculated_prices.items():
+        print(f'    ["{name}", {echo_price}],' + (f'  // {comment}' if comment else ""))
+    print("]);")
+    print()
+
+
+    print("export {ITEM_PRICES_BY_ID, ITEM_PRICES_BY_NAME};")
     print()
 
 if __name__ == "__main__":
