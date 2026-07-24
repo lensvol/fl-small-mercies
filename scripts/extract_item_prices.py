@@ -91,7 +91,7 @@ def main():
         calculated_prices[item_id] = (name, echo_price, comment)
         item_name_to_id[name] = item_id
 
-    # Output first mapping for general purpose calculations
+    # Output mapping for general purpose calculations
     print("const ITEM_PRICES_BY_ID: Map<number, number> = new Map([")
     for item_id, (name, echo_price, comment) in calculated_prices.items():
         print(f"    // {name}" + (f" ({comment})" if comment else ""))
@@ -99,13 +99,7 @@ def main():
     print("]);")
     print()
 
-    # Output second mapping for reverse search of item price by its name (e.g. for tooltips)
-    print("const ITEM_PRICES_BY_NAME: Map<string, number> = new Map([")
-    for item_id, (name, echo_price, comment) in sorted(calculated_prices.items(), key=lambda it: it[1][0]):
-        print(f'    ["{name}", {echo_price}],' + (f'  // {comment}' if comment else ""))
-    print("]);")
-    print()
-
+    # Output reverse mapping for matching item name to ID
     print("const ITEM_ID_BY_NAME: Map<string, number> = new Map([")
     for name, item_id in sorted(item_name_to_id.items(), key=lambda it: it[0]):
         print(f'    ["{name}", {item_id}],')
@@ -114,6 +108,7 @@ def main():
 
     print("export {ITEM_PRICES_BY_ID, ITEM_PRICES_BY_NAME, ITEM_ID_BY_NAME};")
     print()
+
 
 if __name__ == "__main__":
     main()
