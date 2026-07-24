@@ -106,7 +106,7 @@ def main():
     print("]);")
     print()
 
-    print("export {ITEM_PRICES_BY_ID, ITEM_PRICES_BY_NAME, ITEM_ID_BY_NAME};")
+    print("export {ITEM_PRICES_BY_ID, ITEM_ID_BY_NAME};")
     print()
 
 

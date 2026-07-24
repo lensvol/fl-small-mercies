@@ -1435,5 +1435,5 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Übergoat", 102305],
 ]);
 
-export {ITEM_PRICES_BY_ID, ITEM_PRICES_BY_NAME, ITEM_ID_BY_NAME};
+export {ITEM_PRICES_BY_ID, ITEM_ID_BY_NAME};
 
