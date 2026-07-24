@@ -17,11 +17,41 @@ export class WorthDisplayFixer implements IMutationAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const itemNameSpan = getSingletonByClassName(node, "item__name");
-        const itemId = ITEM_ID_BY_NAME.get(itemNameSpan?.textContent || "");
-        const worth = ITEM_PRICES_BY_ID.get(itemId || 0);
+        if (!node.hasAttribute("data-tippy-root")) {
+            return;
+        }
 
-        if (!worth) {
+        let itemName: string = "";
+        const itemNameSpan = getSingletonByClassName(node, "item__name");
+        if (!itemNameSpan?.textContent) {
+            // Tooltips that appear on branch results usually do not have item name on them, but we can try
+            // and find it by trying to find a 'div' described by this tooltip.
+            const tooltipId = node.id;
+            const qualityUpdatesNode = getSingletonByClassName(document.body, "media--quality-updates");
+            if (!qualityUpdatesNode) {
+                // Something strange is going on here, we better bail.
+                return;
+            }
+
+            const tooltipIcon = node.querySelector('div[class*="tooltip__icon"] img');
+            if (!tooltipIcon) {
+                return;
+            }
+
+            const itemIcon = qualityUpdatesNode.querySelector(`img[src="${tooltipIcon.getAttribute("src")!!}"]`);
+            if (!itemIcon) {
+                return;
+            }
+
+            itemName = itemIcon.getAttribute("aria-label") || "";
+        } else {
+            itemName = itemNameSpan.textContent;
+        }
+
+        const itemId = ITEM_ID_BY_NAME.get(itemName || "");
+        const itemWorth = ITEM_PRICES_BY_ID.get(itemId || 0);
+
+        if (!itemWorth) {
             return;
         }
 
@@ -36,7 +66,7 @@ export class WorthDisplayFixer implements IMutationAware {
 
             const worthIndicator = document.createElement("span");
             worthIndicator.classList.add("worth-indicator-golden");
-            worthIndicator.textContent = `Worth ${worth} Echoes`;
+            worthIndicator.textContent = `Worth ${itemWorth} Echoes`;
             insert.appendChild(worthIndicator);
 
             secondaryDescription.insertAdjacentElement("afterend", insert);
