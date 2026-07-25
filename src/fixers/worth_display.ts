@@ -38,12 +38,16 @@ export class WorthDisplayFixer implements IMutationAware {
                 return;
             }
 
-            const itemIcon = qualityUpdatesNode.querySelector(`img[src="${tooltipIcon.getAttribute("src")!!}"]`);
-            if (!itemIcon) {
-                return;
+            // It is possible that an icon will be shared between an item and other quality update (e.g. Roof-Chart),
+            // so we need to iterate over those till we find a name we can recognize.
+            const itemIcons = qualityUpdatesNode.querySelectorAll(`img[src="${tooltipIcon.getAttribute("src")!!}"]`);
+            for (const candidateIcon of itemIcons) {
+                const variantName = candidateIcon.getAttribute("aria-label");
+                if (variantName && ITEM_ID_BY_NAME.has(variantName)) {
+                    itemName = variantName;
+                    break;
+                }
             }
-
-            itemName = itemIcon.getAttribute("aria-label") || "";
         } else {
             itemName = itemNameSpan.textContent;
         }
