@@ -102,6 +102,7 @@ export interface IMessage {
     message: string;
     image?: string;
     tooltip?: string;
+    priority?: number;
 }
 
 export interface IRollSuccessMessage extends IMessage {
@@ -161,6 +162,13 @@ export interface IQualityExplicitlySetMessage extends IMessage {
     priority: number;
 }
 
+export interface IInfoMessage extends IMessage {
+    type: "InfoMessage";
+    image: string;
+    message: string;
+    tooltip: string;
+}
+
 export interface IAreaChangeMessage extends IMessage {
     type: "AreaChangeMessage";
     area: IArea;
@@ -207,7 +215,8 @@ export type IMessageResult =
     | IPyramidQualityChangeMessage
     | IQualityExplicitlySetMessage
     | IAreaChangeMessage
-    | ISettingChangeMessage;
+    | ISettingChangeMessage
+    | IInfoMessage;
 
 export interface IChooseBranchResponse extends IApiResponse {
     actions: number;
