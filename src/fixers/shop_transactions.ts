@@ -40,7 +40,7 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
                 quantity = current / 100;
             }
 
-            if (quality.level === SCRIP_QUALITY_ID && this.scripDisplay) {
+            if (quality.qualityId === SCRIP_QUALITY_ID && this.scripDisplay) {
                 actualDisplay = this.scripDisplay;
                 quantity = current;
             }
