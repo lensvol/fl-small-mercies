@@ -3,18 +3,7 @@ import {SettingsObject} from "../settings";
 import {IMutationAware, IStateAware} from "./base";
 import {getSingletonByClassName} from "../utils";
 
-const DISCRETE_SIDEBAR_QUALITIES = [
-    "Notability",
-    "Influence",
-    "Bizarre",
-    "Dreaded",
-    "Respectable",
-    "Irrigo",
-    "A Turncoat",
-    "Moonlit",
-];
-
-export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
+export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
     private removeDiscreteScrollbars = false;
     private removeMaxedOutScrollbars = false;
     private maxedOutQualities: Set<string> = new Set();
@@ -82,10 +71,7 @@ export class DiscreteScrollbarsFixer implements IMutationAware, IStateAware {
     }
 
     private shouldBeHidden(qualityName: string) {
-        return (
-            (this.removeDiscreteScrollbars && DISCRETE_SIDEBAR_QUALITIES.includes(qualityName)) ||
-            (this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName))
-        );
+        return this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName);
     }
 
     linkState(state: GameStateController): void {
