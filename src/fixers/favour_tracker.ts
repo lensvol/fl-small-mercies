@@ -50,10 +50,10 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
             }
         });
 
-        state.onQualityChanged((state, quality, _previous, current) => {
-            if (FAVOURS.has(quality.name)) {
-                this.favourValues.set(quality.name, current);
-                this.updateFavour(quality.name, current);
+        state.onQualityChanged((state, _previous, current) => {
+            if (FAVOURS.has(current.name)) {
+                this.favourValues.set(current.name, current.level);
+                this.updateFavour(current.name, current.level);
             }
         });
     }

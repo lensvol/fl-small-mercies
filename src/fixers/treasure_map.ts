@@ -61,9 +61,9 @@ export class TreasureMapFixer implements INetworkAware, IStateAware {
             this.currentTreasureLocation = TREASURE_LOCATIONS[locationQuality.level];
             debug(`Current treasure location is ${this.currentTreasureLocation}`);
         });
-        state.onQualityChanged((gameState, q, prevLevel, curLevel) => {
-            if (q.qualityId === DIRECTIONS_QUALITY_ID && curLevel <= TREASURE_LOCATIONS.length) {
-                this.currentTreasureLocation = TREASURE_LOCATIONS[curLevel];
+        state.onQualityChanged((_state, _previous, current) => {
+            if (current.qualityId === DIRECTIONS_QUALITY_ID && current.level <= TREASURE_LOCATIONS.length) {
+                this.currentTreasureLocation = TREASURE_LOCATIONS[current.level];
                 debug(`Your treasure is now stashed at ${this.currentTreasureLocation}!`);
             }
         });

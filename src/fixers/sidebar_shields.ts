@@ -467,17 +467,21 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             this.firstLoad = false;
         });
 
-        state.onQualityChanged((_state, quality, _prevLevel, currentLevel) => {
-            if (!QUALITY_ID_ORDER.includes(quality.qualityId) && quality.category != "SidebarTransient") {
+        state.onQualityChanged((_state, _previous, current) => {
+            if (
+                !QUALITY_ID_ORDER.includes(current.qualityId) &&
+                current.category !== "SidebarTransient" &&
+                current.category !== "Menace"
+            ) {
                 return;
             }
 
             // Some qualities can also change as a result of your branch choices.
-            let shield = this.abilityToShield.get(quality.qualityId);
+            let shield = this.abilityToShield.get(current.qualityId);
             if (!shield) {
-                shield = new SidebarShield(quality, currentLevel);
+                shield = new SidebarShield(current, current.level);
                 this.shieldWall.addShield(shield);
-                this.abilityToShield.set(quality.qualityId, shield);
+                this.abilityToShield.set(current.qualityId, shield);
                 if (this.enableCounterAnimation) {
                     shield.enableCounterAnimation();
                 } else {
@@ -485,7 +489,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 }
             }
 
-            shield.setLevel(currentLevel);
+            shield.setLevel(current.level);
             if (this.pulseChangedValues) {
                 shield.pulse();
             }
