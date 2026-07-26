@@ -30,6 +30,7 @@ import {TreasureMapFixer} from "./treasure_map";
 import {EpaTrackerFixer} from "./epa_tracker";
 import {ContactsSnippetFixer} from "./remove_contacts_snippet";
 import {SidebarShieldsFixer} from "./sidebar_shields";
+import {ChangePointsAnnotationFixer} from "./cp_annotation";
 
 export default [
     AutoScrollFixer,
@@ -64,4 +65,5 @@ export default [
     EpaTrackerFixer,
     ContactsSnippetFixer,
     SidebarShieldsFixer,
+    ChangePointsAnnotationFixer,
 ];
