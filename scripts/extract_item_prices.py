@@ -1,10 +1,28 @@
 import json
 import sys
 from collections import OrderedDict
+import ssl
+from urllib import parse, request
+
+def make_wiki_call(query: str) -> dict:
+    data = parse.urlencode(
+        {
+            "action": "ask",
+            "format": "json",
+            "query": query,
+        }
+    ).encode()
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    req = request.Request("https://fallenlondon.wiki/w/api.php", data=data)
+    with request.urlopen(req, context=ctx) as response:
+        return json.loads(response.read())["query"]
 
 def main():
-    with open(sys.argv[1], "r") as fp:
-        wiki_info = json.load(fp)
+    wiki_info = make_wiki_call("[[Sells for::+]]|?=Name|?Sells for|?ID|limit=9999")
 
     # Some items have monetary value, but are traded in _storylets_ and not in Bazaar,
     # so our current dump query will not be able to extract them (╯°□°)╯︵ ┻━┻
