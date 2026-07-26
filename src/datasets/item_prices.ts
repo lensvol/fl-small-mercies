@@ -1,3 +1,9 @@
+
+// This information was compiled using data submitted to the "Fallen London Wiki"
+// (https://fallenlondon.wiki) by its contributors and is used here under
+// CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
+
+
 const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Aeolian Scream
     [773, 2.50],

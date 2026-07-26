@@ -91,6 +91,13 @@ def main():
         calculated_prices[item_id] = (name, echo_price, comment)
         item_name_to_id[name] = item_id
 
+    print("""
+// This information was compiled using data submitted to the "Fallen London Wiki"
+// (https://fallenlondon.wiki) by its contributors and is used here under
+// CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
+
+""")
+
     # Output mapping for general purpose calculations
     print("const ITEM_PRICES_BY_ID: Map<number, number> = new Map([")
     for item_id, (name, echo_price, comment) in calculated_prices.items():
