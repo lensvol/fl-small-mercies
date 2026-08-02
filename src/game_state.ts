@@ -505,8 +505,7 @@ export class GameStateController {
                 message.type === "PyramidQualityChangeMessage" ||
                 message.type === "QualityExplicitlySetMessage"
             ) {
-                const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(thing as IQuality);
+                this.upsertQuality(message.possession as IQuality);
             }
 
             if (message.type === "AreaChangeMessage") {
