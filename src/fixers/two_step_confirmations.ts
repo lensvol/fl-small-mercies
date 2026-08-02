@@ -71,6 +71,7 @@ const DANGEROUS_BRANCHES = [
     205784 /* A Reputation of Some Importance: Another Way */,
     246280 /* Adulterine Castle: Leave through the Mirror-Marches */,
     259359 /* Obtaining A Severed Thread */,
+    278678 /* Break the bank */,
 
     // TODO: Re-enable it when support for protecting cards is added
     // 18162,  /* A Flash of White */
