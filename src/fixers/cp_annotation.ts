@@ -48,15 +48,21 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                     const delta = calculatedPoints + extractedPoints - oldPoints;
 
                     if (oldPoints !== calculatedPoints + extractedPoints) {
-                        let approx = "";
-                        if (this.approximatedQualities.has(quality.qualityId)) {
-                            approx = "approximately ";
-                            this.approximatedQualities.delete(quality.qualityId);
-                        }
-
-                        const annotation = `(${approx}${delta > 0 ? "+" : "-"}${Math.abs(delta)} CP)`;
-                        message.message = `${message.message} <em>${annotation}</em>`;
                         this.qualityChangePoints.set(message.possession.id, calculatedPoints + extractedPoints);
+
+                        // Displaying changes when they are already noted is superfluous
+                        if (
+                            !message.message.startsWith("You've gained") &&
+                            !message.message.startsWith("You now have")
+                        ) {
+                            let approx = "";
+                            if (this.approximatedQualities.has(quality.qualityId)) {
+                                approx = "approximately ";
+                                this.approximatedQualities.delete(quality.qualityId);
+                            }
+                            const annotation = `(${approx}${delta > 0 ? "+" : "-"}${Math.abs(delta)} CP)`;
+                            message.message = `${message.message} <em>${annotation}</em>`;
+                        }
                     }
                 }
                 if (message.type === "QualityExplicitlySetMessage") {
