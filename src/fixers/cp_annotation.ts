@@ -4,13 +4,12 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {GameState, GameStateController, Quality} from "../game_state";
 import {sumArithmeticSequence} from "../utils";
-import {debug} from "../logging";
 import {PYRAMIDAL_QUALITY_IDS} from "../datasets/qualities";
 
 const CHANGE_POINTS_REGEX = /(\d+) change points*, (\d+) more needed to reach level (\d+)/;
 
 function calculateChangePoints(quality: Quality): number {
-    if (PYRAMIDAL_QUALITY_IDS.includes(quality.qualityId)) {
+    if (PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
         return sumArithmeticSequence(quality.level);
     } else {
         return quality.effectiveLevel;
@@ -80,11 +79,11 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
             for (const quality of state.enumerateQualities()) {
                 let calculatedPoints = calculateChangePoints(quality);
 
-                if (quality.progressAsPercentage === -1 && PYRAMIDAL_QUALITY_IDS.includes(quality.qualityId)) {
+                if (quality.progressAsPercentage === -1 && PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
                     // Sadly /myself response does not provide any information about the progress to the next level,
                     // so we will have to explicitly inform user of the fact that we approximate initial value.
                     this.approximatedQualities.add(quality.qualityId);
-                } else if (quality.progressAsPercentage > 0 && PYRAMIDAL_QUALITY_IDS.includes(quality.qualityId)) {
+                } else if (quality.progressAsPercentage > 0 && PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
                     calculatedPoints += Math.round((quality.level + 1) * (quality.progressAsPercentage / 100));
                 }
 

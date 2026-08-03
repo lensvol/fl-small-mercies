@@ -32,17 +32,14 @@ def main():
         quality_id = record["printouts"]["ID"][0]
         results[quality_id] = name
 
-    print("""
-// This information was compiled using data submitted to the "Fallen London Wiki"
+    print("""// This information was compiled using data submitted to the "Fallen London Wiki"
 // (https://fallenlondon.wiki) by its contributors and is used here under
 // CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
-
 """)
-    print("const PYRAMIDAL_QUALITY_IDS: number[] = [")
+    print("const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([")
     for quality_id, name in sorted(results.items(), key=lambda it: it[0]):
-        print(f"    // {name}")
-        print(f"    {quality_id},")
-    print("];")
+        print(f"    {quality_id}, // {name}")
+    print("]);")
     print()
     print("export {PYRAMIDAL_QUALITY_IDS};")
 
