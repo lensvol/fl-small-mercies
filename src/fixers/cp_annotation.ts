@@ -39,7 +39,6 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                     const matches = message.tooltip?.match(CHANGE_POINTS_REGEX);
                     if (matches) {
                         const [_, currentCP, _pointsNeeded, _nextLevel] = matches;
-                        debug(`Extracted following values from '${message.message}:`, matches);
                         extractedPoints = Number.parseInt(currentCP);
                     }
 
@@ -84,7 +83,6 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                 }
 
                 this.qualityChangePoints.set(quality.qualityId, calculatedPoints);
-                debug(`CP points for ${quality.name}: ${calculatedPoints}`);
             }
         });
     }
