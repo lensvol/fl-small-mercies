@@ -19,11 +19,18 @@ function calculateChangePoints(quality: Quality): number {
 export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
     private qualityChangePoints: Map<number, number> = new Map();
     private approximatedQualities: Set<number> = new Set();
+    private annotateChangePoints: boolean = false;
 
-    applySettings(settings: SettingsObject): void {}
+    applySettings(settings: SettingsObject): void {
+        this.annotateChangePoints = settings.annotate_cp_changes as boolean;
+    }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
+            if (!this.annotateChangePoints) {
+                return;
+            }
+
             for (const message of response.messages || []) {
                 if (message.type === "PyramidQualityChangeMessage" || message.type === "StandardQualityChangeMessage") {
                     if (message.possession.nature === "Thing") {

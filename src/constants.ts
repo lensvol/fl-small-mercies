@@ -153,6 +153,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show sidebar abilities in a compact way.",
                 default: false,
             },
+            annotate_cp_changes: {
+                description: "Annotate branch results with change point amounts.",
+                default: true,
+            },
         },
     },
     {
