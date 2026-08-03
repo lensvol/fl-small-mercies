@@ -80,7 +80,7 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
             for (const quality of state.enumerateQualities()) {
                 let calculatedPoints = calculateChangePoints(quality);
 
-                if (quality.progressAsPercentage === -1) {
+                if (quality.progressAsPercentage === -1 && PYRAMIDAL_QUALITY_IDS.includes(quality.qualityId)) {
                     // Sadly /myself response does not provide any information about the progress to the next level,
                     // so we will have to explicitly inform user of the fact that we approximate initial value.
                     this.approximatedQualities.add(quality.qualityId);
