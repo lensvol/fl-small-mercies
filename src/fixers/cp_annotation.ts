@@ -51,7 +51,7 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                     const cap = BASE_QUALITIES_IDS.includes(quality.qualityId) ? 70 : 50;
                     const calculatedPoints = calculateChangePoints(quality.level, cap);
                     let oldPoints = this.qualityChangePoints.get(quality.qualityId) || 0;
-                    if (!oldPoints && message.type === "PyramidQualityChangeMessage") {
+                    if (!oldPoints) {
                         oldPoints =
                             calculateChangePoints(message.progressBar.leftScore, cap) +
                             Math.round(
