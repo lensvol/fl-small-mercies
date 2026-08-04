@@ -65,10 +65,11 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                     if (oldPoints !== calculatedPoints + extractedPoints) {
                         this.qualityChangePoints.set(message.possession.id, calculatedPoints + extractedPoints);
 
-                        // Displaying changes when they are already noted is superfluous
                         if (
-                            !message.message.startsWith("You've gained") &&
-                            !message.message.startsWith("You now have")
+                            // Displaying changes when they are already noted is superfluous
+                            message.message.startsWith("You've gained a new quality") ||
+                            (!message.message.startsWith("You've gained") &&
+                                !message.message.startsWith("You now have"))
                         ) {
                             let approx = "";
                             if (this.approximatedQualities.has(quality.qualityId)) {
