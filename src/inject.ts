@@ -1,5 +1,5 @@
 import {FLSettingsFrontend} from "./settings";
-import {EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants";
+import {EXTENSION_PREFIX, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants";
 import AVAILABLE_FIXERS from "./fixers/index";
 import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base";
 import {GameStateController} from "./game_state";
@@ -45,7 +45,7 @@ window.addEventListener("message", (event) => {
 debug(`Requesting stashed responses from the early stage sniffer...`);
 window.dispatchEvent(new CustomEvent("FL_SM_divulgeStash"));
 
-const settingsFrontend = new FLSettingsFrontend(EXTENSION_ID, EXTENSION_NAME, SETTINGS_SCHEMA);
+const settingsFrontend = new FLSettingsFrontend(EXTENSION_PREFIX, EXTENSION_NAME, SETTINGS_SCHEMA);
 settingsFrontend.installSettingsPage();
 settingsFrontend.registerUpdateHandler((settings) => {
     fixers.map((fixer) => {
