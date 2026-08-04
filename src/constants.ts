@@ -2,10 +2,11 @@ import {SettingsSchema} from "./settings";
 import {ICustomSnippet} from "./interfaces";
 
 const EXTENSION_NAME = "FL Small Mercies";
-const EXTENSION_ID = "FL_SM";
+const EXTENSION_PREFIX = "FL_SM";
 
-const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_ID}_saveSettings`;
-const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_ID}_currentSettings`;
+const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_PREFIX}_saveSettings`;
+const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_PREFIX}_currentSettings`;
+const MSG_TYPE_GET_VERSION = `${EXTENSION_PREFIX}_getVersion`;
 
 const SETTINGS_SCHEMA: SettingsSchema = [
     {
@@ -156,6 +157,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
         settings: {
             ship_saver: {
                 description: "Disable storylet that lets you sell your Ship.",
+                default: true,
+            },
+            piggy_bank_saver: {
+                description: "Disable storylet that lets you break your Porcine Investment Vessel.",
                 default: true,
             },
             remove_plan_buttons: {
@@ -338,9 +343,10 @@ const COMMUNITY_SNIPPETS: ICustomSnippet[] = [
 
 export {
     EXTENSION_NAME,
-    EXTENSION_ID,
+    EXTENSION_PREFIX,
     MSG_TYPE_SAVE_SETTINGS,
     MSG_TYPE_CURRENT_SETTINGS,
+    MSG_TYPE_GET_VERSION,
     SETTINGS_SCHEMA,
     COMMUNITY_SNIPPETS,
 };

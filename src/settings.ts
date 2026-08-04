@@ -1,7 +1,6 @@
-import { debug, error, log } from "./logging";
-import {sendToServiceWorker} from "./comms";
-import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_SAVE_SETTINGS} from "./constants";
-import Tab = chrome.tabs.Tab;
+import {debug, error, log} from "./logging";
+import {getFallenLondonTabs, sendMessageToTabs, sendToServiceWorker} from "./comms";
+import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_GET_VERSION, MSG_TYPE_SAVE_SETTINGS} from "./constants";
 
 type MultipleChoices = [string, string][];
 type ToggleSetting = {description: string; default: boolean};
@@ -34,6 +33,8 @@ class FLSettingsFrontend {
 
     private updateHandler?: (settings: SettingsObject) => void;
 
+    private readonly extensionVersionSpan = document.createElement("span");
+
     constructor(extensionId: string, name: string, schema: SettingsSchema) {
         this.extensionId = extensionId;
         this.name = name;
@@ -47,9 +48,13 @@ class FLSettingsFrontend {
                 debug("Update settings with the new data...");
                 this.updateState(event.data.settings);
             }
+            if (event.data.action === MSG_TYPE_GET_VERSION) {
+                this.extensionVersionSpan.appendChild(document.createTextNode(` (${event.data.version})`));
+            }
         });
 
         sendToServiceWorker(MSG_TYPE_CURRENT_SETTINGS, {});
+        sendToServiceWorker(MSG_TYPE_GET_VERSION, {});
     }
 
     private attachPanelInjector(node: Node) {
@@ -176,10 +181,11 @@ class FLSettingsFrontend {
         const containerDiv = document.createElement("div");
         containerDiv.setAttribute("custom-settings", this.extensionId);
 
-        const heading = document.createElement("h2");
-        heading.classList.add("heading", "heading--2");
-        heading.textContent = this.name;
+        const heading = document.createElement("h1");
+        heading.classList.add("heading", "heading--1");
         heading.setAttribute("id", "extension-panel");
+        heading.appendChild(document.createTextNode(this.name));
+        heading.appendChild(this.extensionVersionSpan);
 
         const listContainer = document.createElement("ul");
         // FIXME: Use proper CSS classes for that
@@ -253,13 +259,11 @@ class FLSettingsFrontend {
                             continue;
                         }
                     } catch (e) {
-                        error(`Cannot access 'nodeName' when accessing settings: {e}`)
+                        error(`Cannot access 'nodeName' when accessing settings: {e}`);
                         continue;
                     }
 
-                    const accountSections = (node as HTMLElement).querySelector(
-                        "ul[aria-label='Account sections']"
-                    );
+                    const accountSections = (node as HTMLElement).querySelector("ul[aria-label='Account sections']");
                     if (accountSections) {
                         const existingExtensionsBtn = accountSections.querySelector("button[id='tab--Extensions']");
                         if (!existingExtensionsBtn) {
@@ -341,27 +345,6 @@ class FLSettingsBackend {
         this.schema = schema;
     }
 
-    private getFallenLondonTabs(): Promise<Array<Tab>> {
-        return new Promise((resolve, _) => {
-            chrome.windows.getCurrent((w) => {
-                chrome.tabs.query({windowId: w.id, url: "*://*.fallenlondon.com/*"}, function (tabs) {
-                    resolve(tabs);
-                });
-            });
-        });
-    }
-
-    private sendStateToTabs(tabs: Array<Tab>, state: SettingsObject) {
-        console.debug("Sending state to tabs", state);
-        tabs.map((t) => {
-            if (t.id == null) {
-                return;
-            }
-
-            chrome.tabs.sendMessage(t.id, {action: MSG_TYPE_CURRENT_SETTINGS, settings: state});
-        });
-    }
-
     isMessageRelevant(message: {[key: string]: boolean | string}) {
         return message.action == MSG_TYPE_CURRENT_SETTINGS || message.action == MSG_TYPE_SAVE_SETTINGS;
     }
@@ -374,12 +357,12 @@ class FLSettingsBackend {
                 },
                 () => {
                     // Send out new state to the FL tabs
-                    this.getFallenLondonTabs().then((tabs) => {
+                    getFallenLondonTabs().then((tabs) => {
                         if (message.settings == null) {
                             return;
                         }
 
-                        this.sendStateToTabs(tabs, message.settings);
+                        sendMessageToTabs(tabs, MSG_TYPE_CURRENT_SETTINGS, {settings: message.settings});
                     });
 
                     log("Saved settings to local storage.");
@@ -391,11 +374,15 @@ class FLSettingsBackend {
             chrome.storage.local.get(["settings"], (result) => {
                 if (chrome.runtime.lastError) {
                     debug("Could not load settings from DB, falling back to defaults.");
-                    this.getFallenLondonTabs().then((tabs) =>
-                        this.sendStateToTabs(tabs, createDefaultSettings(this.schema))
+                    getFallenLondonTabs().then((tabs) =>
+                        sendMessageToTabs(tabs, MSG_TYPE_CURRENT_SETTINGS, {
+                            settings: createDefaultSettings(this.schema),
+                        })
                     );
                 } else {
-                    this.getFallenLondonTabs().then((tabs) => this.sendStateToTabs(tabs, result.settings));
+                    getFallenLondonTabs().then((tabs) =>
+                        sendMessageToTabs(tabs, MSG_TYPE_CURRENT_SETTINGS, {settings: result.settings})
+                    );
                 }
             });
         }
