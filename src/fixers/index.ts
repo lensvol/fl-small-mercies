@@ -3,7 +3,7 @@ import {ThousandSeparatorFixer} from "./thousands_separator";
 import {AutoScrollFixer} from "./auto_scroll";
 import {MaxedOutScrollbarsFixer} from "./abilities_scrollbars";
 import {CurrencyIconsFixer} from "./currency_icons";
-import {ShipSaverFixer} from "./ship_saver";
+import {BranchProtectorFixer} from "./branch_saver";
 import {RightSidebarFixer} from "./right_sidebar";
 import {PlanButtonsFixer} from "./plan_remover";
 import {ThingSortFixer} from "./things_sorter";
@@ -37,7 +37,7 @@ export default [
     ThousandSeparatorFixer,
     MaxedOutScrollbarsFixer,
     CurrencyIconsFixer,
-    ShipSaverFixer,
+    BranchProtectorFixer,
     RightSidebarFixer,
     PlanButtonsFixer,
     ProfileLinkFixer,
