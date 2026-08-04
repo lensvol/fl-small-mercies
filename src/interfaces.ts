@@ -272,6 +272,8 @@ export interface IQualityRequirement {
     qualityId: number;
     tooltip: string;
     allowedOn: string;
+    availableAtMessage?: string;
+    status: "Locked" | "Unlocked";
     id: number;
 }
 
