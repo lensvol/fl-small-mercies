@@ -7,13 +7,20 @@ import {sumArithmeticSequence} from "../utils";
 import {PYRAMIDAL_QUALITY_IDS} from "../datasets/qualities";
 
 const CHANGE_POINTS_REGEX = /(\d+) change points*, (\d+) more needed to reach level (\d+)/;
+// TODO: Move it to qualities.ts
+const BASE_QUALITIES_IDS = [
+    209, // Watchful
+    210, // Shadowy
+    211, // Dangerous
+    212, // Persuasive
+];
 
-function calculateChangePoints(quality: Quality): number {
-    if (PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
-        return sumArithmeticSequence(quality.level);
-    } else {
-        return quality.effectiveLevel;
+function calculateChangePoints(level: number, cap: number = 50): number {
+    if (level > cap) {
+        return sumArithmeticSequence(cap) + (level - cap) * cap;
     }
+
+    return sumArithmeticSequence(level);
 }
 
 export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
@@ -32,15 +39,7 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
             }
 
             for (const message of response.messages || []) {
-                if (message.type === "PyramidQualityChangeMessage" || message.type === "StandardQualityChangeMessage") {
-                    if (message.possession.nature === "Thing") {
-                        continue;
-                    }
-
-                    if (message.possession.allowedOn === "World") {
-                        continue;
-                    }
-
+                if (message.type === "PyramidQualityChangeMessage") {
                     let extractedPoints = 0;
                     const matches = message.tooltip?.match(CHANGE_POINTS_REGEX);
                     if (matches) {
@@ -49,8 +48,18 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                     }
 
                     const quality = Quality.fromJson(message.possession);
-                    const calculatedPoints = calculateChangePoints(quality);
-                    const oldPoints = this.qualityChangePoints.get(quality.qualityId) || 0;
+                    const cap = BASE_QUALITIES_IDS.includes(quality.qualityId) ? 70 : 50;
+                    const calculatedPoints = calculateChangePoints(quality.level, cap);
+                    let oldPoints = this.qualityChangePoints.get(quality.qualityId) || 0;
+                    if (!oldPoints && message.type === "PyramidQualityChangeMessage") {
+                        oldPoints =
+                            calculateChangePoints(message.progressBar.leftScore, cap) +
+                            Math.round(
+                                (quality.level > cap ? cap : quality.level + 1) *
+                                    (message.progressBar.startPercentage / 100)
+                            );
+                    }
+
                     const delta = calculatedPoints + extractedPoints - oldPoints;
 
                     if (oldPoints !== calculatedPoints + extractedPoints) {
@@ -71,8 +80,12 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
                         }
                     }
                 }
-                if (message.type === "QualityExplicitlySetMessage") {
-                    const calculatedPoints = calculateChangePoints(Quality.fromJson(message.possession));
+                if (
+                    message.type === "QualityExplicitlySetMessage" &&
+                    PYRAMIDAL_QUALITY_IDS.has(message.possession.id)
+                ) {
+                    const cap = BASE_QUALITIES_IDS.includes(message.possession.id) ? 70 : 50;
+                    const calculatedPoints = calculateChangePoints(message.possession.level, cap);
                     this.qualityChangePoints.set(message.possession.id, calculatedPoints);
                 }
             }
@@ -83,15 +96,31 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
 
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((state: GameState) => {
-            for (const quality of state.enumerateQualities()) {
-                let calculatedPoints = calculateChangePoints(quality);
+            if (!this.annotateChangePoints) {
+                return;
+            }
 
-                if (quality.progressAsPercentage === -1 && PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
+            for (const quality of state.enumerateQualities()) {
+                // If we know of that value already, then we also probably now it with more precision
+                if (this.qualityChangePoints.has(quality.qualityId)) {
+                    continue;
+                }
+
+                if (!PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
+                    continue;
+                }
+
+                const cap = BASE_QUALITIES_IDS.includes(quality.qualityId) ? 70 : 50;
+                let calculatedPoints = calculateChangePoints(quality.level, cap);
+
+                if (quality.progressAsPercentage === -1) {
                     // Sadly /myself response does not provide any information about the progress to the next level,
                     // so we will have to explicitly inform user of the fact that we approximate initial value.
                     this.approximatedQualities.add(quality.qualityId);
-                } else if (quality.progressAsPercentage > 0 && PYRAMIDAL_QUALITY_IDS.has(quality.qualityId)) {
-                    calculatedPoints += Math.round((quality.level + 1) * (quality.progressAsPercentage / 100));
+                } else if (quality.progressAsPercentage > 0) {
+                    calculatedPoints += Math.round(
+                        (quality.level > cap ? cap : quality.level + 1) * (quality.progressAsPercentage / 100)
+                    );
                 }
 
                 this.qualityChangePoints.set(quality.qualityId, calculatedPoints);
