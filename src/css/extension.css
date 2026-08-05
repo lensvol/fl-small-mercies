@@ -129,3 +129,8 @@
 .shield-value::after {
     content: counter(num);
 }
+
+/* Lifted from the "Fallen London Companion" extension */
+.worth-indicator-golden {
+    color: rgb(201, 178, 94);
+}

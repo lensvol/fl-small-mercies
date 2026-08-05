@@ -154,6 +154,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Show sidebar abilities in a compact way.",
                 default: false,
             },
+            add_worth_tooltips: {
+                description: "Add item's worth in Echoes to its tooltip.",
+                default: false,
+            },
         },
     },
     {
