@@ -239,6 +239,10 @@ export interface IBeginStoryletRequest {
     eventId: number;
 }
 
+export interface IUseQualityRequest {
+    qualityId: number;
+}
+
 export interface ISnippet {
     id: number;
     title: string;
