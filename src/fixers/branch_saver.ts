@@ -1,7 +1,7 @@
 import {INetworkAware} from "./base";
 import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
-import {IBeginStoryletRequest, IQualityRequirement} from "../interfaces";
+import {IBeginStoryletRequest, IChooseBranchResponse, IQualityRequirement} from "../interfaces";
 
 const PUT_TO_ZEE_STORYLET_ID = 335704;
 const PIGGY_BANK_STORYLET_ID = 380520;
@@ -30,31 +30,8 @@ export class BranchProtectorFixer implements INetworkAware {
 
     // FIXME: De-duplicate using single handler and discriminate by type.
     linkNetworkTools(interceptor: FLApiInterceptor): void {
-        interceptor.onResponseReceived("/api/storylet/begin", (request, response) => {
-            if (!this.disableShipSaleOption) {
-                return;
-            }
-
-            const beginRequest = request as unknown as IBeginStoryletRequest;
-            if (beginRequest.eventId !== PUT_TO_ZEE_STORYLET_ID) {
-                return;
-            }
-
-            for (const branch of response.storylet.childBranches) {
-                if (branch.name === "Get rid of your current ship") {
-                    branch.qualityLocked = true;
-                    branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
-                    break;
-                }
-            }
-        });
-
-        interceptor.onResponseReceived("/api/storylet", (_request, response) => {
-            if (!this.disableShipSaleOption && !this.disableBreakBankOption) {
-                return;
-            }
-
-            if (response.phase !== "In" && response.phase !== "InItemUse") {
+        const branchLocker = (_request: any, response: IChooseBranchResponse) => {
+            if (!this.disableShipSaleOption || !this.disableShipSaleOption || !response.storylet) {
                 return;
             }
 
@@ -72,6 +49,9 @@ export class BranchProtectorFixer implements INetworkAware {
                     branch.qualityRequirements.push(this.SMALL_MERCIES_LOCKED_QUALITY);
                 }
             }
-        });
+        };
+
+        interceptor.onResponseReceived("/api/storylet/begin", branchLocker);
+        interceptor.onResponseReceived("/api/storylet", branchLocker);
     }
 }
