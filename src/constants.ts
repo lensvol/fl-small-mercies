@@ -158,6 +158,14 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Add item's worth in Echoes to its tooltip.",
                 default: false,
             },
+            branch_results_worth: {
+                description: "Show detailed breakdown of net worth changes in branch results.",
+                default: false,
+            },
+            branch_net_worth: {
+                description: "Display total net worth change as a result of branch choice.",
+                default: false,
+            },
         },
     },
     {

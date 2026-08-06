@@ -7,11 +7,21 @@ import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)\)./;
 
 export class ResultsWorthFixer implements INetworkAware {
-    applySettings(settings: SettingsObject): void {}
+    private showTotalNetWorth: boolean = false;
+    private showPerMessageBreakdown: boolean = false;
+
+    applySettings(settings: SettingsObject): void {
+        this.showTotalNetWorth = settings.branch_net_worth as boolean;
+        this.showPerMessageBreakdown = settings.branch_results_worth as boolean;
+    }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
             let totalWorthDelta = 0;
+
+            if (!this.showTotalNetWorth && !this.showPerMessageBreakdown) {
+                return;
+            }
 
             // TODO: Take direct currency expenses into account
             for (const message of response.messages || []) {
@@ -39,14 +49,17 @@ export class ResultsWorthFixer implements INetworkAware {
                     const delta = Number(matches[2]);
                     const sign = message.changeType === "Decreased" ? "+" : "-";
                     const worth = delta * price;
-                    const presentation = sign === "+" ? "worth-increased" : "worth-decreased";
-                    message.message += `<em class="${presentation}">(${sign}${worth.toFixed(2)} Echoes)</em>`;
+
+                    if (this.showPerMessageBreakdown) {
+                        const presentation = sign === "+" ? "worth-increased" : "worth-decreased";
+                        message.message += `<em class="${presentation}">(${sign}${worth.toFixed(2)} Echoes)</em>`;
+                    }
 
                     totalWorthDelta += worth * (sign === "+" ? 1 : -1);
                 }
             }
 
-            if (totalWorthDelta !== 0) {
+            if (this.showTotalNetWorth && totalWorthDelta !== 0) {
                 const presentation = totalWorthDelta > 0 ? "worth-increased" : "worth-decreased";
                 const plus = totalWorthDelta > 0 ? "+" : "";
                 const formattedWorth = totalWorthDelta.toFixed(2);
@@ -59,6 +72,8 @@ export class ResultsWorthFixer implements INetworkAware {
                     tooltip: "For a lack of a penny.",
                 });
             }
+
+            return response;
         });
     }
 }
