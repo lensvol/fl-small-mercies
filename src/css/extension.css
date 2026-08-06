@@ -137,12 +137,12 @@
 
 .worth-decreased {
     color: rgb(176, 48, 48);
-    font-size: 0.9em;
+    font-size: 1em;
     margin-left: 6px;
 }
 
 .worth-increased {
     color: rgb(74, 124, 89);
-    font-size: 0.9em;
+    font-size: 1em;
     margin-left: 6px;
 }

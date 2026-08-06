@@ -13,6 +13,7 @@ export class ResultsWorthFixer implements INetworkAware {
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
             let totalWorthDelta = 0;
 
+            // TODO: Take direct currency expenses into account
             for (const message of response.messages || []) {
                 if (message.type !== "StandardQualityChangeMessage") {
                     continue;
@@ -50,8 +51,8 @@ export class ResultsWorthFixer implements INetworkAware {
 
                 response.messages.push({
                     priority: 2,
-                    image: "banknotessmall",
-                    message: `<em>Total wealth change: <span class="${presentation}" style="font-size: 1em">${plus}${formattedWorth} Echoes</span></em>`,
+                    image: "banknotes",
+                    message: `<em>Net worth change: <span class="${presentation}" style="font-size: 1em"><b>${plus}${formattedWorth}</b> Echoes</span></em>`,
                     type: "InfoMessage",
                     tooltip: "For a lack of a penny.",
                 });
