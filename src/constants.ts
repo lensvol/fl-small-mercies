@@ -252,6 +252,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Apply changes to shield values based on changed equipment.",
                 default: true,
             },
+            colorize_worth_annotations: {
+                description: "Colorize annotations about net worth in branch results.",
+                default: true,
+            },
         },
     },
 ];

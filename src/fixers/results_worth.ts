@@ -9,10 +9,12 @@ const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\
 export class ResultsWorthFixer implements INetworkAware {
     private showTotalNetWorth: boolean = false;
     private showPerMessageBreakdown: boolean = false;
+    private colorizeAnnotations: boolean = true;
 
     applySettings(settings: SettingsObject): void {
         this.showTotalNetWorth = settings.branch_net_worth as boolean;
         this.showPerMessageBreakdown = settings.branch_results_worth as boolean;
+        this.colorizeAnnotations = settings.colorize_worth_annotations as boolean;
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
@@ -51,7 +53,11 @@ export class ResultsWorthFixer implements INetworkAware {
                     const worth = delta * price;
 
                     if (this.showPerMessageBreakdown) {
-                        const presentation = sign === "+" ? "worth-increased" : "worth-decreased";
+                        const cssClasses = ["worth-branch-annotation"];
+                        if (this.colorizeAnnotations) {
+                            cssClasses.push(sign === "+" ? "worth-annotation-increase" : "worth-annotation-decrease");
+                        }
+                        const presentation = cssClasses.join(" ");
                         message.message += `<em class="${presentation}">(${sign}${worth.toFixed(2)} Echoes)</em>`;
                     }
 
@@ -60,14 +66,18 @@ export class ResultsWorthFixer implements INetworkAware {
             }
 
             if (this.showTotalNetWorth && totalWorthDelta !== 0) {
-                const presentation = totalWorthDelta > 0 ? "worth-increased" : "worth-decreased";
+                const cssClasses = ["worth-branch-annotation"];
+                if (this.colorizeAnnotations) {
+                    cssClasses.push(totalWorthDelta > 0 ? "worth-annotation-increase" : "worth-annotation-decrease");
+                }
+                const presentation = cssClasses.join(" ");
                 const plus = totalWorthDelta > 0 ? "+" : "";
                 const formattedWorth = totalWorthDelta.toFixed(2);
 
                 response.messages.push({
                     priority: 2,
                     image: "banknotes",
-                    message: `<em>Net worth change: <span class="${presentation}" style="font-size: 1em"><b>${plus}${formattedWorth}</b> Echoes</span></em>`,
+                    message: `<em>Net worth change: <span class="${presentation}"><b>${plus}${formattedWorth}</b> Echoes</span></em>`,
                     type: "InfoMessage",
                     tooltip: "For a lack of a penny.",
                 });
