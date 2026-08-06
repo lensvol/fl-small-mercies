@@ -21,7 +21,7 @@ export class ResultsWorthFixer implements INetworkAware {
 
                 const item = message.possession;
 
-                if (item.nature !== "Thing") {
+                if (item.nature !== "Thing" && item.category !== "Currency") {
                     continue;
                 }
 
@@ -29,6 +29,8 @@ export class ResultsWorthFixer implements INetworkAware {
                 const worth = item.effectiveLevel * price;
 
                 if (worth === 0) {
+                    // Apparently we do not know worth of that item, might as well silently skip it
+                    // TODO: Maybe display it as (+ ??? Echoes)?
                     continue;
                 }
 
