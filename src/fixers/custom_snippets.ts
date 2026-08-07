@@ -2,7 +2,7 @@ import {IMutationAware, INetworkAware} from "./base";
 import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IInfobarResponse, ISnippet} from "../interfaces";
-import {COMMUNITY_SNIPPETS} from "../constants";
+import {COMMUNITY_SNIPPETS} from "../datasets/snippets";
 import {getSingletonByClassName} from "../utils";
 
 export class CustomSnippetsFixer implements INetworkAware, IMutationAware {
