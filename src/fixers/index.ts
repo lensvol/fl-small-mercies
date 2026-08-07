@@ -1,4 +1,3 @@
-import {JournalUiFixer} from "./journal_ui";
 import {ThousandSeparatorFixer} from "./thousands_separator";
 import {AutoScrollFixer} from "./auto_scroll";
 import {MaxedOutScrollbarsFixer} from "./abilities_scrollbars";
@@ -35,7 +34,6 @@ import {ResultsWorthFixer} from "./results_worth";
 
 export default [
     AutoScrollFixer,
-    JournalUiFixer,
     ThousandSeparatorFixer,
     MaxedOutScrollbarsFixer,
     CurrencyIconsFixer,
