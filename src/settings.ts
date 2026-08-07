@@ -1,6 +1,6 @@
 import {debug, error, log} from "./logging";
 import {getFallenLondonTabs, sendMessageToTabs, sendToServiceWorker} from "./comms";
-import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_GET_VERSION, MSG_TYPE_SAVE_SETTINGS} from "./constants";
+import {MSG_TYPE_CURRENT_SETTINGS, MSG_TYPE_GET_VERSION, MSG_TYPE_SAVE_SETTINGS, SETTINGS_SCHEMA} from "./constants";
 
 type MultipleChoices = [string, string][];
 type ToggleSetting = {description: string; default: boolean};
@@ -294,6 +294,15 @@ class FLSettingsFrontend {
 
     private updateState(newState: SettingsObject) {
         this.settings = newState || this.settings;
+
+        for (const group of SETTINGS_SCHEMA) {
+            for (const name in group.settings) {
+                if (!(name in this.settings)) {
+                    debug(`Insert new setting '${name}' with default value ${group.settings[name].default}`);
+                    this.settings[name] = group.settings[name].default;
+                }
+            }
+        }
 
         if (this.updateHandler) {
             this.updateHandler(this.settings);
