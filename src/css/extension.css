@@ -134,3 +134,15 @@
 .worth-indicator-golden {
     color: rgb(201, 178, 94);
 }
+
+.worth-branch-annotation {
+    margin-left: 6px;
+}
+
+.worth-annotation-decrease {
+    color: rgb(176, 48, 48);
+}
+
+.worth-annotation-increase {
+    color: rgb(74, 124, 89);
+}
