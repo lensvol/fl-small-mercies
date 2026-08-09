@@ -140,6 +140,7 @@ export class Quality {
     nature: string;
     enhancements: Enhancement[];
     sidebarSettingId: number | null;
+    progressAsPercentage: number;
 
     constructor(
         qualityId: number,
@@ -155,7 +156,8 @@ export class Quality {
         nature: string,
         enhancements: Enhancement[] = [],
         bonusOrPenaltyDisplay: string = "",
-        sidebarSettingId: number | null = null
+        sidebarSettingId: number | null = null,
+        progressAsPercentage: number = -1
     ) {
         this.qualityId = qualityId;
         this.category = category;
@@ -171,6 +173,27 @@ export class Quality {
         this.enhancements = enhancements;
         this.bonusOrPenaltyDisplay = bonusOrPenaltyDisplay;
         this.sidebarSettingId = sidebarSettingId;
+        this.progressAsPercentage = progressAsPercentage;
+    }
+
+    static fromJson(rawQuality: IQuality): Quality {
+        return new Quality(
+            rawQuality.id,
+            rawQuality.category,
+            rawQuality.name,
+            rawQuality.description,
+            rawQuality.availableAt,
+            rawQuality.effectiveLevel,
+            rawQuality.level,
+            rawQuality.levelDescription,
+            rawQuality.image,
+            rawQuality.cap || 0,
+            rawQuality.nature,
+            rawQuality.enhancements,
+            rawQuality.bonusOrPenaltyDisplay || "",
+            rawQuality.sidebarSettingId,
+            rawQuality.progressAsPercentage || -1
+        );
     }
 }
 
@@ -350,13 +373,14 @@ export class GameStateController {
 
         if (existingQuality && existingQuality.level != rawQuality.effectiveLevel) {
             // We save previous value here so that we can update quality value in-place and still pass it on.
-            const previousLevel = existingQuality.level;
+            // const previousLevel = existingQuality.level;
+            const previousState = {...existingQuality};
             existingQuality.effectiveLevel = rawQuality.effectiveLevel;
             existingQuality.level = rawQuality.level;
 
-            this.triggerListeners(StateChangeTypes.QualityChanged, existingQuality, previousLevel, rawQuality.level);
+            this.triggerListeners(StateChangeTypes.QualityChanged, previousState, existingQuality);
 
-            return [existingQuality, previousLevel];
+            return [existingQuality, previousState.level];
         } else {
             const quality = new Quality(
                 rawQuality.id,
@@ -372,7 +396,8 @@ export class GameStateController {
                 rawQuality.nature,
                 rawQuality.enhancements,
                 rawQuality.bonusOrPenaltyDisplay || "",
-                rawQuality.sidebarSettingId
+                rawQuality.sidebarSettingId,
+                rawQuality.progressAsPercentage
             );
             this.state.setQuality(rawQuality.category, rawQuality.name, quality);
             return [quality, 0];
@@ -480,12 +505,7 @@ export class GameStateController {
                 message.type === "PyramidQualityChangeMessage" ||
                 message.type === "QualityExplicitlySetMessage"
             ) {
-                const thing = message.possession;
-                const [quality, previousLevel] = this.upsertQuality(thing as IQuality);
-
-                if (thing.level !== previousLevel) {
-                    this.triggerListeners(StateChangeTypes.QualityChanged, quality, previousLevel, thing.level);
-                }
+                this.upsertQuality(message.possession as IQuality);
             }
 
             if (message.type === "AreaChangeMessage") {
@@ -707,9 +727,7 @@ export class GameStateController {
         this.changeListeners[StateChangeTypes.UserDataLoaded].push(handler);
     }
 
-    public onQualityChanged(
-        handler: (g: GameState, quality: Quality, previousLevel: number, currentLevel: number) => void
-    ) {
+    public onQualityChanged(handler: (g: GameState, previous: Quality, current: Quality) => void) {
         this.changeListeners[StateChangeTypes.QualityChanged].push(handler);
     }
 

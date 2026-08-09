@@ -3,7 +3,7 @@ import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state";
 import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
 import {getSingletonByClassName} from "../utils";
-import { error } from "../logging";
+import {error} from "../logging";
 
 const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband"];
 
@@ -248,10 +248,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             this.currentState = state;
         });
 
-        controller.onQualityChanged((_state: GameState, quality, _previous, current) => {
+        controller.onQualityChanged((_state: GameState, _previous, quality) => {
             const display = this.currencyToDisplay.get(quality.name);
             if (display) {
-                display.setQuantity(current);
+                display.setQuantity(quality.level);
             }
         });
 
@@ -308,7 +308,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                     continue;
                 }
             } catch (e) {
-                error(`Failed to access 'nodeName' when modifying currencies: {e}`)
+                error(`Failed to access 'nodeName' when modifying currencies: {e}`);
                 continue;
             }
 

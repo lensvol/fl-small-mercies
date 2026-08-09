@@ -27,7 +27,7 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
     }
 
     linkState(state: GameStateController): void {
-        state.onQualityChanged((state, quality, _previous, current) => {
+        state.onQualityChanged((state, _previous, quality) => {
             if (!this.trackShopTransactions) {
                 return;
             }
@@ -37,12 +37,12 @@ export class ShopTransactionFixer implements IStateAware, IMutationAware {
 
             if (quality.qualityId === PENNY_QUALITY_ID && this.echoesDisplay) {
                 actualDisplay = this.echoesDisplay;
-                quantity = current / 100;
+                quantity = quality.level / 100;
             }
 
             if (quality.qualityId === SCRIP_QUALITY_ID && this.scripDisplay) {
                 actualDisplay = this.scripDisplay;
-                quantity = current;
+                quantity = quality.level;
             }
 
             if (!actualDisplay) {

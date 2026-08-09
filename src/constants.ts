@@ -166,6 +166,10 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Display total net worth change as a result of branch choice.",
                 default: false,
             },
+            annotate_cp_changes: {
+                description: "Annotate branch results with change point amounts.",
+                default: true,
+            },
         },
     },
     {

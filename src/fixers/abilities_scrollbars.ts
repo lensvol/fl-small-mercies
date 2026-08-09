@@ -85,7 +85,7 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
             }
         });
 
-        state.onQualityChanged((_state, quality, _before, _after) => {
+        state.onQualityChanged((_state, _previous, quality) => {
             if (quality.level < quality.cap) {
                 this.maxedOutQualities.delete(quality.name);
             } else {

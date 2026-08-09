@@ -31,6 +31,7 @@ import {ContactsSnippetFixer} from "./remove_contacts_snippet";
 import {SidebarShieldsFixer} from "./sidebar_shields";
 import {WorthDisplayFixer} from "./worth_display";
 import {ResultsWorthFixer} from "./results_worth";
+import {ChangePointsAnnotationFixer} from "./cp_annotation";
 
 export default [
     AutoScrollFixer,
@@ -66,4 +67,5 @@ export default [
     SidebarShieldsFixer,
     WorthDisplayFixer,
     ResultsWorthFixer,
+    ChangePointsAnnotationFixer,
 ];

@@ -17,4 +17,10 @@ function numberWithCommas(x: string): string {
     return result.endsWith(".00") ? result.slice(0, result.length - 3) : result;
 }
 
-export {getSingletonByClassName, numberWithCommas};
+function sumArithmeticSequence(lastTerm: number, firstTerm: number = 1) {
+    // Since pyramidal progressions always start with 1 we can assume that the number of terms
+    // is equal to the last term.
+    return (lastTerm / 2) * (firstTerm + lastTerm);
+}
+
+export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence};
