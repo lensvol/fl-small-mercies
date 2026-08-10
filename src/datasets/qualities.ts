@@ -2,6 +2,7 @@
 // (https://fallenlondon.wiki) by its contributors and is used here under
 // CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
 
+/* BEGIN: Pyramidal Qualities */
 const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([
     209, // Watchful
     210, // Shadowy
@@ -68,7 +69,6 @@ const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([
     428, // Route: Wolfstack Docks
     429, // Route: The Forgotten Quarter
     430, // Route: The Flit
-    438, // Tracking down the Manager
     439, // An Infernal Informant
     440, // A Constables' Pet
     444, // Ambition: Heart's Desire - The Bishop of St Fiacre's
@@ -648,5 +648,7 @@ const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([
     146925, // October Voted
     147071, // A History Scarred and Ragged
 ]);
+
+/* END: Pyramidal Qualities */
 
 export {PYRAMIDAL_QUALITY_IDS};

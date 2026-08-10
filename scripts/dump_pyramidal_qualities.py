@@ -4,6 +4,7 @@ from collections import OrderedDict
 import ssl
 from urllib import parse, request
 
+
 def make_wiki_call(query: str) -> dict:
     data = parse.urlencode(
         {
@@ -21,6 +22,7 @@ def make_wiki_call(query: str) -> dict:
     with request.urlopen(req, context=ctx) as response:
         return json.loads(response.read())["query"]
 
+
 def main():
     wiki_info = make_wiki_call("[[Increase Type::Pyramidal]]|?=Name|?ID|limit=9999")
 
@@ -32,16 +34,35 @@ def main():
         quality_id = record["printouts"]["ID"][0]
         results[quality_id] = name
 
-    print("""// This information was compiled using data submitted to the "Fallen London Wiki"
-// (https://fallenlondon.wiki) by its contributors and is used here under
-// CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
-""")
-    print("const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([")
-    for quality_id, name in sorted(results.items(), key=lambda it: it[0]):
-        print(f"    {quality_id}, // {name}")
-    print("]);")
-    print()
-    print("export {PYRAMIDAL_QUALITY_IDS};")
+    output = []
+    existing = []
+    with open(sys.argv[1], "r") as fp:
+        existing = fp.readlines()
+
+    existing = map(str.rstrip, existing)
+
+    in_header = True
+    in_footer = False
+    for line in existing:
+        if in_header or in_footer:
+            output.append(line)
+        if "BEGIN: Pyramidal Qualities".lower() in line.lower():
+            in_header = False
+
+            output.append("const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([")
+            for quality_id, name in sorted(results.items(), key=lambda it: it[0]):
+                output.append(f"    {quality_id}, // {name}")
+            output.append("]);")
+            output.append("")
+        elif "END: Pyramidal Qualities".lower() in line.lower():
+            in_footer = True
+            output.append(line)
+
+    with open(sys.argv[1], "w") as fp:
+        fp.write("\n".join(output))
+
+    print(f"Pyramidal qualities processed: {len(results.items())}")
+
 
 if __name__ == "__main__":
     main()
