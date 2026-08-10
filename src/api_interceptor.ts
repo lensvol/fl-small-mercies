@@ -178,14 +178,12 @@ export class FLApiInterceptor {
         return function (this: AugmentedXMLHttpRequest, _method, url, _async) {
             this._targetUrl = url;
             this.addEventListener("readystatechange", (event) => {
-                // @ts-ignore: There is hell and then there is typing other people's API.
                 if (this.readyState == DONE) {
                     // FIXME: also filter out non-200 responses
-                    // @ts-ignore: There is hell and then there is typing other people's API.
-                    const responseText = handler(url, this._requestData, event.currentTarget.responseText);
-                    // @ts-ignore: There is hell and then there is typing other people's API.
+                    const originalResponse = event.currentTarget as XMLHttpRequest;
+                    const responseText = handler(url, this._requestData, originalResponse!!.responseText);
                     Object.defineProperty(this, "responseText", {writable: true});
-                    // @ts-ignore: There is hell and then there is typing other people's API.
+                    // @ts-ignore: We explicitly set this field to writable above
                     // noinspection JSConstantReassignment
                     this.responseText = responseText;
                 }
