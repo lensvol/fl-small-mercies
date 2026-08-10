@@ -179,13 +179,15 @@ export class FLApiInterceptor {
             this._targetUrl = url;
             this.addEventListener("readystatechange", (event) => {
                 if (this.readyState == DONE) {
-                    // FIXME: also filter out non-200 responses
                     const originalResponse = event.currentTarget as XMLHttpRequest;
-                    const responseText = handler(url, this._requestData, originalResponse!!.responseText);
-                    Object.defineProperty(this, "responseText", {writable: true});
-                    // @ts-ignore: We explicitly set this field to writable above
-                    // noinspection JSConstantReassignment
-                    this.responseText = responseText;
+                    // There is no need for the moment to process anything but successful requests
+                    if (originalResponse && originalResponse.status >= 200 && originalResponse.status <= 300) {
+                        const responseText = handler(url, this._requestData, originalResponse.responseText);
+                        Object.defineProperty(this, "responseText", {writable: true});
+                        // @ts-ignore: We explicitly set this field to writable above
+                        // noinspection JSConstantReassignment
+                        this.responseText = responseText;
+                    }
                 }
             });
             return original_function.apply(this, [_method, url, _async]);
