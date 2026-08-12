@@ -6,7 +6,7 @@ export interface IQuality {
     id: number;
     level: number;
     levelDescription: string;
-    availableAt: string;
+    availableAt?: string;
     name: string;
     nameAndLevel: string;
     description: string;

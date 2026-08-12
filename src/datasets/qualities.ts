@@ -3,6 +3,8 @@
 // CC-BY-SA 3.0 license (https://creativecommons.org/licenses/by-sa/3.0/)
 
 /* BEGIN: Pyramidal Qualities */
+import {IQuality} from "../interfaces";
+
 const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([
     209, // Watchful
     210, // Shadowy
@@ -651,4 +653,81 @@ const PYRAMIDAL_QUALITY_IDS: Set<number> = new Set([
 
 /* END: Pyramidal Qualities */
 
-export {PYRAMIDAL_QUALITY_IDS};
+const SKELETON_QUALITIES: Record<number, IQuality> = {
+    214: {
+        enhancements: [],
+        qualityPossessedId: -1,
+        name: "Wounds",
+        nameAndLevel: "",
+        levelDescription: "",
+        description: "Wounds are becoming troublesome. At 8, they may become fatal. Which would be inconvenient.",
+        nature: "Status",
+        category: "Menace",
+        effectiveLevel: -1,
+        level: -1,
+        himbleLevel: 0,
+        equippable: false,
+        progressAsPercentage: 0,
+        allowedOn: "Character",
+        image: "sidebarwounds",
+        id: 214,
+    },
+    215: {
+        enhancements: [],
+        qualityPossessedId: 76958698,
+        name: "Scandal",
+        nameAndLevel: "",
+        levelDescription: "",
+        description: "Scandal is getting out of hand. If this reaches 8, something bad may happen.",
+        nature: "Status",
+        category: "Menace",
+        effectiveLevel: -1,
+        level: -1,
+        himbleLevel: 0,
+        equippable: false,
+        progressAsPercentage: 0,
+        allowedOn: "Character",
+        image: "sidebarscandal",
+        id: 215,
+    },
+    216: {
+        enhancements: [],
+        qualityPossessedId: -1,
+        name: "Suspicion",
+        nameAndLevel: "",
+        levelDescription: "",
+        description:
+            "Suspicious activities are beginning to draw the attention of the law. If this reaches 8, something bad may happen.",
+        nature: "Status",
+        category: "Menace",
+        effectiveLevel: -1,
+        level: -1,
+        himbleLevel: 0,
+        equippable: false,
+        progressAsPercentage: 0,
+        allowedOn: "Character",
+        image: "sidebarsuspicion",
+        id: 216,
+    },
+    217: {
+        enhancements: [],
+        qualityPossessedId: -1,
+        name: "Nightmares",
+        nameAndLevel: "",
+        levelDescription: "",
+        description:
+            "Nightmares are becoming a problem. Some nights you hardly dare sleep. If this reaches 5, bad things may begin to happen. Don't let it reach 8.",
+        nature: "Status",
+        category: "Menace",
+        effectiveLevel: -1,
+        level: -1,
+        himbleLevel: 0,
+        equippable: false,
+        progressAsPercentage: 0,
+        allowedOn: "Character",
+        image: "sidebarnightmares",
+        id: 217,
+    },
+};
+
+export {PYRAMIDAL_QUALITY_IDS, SKELETON_QUALITIES};
