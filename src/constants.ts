@@ -16,10 +16,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Fix color and alignment of the navigation buttons in Journal.",
                 default: true,
             },
-            discrete_scrollbars: {
-                description: "Remove progress bars from discrete sidebar qualities.",
-                default: true,
-            },
             maxed_out_scrollbars: {
                 description: "Remove progress bars from maxed-out sidebar qualities.",
                 default: true,

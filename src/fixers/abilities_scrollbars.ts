@@ -4,7 +4,6 @@ import {IMutationAware, IStateAware} from "./base";
 import {getSingletonByClassName} from "../utils";
 
 export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
-    private removeDiscreteScrollbars = false;
     private removeMaxedOutScrollbars = false;
     private maxedOutQualities: Set<string> = new Set();
     private qualityDisplays: Map<string, HTMLElement> = new Map();
@@ -46,12 +45,11 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
     }
 
     applySettings(settings: SettingsObject): void {
-        this.removeDiscreteScrollbars = settings.discrete_scrollbars as boolean;
         this.removeMaxedOutScrollbars = settings.maxed_out_scrollbars as boolean;
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        if (!this.removeDiscreteScrollbars && !this.removeMaxedOutScrollbars) {
+        if (!this.removeMaxedOutScrollbars) {
             return false;
         }
 
