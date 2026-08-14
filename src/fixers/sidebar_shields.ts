@@ -3,7 +3,7 @@ import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
 import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
-import {UNKNOWN_QUALITY} from "../datasets/qualities";
+import {SKELETON_QUALITIES, UNKNOWN_QUALITY} from "../datasets/qualities";
 
 const PLACEHOLDER_QUALITY = Quality.fromJson(UNKNOWN_QUALITY);
 
@@ -551,7 +551,9 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     // for better experience.
                     shield = new SidebarShield();
                     let quality = state.getQualityById(qualityId);
-                    if (!quality) {
+                    if (!quality && qualityId in SKELETON_QUALITIES) {
+                        quality = Quality.fromJson(SKELETON_QUALITIES[qualityId]);
+                    } else {
                         quality = {...PLACEHOLDER_QUALITY};
                         quality.qualityId = qualityId;
                         quality.name = qualityIdToName.get(qualityId)!!;
