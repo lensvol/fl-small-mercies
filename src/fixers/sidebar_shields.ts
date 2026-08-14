@@ -617,7 +617,12 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const firstQuality = getSingletonByClassName(node, "sidebar-quality");
+        const columnSecondary = getSingletonByClassName(node, "col-secondary");
+        if (!columnSecondary) {
+            return;
+        }
+
+        const firstQuality = getSingletonByClassName(columnSecondary, "sidebar-quality");
         if (firstQuality && firstQuality.parentElement) {
             // TODO: Make it more elegant
             for (const shield of this.abilityToShield.values()) {
