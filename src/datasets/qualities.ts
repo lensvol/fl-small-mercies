@@ -674,7 +674,7 @@ const SKELETON_QUALITIES: Record<number, IQuality> = {
     },
     215: {
         enhancements: [],
-        qualityPossessedId: 76958698,
+        qualityPossessedId: -1,
         name: "Scandal",
         nameAndLevel: "",
         levelDescription: "",
