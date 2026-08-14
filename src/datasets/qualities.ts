@@ -730,4 +730,23 @@ const SKELETON_QUALITIES: Record<number, IQuality> = {
     },
 };
 
-export {PYRAMIDAL_QUALITY_IDS, SKELETON_QUALITIES};
+const UNKNOWN_QUALITY = {
+    enhancements: [],
+    qualityPossessedId: -1,
+    name: "??? UNKNOWN ???",
+    nameAndLevel: "",
+    levelDescription: "",
+    description: "Nothing to say here, we're still retrieving information...",
+    nature: "Status",
+    category: "Nuisance",
+    effectiveLevel: -1,
+    level: -1,
+    himbleLevel: 0,
+    equippable: false,
+    progressAsPercentage: 0,
+    allowedOn: "Everywhere",
+    image: "question",
+    id: -1,
+};
+
+export {PYRAMIDAL_QUALITY_IDS, SKELETON_QUALITIES, UNKNOWN_QUALITY};

@@ -3,6 +3,9 @@ import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
 import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
+import {UNKNOWN_QUALITY} from "../datasets/qualities";
+
+const PLACEHOLDER_QUALITY = Quality.fromJson(UNKNOWN_QUALITY);
 
 const QUALITY_ID_ORDER = [
     // Watchful
@@ -68,19 +71,6 @@ const QUALITY_ID_ORDER = [
     // Neathproofed
     142591,
 ];
-const UNKNOWN_QUALITY = new Quality(
-    -777,
-    "Unknown",
-    "Unknown quality",
-    "Nothing to say here, we're still retrieving information...",
-    "everywhere",
-    0,
-    0,
-    "Zero",
-    "question",
-    0,
-    "Status"
-);
 
 function createTippyMimic(
     posX: number,
@@ -178,7 +168,7 @@ class SidebarShield {
     private counterAnimationEnabled: boolean = true;
     private counterAnimationTimerId: number = 0;
 
-    constructor(quality: Quality = UNKNOWN_QUALITY, level: number = 0) {
+    constructor(quality: Quality = PLACEHOLDER_QUALITY, level: number = 0) {
         this.linkedQuality = quality;
         this.container = this.render();
         this.levelDisplay = getSingletonByClassName(this.container, "agent-stat-level")!!;
@@ -562,7 +552,7 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                     shield = new SidebarShield();
                     let quality = state.getQualityById(qualityId);
                     if (!quality) {
-                        quality = {...UNKNOWN_QUALITY};
+                        quality = {...PLACEHOLDER_QUALITY};
                         quality.qualityId = qualityId;
                         quality.name = qualityIdToName.get(qualityId)!!;
                     }
