@@ -5,7 +5,7 @@ interface IApiResponse {
 export interface IQuality {
     id: number;
     level: number;
-    levelDescription: string;
+    levelDescription?: string;
     availableAt?: string;
     name: string;
     nameAndLevel: string;
