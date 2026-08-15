@@ -23,4 +23,90 @@ function sumArithmeticSequence(lastTerm: number, firstTerm: number = 1) {
     return (lastTerm / 2) * (firstTerm + lastTerm);
 }
 
-export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence};
+function createTippyMimic(
+    posX: number,
+    posY: number,
+    title: string,
+    description: string,
+    secondaryDescription: string | undefined
+) {
+    const fauxTippy = document.createElement("div");
+    fauxTippy.classList.add("faux-tippy-box");
+    fauxTippy.dataset.tippyRoot = "";
+    fauxTippy.style.cssText = `pointer-events: none; z-index: 9999; visibility: visible; position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(${posX.toFixed()}px, ${posY.toFixed()}px, 0px); width: 350px;`;
+
+    const container = document.createElement("div");
+    container.setAttribute("id", "fl-sm-faux-tooltip");
+    container.classList.add("tippy-box");
+    container.setAttribute("role", "tooltip");
+    container.dataset.state = "visible";
+    container.dataset.placement = "bottom";
+    container.dataset.animation = "fade";
+    container.style.cssText = "max-width: 500px; transition-duration: 0ms;";
+    container.setAttribute("tabindex", "-1");
+
+    const container2 = document.createElement("div");
+    container2.classList.add("tippy-content");
+    container2.dataset.state = "visible";
+    container2.style.cssText = "transition-duration: 0ms;";
+
+    const container3 = document.createElement("div");
+    container3.classList.add("tippy-arrow");
+    container3.style.cssText = "position: absolute; left: 0px; transform: translate3d(62px, 0px, 0px);";
+
+    const container4 = document.createElement("div");
+
+    const container5 = document.createElement("div");
+    container5.classList.add("tooltip");
+
+    const container6 = document.createElement("div");
+    container6.classList.add("tooltip__desc__noImage");
+
+    const textSpan = document.createElement("span");
+    textSpan.classList.add("item__name");
+
+    const textSpan2 = document.createElement("span");
+    textSpan2.classList.add("item__value");
+
+    const paragraph = document.createElement("p");
+
+    const container7 = document.createElement("div");
+    container7.classList.add("tooltip__secondary-description");
+
+    const text = document.createTextNode(title);
+
+    const textSpan3 = document.createElement("span");
+
+    const text3 = document.createElement("span");
+    text3.innerHTML = description;
+
+    fauxTippy.appendChild(container);
+
+    container.appendChild(container2);
+    container.appendChild(container3);
+
+    container2.appendChild(container4);
+
+    container4.appendChild(container5);
+
+    container5.appendChild(container6);
+
+    container6.appendChild(textSpan);
+    container6.appendChild(textSpan2);
+    container6.appendChild(paragraph);
+    container6.appendChild(container7);
+
+    textSpan.appendChild(text);
+
+    paragraph.appendChild(textSpan3);
+
+    if (secondaryDescription) {
+        container7.innerHTML = secondaryDescription;
+    }
+
+    textSpan3.appendChild(text3);
+
+    return fauxTippy;
+}
+
+export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, createTippyMimic};
