@@ -72,9 +72,6 @@ function createTippyMimic(
 
     const paragraph = document.createElement("p");
 
-    const container7 = document.createElement("div");
-    container7.classList.add("tooltip__secondary-description");
-
     const text = document.createTextNode(title);
 
     const textSpan3 = document.createElement("span");
@@ -96,14 +93,17 @@ function createTippyMimic(
     container6.appendChild(textSpan);
     container6.appendChild(textSpan2);
     container6.appendChild(paragraph);
-    container6.appendChild(container7);
 
     textSpan.appendChild(text);
 
     paragraph.appendChild(textSpan3);
 
     if (secondaryDescription) {
+        const container7 = document.createElement("div");
+        container7.classList.add("tooltip__secondary-description");
         container7.innerHTML = secondaryDescription;
+
+        container6.appendChild(container7);
     }
 
     textSpan3.appendChild(text3);
