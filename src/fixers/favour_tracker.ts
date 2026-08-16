@@ -1,10 +1,11 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {GameStateController} from "../game_state";
-import {getSingletonByClassName} from "../utils";
+import {GameState, GameStateController} from "../game_state";
+import {attachTooltipToElement, getSingletonByClassName} from "../utils";
+import {ITooltipContent} from "../interfaces";
 
 // Mapping of favour name to its respective image
-const FAVOURS = new Map([
+const FAVOUR_IMAGES = new Map([
     ["Favours: Bohemians", "bohogirl1"],
     ["Favours: Society", "salon2"],
     ["Favours: Criminals", "manacles"],
@@ -20,13 +21,29 @@ const FAVOURS = new Map([
     ["Favours: Tomb-Colonies", "bandagedman"],
 ]);
 
+const RENOWN_ITEMS = new Map([
+    ["Bohemians", "Ornate Typewriter"],
+    ["Society", "Entry in Slowcake's Exceptionals"],
+    ["Criminals", "Old Bone Skeleton Key"],
+    ["The Church", "Tiny Jewelled Reliquary"],
+    ["The Docks", "Engraved Pewter Tankard"],
+    ["Urchins", "Rookery Password"],
+    ["Constables", "Antique Constable's Badge"],
+    ["Hell", "Bright Brass Skull"],
+    ["Revolutionaries", "Red-Feathered Pin"],
+    ["Rubbery Men", "Nodule of Pulsating Amber"],
+    ["The Great Game", "Copper Cipher Ring"],
+    ["Tomb-Colonies", "Diary of the Dead"],
+]);
+
 export class FavourTrackerFixer implements IMutationAware, IStateAware {
     private displayFavourTracker = false;
     private showZeroFavours = false;
     private favourValues: Map<string, number> = new Map();
+    private currentRenown: Map<string, Record<string, number | string>> = new Map();
 
     constructor() {
-        for (const favour of FAVOURS.keys()) {
+        for (const favour of FAVOUR_IMAGES.keys()) {
             this.favourValues.set(favour, 0);
         }
     }
@@ -38,7 +55,7 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
 
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((g) => {
-            for (const favourName of FAVOURS.keys()) {
+            for (const favourName of FAVOUR_IMAGES.keys()) {
                 const quality = g.getQuality("Contacts", favourName);
                 if (quality) {
                     this.favourValues.set(favourName, quality.level);
@@ -48,21 +65,54 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
 
                 this.updateFavour(favourName, quality?.level || 0);
             }
+
+            for (const factionName of RENOWN_ITEMS.keys()) {
+                const quality = g.getQuality("Contacts", `Renown: ${factionName}`);
+                if (quality) {
+                    this.currentRenown.set(factionName, {
+                        level: quality.level || 0,
+                        description: quality.levelDescription,
+                    });
+                }
+            }
         });
 
         state.onQualityChanged((state, _previous, current) => {
-            if (FAVOURS.has(current.name)) {
+            if (FAVOUR_IMAGES.has(current.name)) {
                 this.favourValues.set(current.name, current.level);
                 this.updateFavour(current.name, current.level);
+            } else if (current.name.startsWith("Renown: ")) {
+                this.currentRenown.set(current.name.replace("Renown: ", ""), {
+                    level: current.level || 0,
+                    description: current.levelDescription,
+                });
             }
         });
     }
 
     private createFavour(title: string, value: number): HTMLElement {
-        const icon = FAVOURS.get(title) || "question";
+        const icon = FAVOUR_IMAGES.get(title) || "question";
         title = title.replace("Favours: ", "");
 
-        const newDisplay = this.createFavourDisplay(title, icon + "small", value);
+        const newDisplay = this.createFavourDisplay(title, icon + "small", value, () => {
+            const renownTitle = `Renown: ${title}`;
+            const content: ITooltipContent = {
+                title: `${renownTitle} - ??? / ???`,
+                secondaryText: "Renown is not applicable for this faction.",
+            };
+
+            if (RENOWN_ITEMS.has(title)) {
+                const renownInfo = this.currentRenown.get(title)!!;
+                content.title = `${renownTitle} - ${renownInfo.level} / 55`;
+                content.text = renownInfo.description as string;
+                content.secondaryText = `You can increase this by using <br><b>${
+                    RENOWN_ITEMS.get(title) || "some"
+                }</b> in your inventory.`;
+            }
+
+            return content;
+        });
+
         if (value == 0 && !this.showZeroFavours) {
             newDisplay.style.cssText = "display: none";
         }
@@ -111,7 +161,12 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
         }
     }
 
-    private createFavourDisplay(title: string, icon: string, initialValue: number): HTMLElement {
+    private createFavourDisplay(
+        title: string,
+        icon: string,
+        initialValue: number,
+        contentCallback: () => ITooltipContent
+    ): HTMLElement {
         const li = document.createElement("li");
         li.classList.add("js-item", "item", "sidebar-quality", "tracked-favour");
         li.style.cssText = "text-align: left";
@@ -150,6 +205,8 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
         span4.classList.add("progress-bar__stripe", "progress-bar__stripe--has-transition");
         const percentage = (initialValue / 7) * 100;
         span4.style.cssText = `width: ${percentage}%;`;
+
+        attachTooltipToElement(img, contentCallback, 250);
 
         li.appendChild(div);
         li.appendChild(div3);
