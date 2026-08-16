@@ -4,7 +4,7 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)\)./;
+const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)( -[ \w\s]+)?\)./;
 
 export class ResultsWorthFixer implements INetworkAware {
     private showTotalNetWorth: boolean = false;
