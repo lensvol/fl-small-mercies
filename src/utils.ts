@@ -29,7 +29,7 @@ function createTippyMimic(
     posX: number,
     posY: number,
     title: string,
-    description: string,
+    description: string | undefined,
     secondaryDescription: string | undefined,
     maxWidth: number = 350
 ) {

@@ -447,6 +447,6 @@ export interface IActionsResponse {
 
 export interface ITooltipContent {
     title: string;
-    text: string;
+    text?: string;
     secondaryText?: string;
 }
