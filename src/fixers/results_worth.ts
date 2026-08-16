@@ -77,7 +77,7 @@ export class ResultsWorthFixer implements INetworkAware {
                 response.messages.push({
                     priority: 2,
                     image: "banknotes",
-                    message: `<em>Net worth change: <span class="${presentation}"><b>${plus}${formattedWorth}</b> Echoes</span></em>`,
+                    message: `<em>Net worth change: <span class="${presentation}">${plus}${formattedWorth} Echoes</span></em>`,
                     type: "InfoMessage",
                     tooltip: "For a lack of a penny.",
                 });
