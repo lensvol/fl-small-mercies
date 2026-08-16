@@ -1,6 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {attachTooltip, createTippyMimic, getSingletonByClassName} from "../utils";
+import {attachTooltipToElement, getSingletonByClassName} from "../utils";
 import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
 import {SKELETON_QUALITIES, UNKNOWN_QUALITY} from "../datasets/qualities";
@@ -194,7 +194,7 @@ class SidebarShield {
         container2.appendChild(img);
         container2.appendChild(textSpan);
 
-        attachTooltip(container, () => ({
+        attachTooltipToElement(container, () => ({
             title:
                 `${this.linkedQuality.name} ${this.level}` +
                 (this.linkedQuality.cap ? ` / ${this.linkedQuality.cap}` : ""),

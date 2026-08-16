@@ -30,12 +30,14 @@ function createTippyMimic(
     posY: number,
     title: string,
     description: string,
-    secondaryDescription: string | undefined
+    secondaryDescription: string | undefined,
+    maxWidth: number = 350
 ) {
     const fauxTippy = document.createElement("div");
     fauxTippy.classList.add("faux-tippy-box");
     fauxTippy.dataset.tippyRoot = "";
-    fauxTippy.style.cssText = `pointer-events: none; z-index: 9999; visibility: visible; position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(${posX.toFixed()}px, ${posY.toFixed()}px, 0px); width: 350px;`;
+    const dimensionsCss = `transform: translate3d(${posX.toFixed()}px, ${posY.toFixed()}px, 0px); width: ${maxWidth}px;`;
+    fauxTippy.style.cssText = `pointer-events: none; z-index: 9999; visibility: visible; position: absolute; inset: 0px auto auto 0px; margin: 0px; ${dimensionsCss}`;
 
     const container = document.createElement("div");
     container.setAttribute("id", "fl-sm-faux-tooltip");
@@ -44,7 +46,7 @@ function createTippyMimic(
     container.dataset.state = "visible";
     container.dataset.placement = "bottom";
     container.dataset.animation = "fade";
-    container.style.cssText = "max-width: 500px; transition-duration: 0ms;";
+    container.style.cssText = `max-width: ${maxWidth}; transition-duration: 0ms;`;
     container.setAttribute("tabindex", "-1");
 
     const container2 = document.createElement("div");
@@ -92,11 +94,14 @@ function createTippyMimic(
 
     container6.appendChild(textSpan);
     container6.appendChild(textSpan2);
-    container6.appendChild(paragraph);
 
     textSpan.appendChild(text);
 
-    paragraph.appendChild(textSpan3);
+    if (description) {
+        container6.appendChild(paragraph);
+        paragraph.appendChild(textSpan3);
+        textSpan3.appendChild(text3);
+    }
 
     if (secondaryDescription) {
         const container7 = document.createElement("div");
@@ -106,12 +111,10 @@ function createTippyMimic(
         container6.appendChild(container7);
     }
 
-    textSpan3.appendChild(text3);
-
     return fauxTippy;
 }
 
-function attachTooltip(node: HTMLElement, contentCallback: () => ITooltipContent) {
+function attachTooltipToElement(node: HTMLElement, contentCallback: () => ITooltipContent, maxWidth: number = 350) {
     node.addEventListener("mouseenter", (ev) => {
         const existingTooltips = node.getElementsByClassName("faux-tippy-box");
         for (const tooltip of existingTooltips) {
@@ -121,13 +124,13 @@ function attachTooltip(node: HTMLElement, contentCallback: () => ITooltipContent
         const content: ITooltipContent = contentCallback();
 
         const rect = node.getBoundingClientRect();
-        const tooltip = createTippyMimic(
-            rect.left + window.screenX + rect.width / 2,
-            rect.top + window.scrollY + rect.height / 2,
-            content.title,
-            content.text,
-            content.secondaryText
-        );
+        let posX = rect.left + window.screenX + rect.width / 2;
+        let posY = rect.top + window.scrollY + rect.height / 2;
+        if (posX + maxWidth > window.innerWidth) {
+            posX = rect.left + window.screenX - maxWidth;
+        }
+
+        const tooltip = createTippyMimic(posX, posY, content.title, content.text, content.secondaryText, maxWidth);
         document.body.appendChild(tooltip);
     });
 
@@ -139,4 +142,4 @@ function attachTooltip(node: HTMLElement, contentCallback: () => ITooltipContent
     });
 }
 
-export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, attachTooltip};
+export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, attachTooltipToElement};
