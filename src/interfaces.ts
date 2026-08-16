@@ -444,3 +444,9 @@ export interface IActionsResponse {
     actionBankSize: number;
     actions: number;
 }
+
+export interface ITooltipContent {
+    title: string;
+    text: string;
+    secondaryText?: string;
+}

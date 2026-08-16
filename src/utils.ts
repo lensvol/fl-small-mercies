@@ -1,3 +1,5 @@
+import {ITooltipContent} from "./interfaces";
+
 function getSingletonByClassName(node: HTMLElement, className: string): HTMLElement | null {
     if (node.classList.contains(className)) {
         return node;
@@ -109,4 +111,32 @@ function createTippyMimic(
     return fauxTippy;
 }
 
-export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, createTippyMimic};
+function attachTooltip(node: HTMLElement, contentCallback: () => ITooltipContent) {
+    node.addEventListener("mouseenter", (ev) => {
+        const existingTooltips = node.getElementsByClassName("faux-tippy-box");
+        for (const tooltip of existingTooltips) {
+            tooltip.parentElement?.removeChild(tooltip);
+        }
+
+        const content: ITooltipContent = contentCallback();
+
+        const rect = node.getBoundingClientRect();
+        const tooltip = createTippyMimic(
+            rect.left + window.screenX + rect.width / 2,
+            rect.top + window.scrollY + rect.height / 2,
+            content.title,
+            content.text,
+            content.secondaryText
+        );
+        document.body.appendChild(tooltip);
+    });
+
+    node.addEventListener("mouseleave", (_) => {
+        const existingTooltips = document.body.getElementsByClassName("faux-tippy-box");
+        for (const tooltip of existingTooltips) {
+            tooltip.parentElement?.removeChild(tooltip);
+        }
+    });
+}
+
+export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, attachTooltip};

@@ -1,6 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {createTippyMimic, getSingletonByClassName} from "../utils";
+import {attachTooltip, createTippyMimic, getSingletonByClassName} from "../utils";
 import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
 import {SKELETON_QUALITIES, UNKNOWN_QUALITY} from "../datasets/qualities";
@@ -194,31 +194,13 @@ class SidebarShield {
         container2.appendChild(img);
         container2.appendChild(textSpan);
 
-        container.addEventListener("mouseenter", (ev) => {
-            const existingTooltips = container.getElementsByClassName("faux-tippy-box");
-            for (const tooltip of existingTooltips) {
-                tooltip.parentElement?.removeChild(tooltip);
-            }
-
-            const rect = container.getBoundingClientRect();
-            const tooltip = createTippyMimic(
-                ev.x + window.screenX - rect.width,
-                ev.y + window.scrollY - rect.height,
+        attachTooltip(container, () => ({
+            title:
                 `${this.linkedQuality.name} ${this.level}` +
-                    (this.linkedQuality.cap ? ` / ${this.linkedQuality.cap}` : ""),
-                this.linkedQuality.description,
-                this.linkedQuality.availableAt
-            );
-            container.appendChild(tooltip);
-        });
-
-        container.addEventListener("mouseleave", (_) => {
-            const existingTooltips = container.getElementsByClassName("faux-tippy-box");
-            for (const tooltip of existingTooltips) {
-                tooltip.parentElement?.removeChild(tooltip);
-            }
-        });
-
+                (this.linkedQuality.cap ? ` / ${this.linkedQuality.cap}` : ""),
+            text: this.linkedQuality.description,
+            secondaryText: this.linkedQuality.availableAt,
+        }));
         return container;
     }
 
