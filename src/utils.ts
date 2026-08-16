@@ -78,9 +78,6 @@ function createTippyMimic(
 
     const textSpan3 = document.createElement("span");
 
-    const text3 = document.createElement("span");
-    text3.innerHTML = description;
-
     fauxTippy.appendChild(container);
 
     container.appendChild(container2);
@@ -98,6 +95,8 @@ function createTippyMimic(
     textSpan.appendChild(text);
 
     if (description) {
+        const text3 = document.createElement("span");
+        text3.innerHTML = description;
         container6.appendChild(paragraph);
         paragraph.appendChild(textSpan3);
         textSpan3.appendChild(text3);
