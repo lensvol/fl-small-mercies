@@ -5,7 +5,7 @@ import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
 import {getSingletonByClassName} from "../utils";
 import {error} from "../logging";
 
-const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband"];
+const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband", "Legal"];
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -169,6 +169,10 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             "Ascended Ambergris",
             new CurrencyDisplay("Ascended Ambergris", "midnightwhale", "ambergris", "Ambergris")
         );
+        this.currencyToDisplay.set(
+            "Blood Oath",
+            new CurrencyDisplay("Blood Oath", "bloody", "bloodoath", "Blood Oaths")
+        );
 
         this.currencyToPredicate.set(
             "Assortment of Khaganian Coinage",
@@ -197,6 +201,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
                 new IsInSetting(107989) // Midnight Moon
             )
         );
+        this.currencyToPredicate.set("Blood Oath", new IsInSetting(108001)); // Queeneater's
     }
 
     applySettings(settings: SettingsObject): void {
