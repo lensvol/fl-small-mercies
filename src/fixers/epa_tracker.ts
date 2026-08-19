@@ -257,8 +257,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                         continue;
                     }
 
-                    // Due to the quirk of the game's code change types for increase and decrease are swapped ¯\_(ツ)_/¯
-                    const wasIncreased = message.changeType === "Decreased";
+                    const wasIncreased = message.changeType === "Increased";
                     const extractedTexts = message.message.match(QUALITY_MESSAGE_REGEX);
 
                     if (!extractedTexts) {

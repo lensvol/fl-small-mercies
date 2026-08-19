@@ -49,7 +49,7 @@ export class ResultsWorthFixer implements INetworkAware {
                 const matches = message.message.match(QUALITY_MESSAGE_REGEX);
                 if (matches) {
                     const delta = Number(matches[2]);
-                    const sign = message.changeType === "Decreased" ? "+" : "-";
+                    const sign = message.changeType === "Increased" ? "+" : "-";
                     const worth = delta * price;
 
                     if (this.showPerMessageBreakdown) {
