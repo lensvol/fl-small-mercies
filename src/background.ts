@@ -90,13 +90,13 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
                 version: chrome.runtime.getManifest().version,
             });
         });
-    } else if (request.action === MSG_TYPE_RED_MAGCATS) {
+    } else if (request.action === MSG_TYPE_RED_MAGCATS && currentIconSet !== AdvancedSkillsArt.RED) {
         currentIconSet = AdvancedSkillsArt.RED;
         syncTabIconSets();
-    } else if (request.action === MSG_TYPE_OLD_MAGCATS) {
+    } else if (request.action === MSG_TYPE_OLD_MAGCATS && currentIconSet !== AdvancedSkillsArt.OLD) {
         currentIconSet = AdvancedSkillsArt.OLD;
         syncTabIconSets();
-    } else if (request.action === MSG_TYPE_DEFAULT_MAGCATS) {
+    } else if (request.action === MSG_TYPE_DEFAULT_MAGCATS && currentIconSet === AdvancedSkillsArt.DEFAULT) {
         currentIconSet = AdvancedSkillsArt.DEFAULT;
         syncTabIconSets();
     }
@@ -104,5 +104,45 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 
 // TODO: Handle CSS insertion for newly spawned tabs (click on a link within the game) and
 // updated ones (manually entered URL)
-chrome.tabs.onCreated.addListener((newTab) => {});
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {});
+chrome.tabs.onCreated.addListener((newTab) => {
+    if (!newTab.pendingUrl?.includes("fallenlondon.com") || !newTab.id) {
+        return;
+    }
+
+    let toRemove: string[] = [];
+    let toAdd: string[] = [];
+
+    if (currentIconSet === AdvancedSkillsArt.DEFAULT) {
+        toRemove = ["dist/css/old_magcats.css", "dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.RED) {
+        toRemove = ["dist/css/old_magcats.css"];
+        toAdd = ["dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.OLD) {
+        toRemove = ["dist/css/red_magcats.css"];
+        toAdd = ["dist/css/old_magcats.css"];
+    }
+
+    removeCSS(newTab.id, toRemove);
+    insertCSS(newTab.id, toAdd);
+});
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (!tab.url?.includes("fallenlondon.com")) {
+        return;
+    }
+
+    let toRemove: string[] = [];
+    let toAdd: string[] = [];
+
+    if (currentIconSet === AdvancedSkillsArt.DEFAULT) {
+        toRemove = ["dist/css/old_magcats.css", "dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.RED) {
+        toRemove = ["dist/css/old_magcats.css"];
+        toAdd = ["dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.OLD) {
+        toRemove = ["dist/css/red_magcats.css"];
+        toAdd = ["dist/css/old_magcats.css"];
+    }
+
+    removeCSS(tabId, toRemove);
+    insertCSS(tabId, toAdd);
+});
