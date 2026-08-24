@@ -264,6 +264,12 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     },
 ];
 
+enum AdvancedSkillsArt {
+    DEFAULT = "default",
+    OLD = "classic",
+    RED = "red",
+}
+
 export {
     EXTENSION_NAME,
     EXTENSION_PREFIX,
@@ -274,4 +280,5 @@ export {
     MSG_TYPE_OLD_MAGCATS,
     MSG_TYPE_DEFAULT_MAGCATS,
     SETTINGS_SCHEMA,
+    AdvancedSkillsArt,
 };

@@ -1,47 +1,82 @@
 import {FLSettingsBackend} from "./settings";
 import {
-    SETTINGS_SCHEMA,
-    MSG_TYPE_GET_VERSION,
-    MSG_TYPE_RED_MAGCATS,
-    MSG_TYPE_OLD_MAGCATS,
+    AdvancedSkillsArt,
     MSG_TYPE_DEFAULT_MAGCATS,
+    MSG_TYPE_GET_VERSION,
+    MSG_TYPE_OLD_MAGCATS,
+    MSG_TYPE_RED_MAGCATS,
+    SETTINGS_SCHEMA,
 } from "./constants";
 import {getFallenLondonTabs, sendMessageToTabs} from "./comms";
+import {debug} from "./logging";
 
 const settingsBackend = new FLSettingsBackend(SETTINGS_SCHEMA);
 
-function insertCSS(tabId: number, path: string) {
+let currentIconSet = AdvancedSkillsArt.DEFAULT;
+
+function insertCSS(tabId: number, paths: string[]) {
+    if (paths.length === 0) {
+        return;
+    }
+
     try {
         chrome.scripting
             .insertCSS({
                 target: {
                     tabId: tabId || 0,
                 },
-                files: [path],
+                files: paths,
             })
             .then((css) => {
-                console.log(`CSS inserted ${tabId}`);
+                debug(`CSS inserted into ${tabId}: ${paths}`);
             });
     } catch (err) {
-        console.error(`failed to insert CSS: ${err}`);
+        console.error(`Failed to insert CSS: ${err}`);
     }
 }
 
-function removeCSS(tabId: number, path: string) {
+function removeCSS(tabId: number, paths: string[]) {
+    if (paths.length === 0) {
+        return;
+    }
+
     try {
         chrome.scripting
             .removeCSS({
                 target: {
                     tabId: tabId || 0,
                 },
-                files: [path],
+                files: paths,
             })
             .then((css: any) => {
-                console.log(`CSS removed from ${tabId}`);
+                debug(`CSS removed from ${tabId}: ${paths}`);
             });
     } catch (err) {
         console.error(`failed to insert CSS: ${err}`);
     }
+}
+
+function syncTabIconSets() {
+    let toRemove: string[] = [];
+    let toAdd: string[] = [];
+
+    if (currentIconSet === AdvancedSkillsArt.DEFAULT) {
+        toRemove = ["dist/css/old_magcats.css", "dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.RED) {
+        toRemove = ["dist/css/old_magcats.css"];
+        toAdd = ["dist/css/red_magcats.css"];
+    } else if (currentIconSet === AdvancedSkillsArt.OLD) {
+        toRemove = ["dist/css/red_magcats.css"];
+        toAdd = ["dist/css/old_magcats.css"];
+    }
+
+    getFallenLondonTabs().then((tabs) => {
+        debug("Trying to sync icons sets across Fallen London tabs...");
+        tabs.map((tab) => {
+            removeCSS(tab.id || 0, toRemove);
+            insertCSS(tab.id || 0, toAdd);
+        });
+    });
 }
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
@@ -56,29 +91,14 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
             });
         });
     } else if (request.action === MSG_TYPE_RED_MAGCATS) {
-        getFallenLondonTabs().then((tabs) => {
-            console.log("Trying to attach Red CSS...", tabs);
-            tabs.map((tab) => {
-                removeCSS(tab.id || 0, "dist/css/old_magcats.css");
-                insertCSS(tab.id || 0, "dist/css/red_magcats.css");
-            });
-        });
+        currentIconSet = AdvancedSkillsArt.RED;
+        syncTabIconSets();
     } else if (request.action === MSG_TYPE_OLD_MAGCATS) {
-        getFallenLondonTabs().then((tabs) => {
-            console.log("Trying to attach Old CSS...", tabs);
-            tabs.map((tab) => {
-                removeCSS(tab.id || 0, "dist/css/red_magcats.css");
-                insertCSS(tab.id || 0, "dist/css/old_magcats.css");
-            });
-        });
+        currentIconSet = AdvancedSkillsArt.OLD;
+        syncTabIconSets();
     } else if (request.action === MSG_TYPE_DEFAULT_MAGCATS) {
-        getFallenLondonTabs().then((tabs) => {
-            console.log("Trying to remove CSS...", tabs);
-            tabs.map((tab) => {
-                removeCSS(tab.id || 0, "dist/css/old_magcats.css");
-                removeCSS(tab.id || 0, "dist/css/red_magcats.css");
-            });
-        });
+        currentIconSet = AdvancedSkillsArt.DEFAULT;
+        syncTabIconSets();
     }
 });
 
