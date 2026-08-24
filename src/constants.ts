@@ -15,10 +15,6 @@ const SETTINGS_SCHEMA: SettingsSchema = [
     {
         title: "UI Fixes",
         settings: {
-            fix_journal_navigation: {
-                description: "Fix color and alignment of the navigation buttons in Journal.",
-                default: true,
-            },
             maxed_out_scrollbars: {
                 description: "Remove progress bars from maxed-out sidebar qualities.",
                 default: true,
