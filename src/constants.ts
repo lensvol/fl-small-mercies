@@ -7,6 +7,9 @@ const EXTENSION_PREFIX = "FL_SM";
 const MSG_TYPE_SAVE_SETTINGS = `${EXTENSION_PREFIX}_saveSettings`;
 const MSG_TYPE_CURRENT_SETTINGS = `${EXTENSION_PREFIX}_currentSettings`;
 const MSG_TYPE_GET_VERSION = `${EXTENSION_PREFIX}_getVersion`;
+const MSG_TYPE_RED_MAGCATS = `${EXTENSION_PREFIX}_redMAGCATS`;
+const MSG_TYPE_OLD_MAGCATS = `${EXTENSION_PREFIX}_oldMAGCATS`;
+const MSG_TYPE_DEFAULT_MAGCATS = `${EXTENSION_PREFIX}_defaultMAGCATS`;
 
 const SETTINGS_SCHEMA: SettingsSchema = [
     {
@@ -61,9 +64,14 @@ const SETTINGS_SCHEMA: SettingsSchema = [
                 description: "Update relevant currencies on shop transactions.",
                 default: true,
             },
-            revert_sidebar_art: {
-                description: "Use old art for icons of Advanced Skills.",
-                default: false,
+            magcats_icons: {
+                description: "Icons used for Advanced Skills",
+                default: "default",
+                choices: [
+                    ["default", "Default"],
+                    ["classic", "Old"],
+                    ["red", "Red"],
+                ],
             },
         },
     },
@@ -262,5 +270,8 @@ export {
     MSG_TYPE_SAVE_SETTINGS,
     MSG_TYPE_CURRENT_SETTINGS,
     MSG_TYPE_GET_VERSION,
+    MSG_TYPE_RED_MAGCATS,
+    MSG_TYPE_OLD_MAGCATS,
+    MSG_TYPE_DEFAULT_MAGCATS,
     SETTINGS_SCHEMA,
 };

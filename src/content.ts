@@ -19,7 +19,14 @@ script.onload = function () {
 (document.head || document.documentElement).appendChild(script);
 
 console.log(`[FL Small Mercies] Setting up comms repeater...`);
-["FL_SM_getVersion", "FL_SM_saveSettings", "FL_SM_currentSettings"].forEach((eventType) => {
+[
+    "FL_SM_getVersion",
+    "FL_SM_saveSettings",
+    "FL_SM_currentSettings",
+    "FL_SM_redMAGCATS",
+    "FL_SM_oldMAGCATS",
+    "FL_SM_defaultMAGCATS",
+].forEach((eventType) => {
     window.addEventListener(eventType, (event) => {
         chrome.runtime.sendMessage({
             action: eventType,

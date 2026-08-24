@@ -3,7 +3,10 @@
   "description": "Set of small 'fixes' for Fallen London UI.",
   "version": "3.4.0",
   "manifest_version": 3,
-  "permissions": ["storage", "tabs"],
+  "permissions": ["storage", "tabs", "scripting"],
+  "host_permissions": [
+      "https://www.fallenlondon.com/*"
+  ],
   "background": {
     "service_worker": "dist/background-bundle.js",
     "type": "module",
