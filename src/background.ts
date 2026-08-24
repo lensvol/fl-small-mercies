@@ -27,7 +27,7 @@ function insertCSS(tabId: number, paths: string[]) {
                 },
                 files: paths,
             })
-            .then((css) => {
+            .then((_css) => {
                 debug(`CSS inserted into ${tabId}: ${paths}`);
             });
     } catch (err) {
@@ -48,7 +48,7 @@ function removeCSS(tabId: number, paths: string[]) {
                 },
                 files: paths,
             })
-            .then((css: any) => {
+            .then((_css: any) => {
                 debug(`CSS removed from ${tabId}: ${paths}`);
             });
     } catch (err) {
@@ -56,7 +56,7 @@ function removeCSS(tabId: number, paths: string[]) {
     }
 }
 
-function syncTabIconSets() {
+function syncTabIconSet(tabId: number) {
     let toRemove: string[] = [];
     let toAdd: string[] = [];
 
@@ -70,16 +70,20 @@ function syncTabIconSets() {
         toAdd = ["dist/css/old_magcats.css"];
     }
 
+    removeCSS(tabId || 0, toRemove);
+    insertCSS(tabId || 0, toAdd);
+}
+
+function syncIconSetsAcrossTabs() {
     getFallenLondonTabs().then((tabs) => {
         debug("Trying to sync icons sets across Fallen London tabs...");
         tabs.map((tab) => {
-            removeCSS(tab.id || 0, toRemove);
-            insertCSS(tab.id || 0, toAdd);
+            syncTabIconSet(tab.id || 0);
         });
     });
 }
 
-chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, _sendResponse) => {
     if (settingsBackend.isMessageRelevant(request)) {
         settingsBackend.handleMessage(request);
     } else if (request.action === MSG_TYPE_GET_VERSION) {
@@ -92,57 +96,27 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         });
     } else if (request.action === MSG_TYPE_RED_MAGCATS && currentIconSet !== AdvancedSkillsArt.RED) {
         currentIconSet = AdvancedSkillsArt.RED;
-        syncTabIconSets();
+        syncIconSetsAcrossTabs();
     } else if (request.action === MSG_TYPE_OLD_MAGCATS && currentIconSet !== AdvancedSkillsArt.OLD) {
         currentIconSet = AdvancedSkillsArt.OLD;
-        syncTabIconSets();
-    } else if (request.action === MSG_TYPE_DEFAULT_MAGCATS && currentIconSet === AdvancedSkillsArt.DEFAULT) {
+        syncIconSetsAcrossTabs();
+    } else if (request.action === MSG_TYPE_DEFAULT_MAGCATS && currentIconSet !== AdvancedSkillsArt.DEFAULT) {
         currentIconSet = AdvancedSkillsArt.DEFAULT;
-        syncTabIconSets();
+        syncIconSetsAcrossTabs();
     }
 });
 
-// TODO: Handle CSS insertion for newly spawned tabs (click on a link within the game) and
-// updated ones (manually entered URL)
 chrome.tabs.onCreated.addListener((newTab) => {
     if (!newTab.pendingUrl?.includes("fallenlondon.com") || !newTab.id) {
         return;
     }
 
-    let toRemove: string[] = [];
-    let toAdd: string[] = [];
-
-    if (currentIconSet === AdvancedSkillsArt.DEFAULT) {
-        toRemove = ["dist/css/old_magcats.css", "dist/css/red_magcats.css"];
-    } else if (currentIconSet === AdvancedSkillsArt.RED) {
-        toRemove = ["dist/css/old_magcats.css"];
-        toAdd = ["dist/css/red_magcats.css"];
-    } else if (currentIconSet === AdvancedSkillsArt.OLD) {
-        toRemove = ["dist/css/red_magcats.css"];
-        toAdd = ["dist/css/old_magcats.css"];
-    }
-
-    removeCSS(newTab.id, toRemove);
-    insertCSS(newTab.id, toAdd);
+    syncTabIconSet(newTab.id);
 });
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!tab.url?.includes("fallenlondon.com")) {
         return;
     }
 
-    let toRemove: string[] = [];
-    let toAdd: string[] = [];
-
-    if (currentIconSet === AdvancedSkillsArt.DEFAULT) {
-        toRemove = ["dist/css/old_magcats.css", "dist/css/red_magcats.css"];
-    } else if (currentIconSet === AdvancedSkillsArt.RED) {
-        toRemove = ["dist/css/old_magcats.css"];
-        toAdd = ["dist/css/red_magcats.css"];
-    } else if (currentIconSet === AdvancedSkillsArt.OLD) {
-        toRemove = ["dist/css/red_magcats.css"];
-        toAdd = ["dist/css/old_magcats.css"];
-    }
-
-    removeCSS(tabId, toRemove);
-    insertCSS(tabId, toAdd);
+    syncTabIconSet(tabId);
 });
