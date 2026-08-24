@@ -86,23 +86,3 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 // updated ones (manually entered URL)
 chrome.tabs.onCreated.addListener((newTab) => {});
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {});
-
-getFallenLondonTabs().then((tabs) => {
-    console.log("Trying to attach CSS...", tabs);
-    tabs.map((tab) => {
-        try {
-            chrome.scripting
-                .insertCSS({
-                    target: {
-                        tabId: tab.id || 0, // ts-ignore: asd
-                    },
-                    files: ["dist/css/red_magcats.css"],
-                })
-                .then((css) => {
-                    console.log(`CSS inserted ${tab.id}`);
-                });
-        } catch (err) {
-            console.error(`failed to insert CSS: ${err}`);
-        }
-    });
-});
