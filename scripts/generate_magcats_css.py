@@ -40,5 +40,5 @@ if __name__ == "__main__":
     for original, replacement in currentSet.items():
         print(f'''
 img[src="//images.fallenlondon.com/icons/{original}.png"]{{
-    content: url("//images.fallenlondon.com/icons/{replacement}.png")
+    content: url("https://images.fallenlondon.com/icons/{replacement}.png")
 }}''')
