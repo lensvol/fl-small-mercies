@@ -203,7 +203,13 @@ export class FLApiInterceptor {
                 return original_function.apply(this, args);
             }
 
-            this._requestData = JSON.parse(args[0] ?? null);
+            try {
+                this._requestData = JSON.parse(args[0] ?? null);
+            } catch (e) {
+                console.error(e);
+                console.error(`Raw data sent to ${this._targetUrl}:`, args[0]);
+                return original_function.apply(this, args);
+            }
 
             const result = handler(this._targetUrl, this, this._requestData);
             if (result instanceof OverridenResponse) {
