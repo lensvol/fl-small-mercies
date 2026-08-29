@@ -34,26 +34,33 @@ _NB: This extension is **not** (yet) whitelisted by Failbetter Games. Use at you
 
 ## Development
 
-### Basics
+### Bootstrapping
 _First,_ install **Node.js** and **npm** >= 8.5.1.
 
 _Second_, install necessary packages:
 ```shell
 npm install --save-dev typescript ts-loader '@types/chrome'
 ```
-_Third,_ compile JS version of the plugin: 
+
+_Third,_ update relevant datasets:
+```shell
+python3 scripts/dump_pyramidal_qualities.py src/datasets/qualities.ts
+python3 scripts/extract_item_prices.py src/datasets/item_prices.ts
+```
+
+Finally, build the extension itself:
 ```shell
 make build_dist
 ```
 
 **Enjoy hacking!**
 
-### Changing Hinterland Scrip icon
+### Changing currency icons
 
 Due to the issues with accessing files within extensions from CSS on Firefox,
 we are forced to inline SVG file itself into the CSS file.
 
-How to do it:
+How to do it (e.g. `scrip`):
 
 1. Run `src/images/icon_scrip.svg` through [svgo](https://github.com/svg/svgo)
 2. Encode contents of that SVG using [data URI encoder](https://yoksel.github.io/url-encoder/)
