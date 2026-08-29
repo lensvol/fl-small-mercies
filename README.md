@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/github/license/lensvol/fl-small-mercies)](https://github.com/lensvol/fl-small-mercies/blob/master/LICENSE) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/lensvol/fl-small-mercies) [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/efcjeepmkepahpaodagjlioagpganblf)](https://chrome.google.com/webstore/detail/fl-small-mercies/efcjeepmkepahpaodagjlioagpganblf) [![Mozilla Add-on](https://img.shields.io/amo/v/fl-small-mercies)](https://addons.mozilla.org/en-US/firefox/addon/fl-small-mercies/) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-
 ![screenshot](https://raw.githubusercontent.com/lensvol/fl-small-mercies/master/screenshot.png)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L4L0D1FN6)
@@ -104,3 +103,7 @@ How to do it:
 * [idyl](https://www.reddit.com/user/idyl/) - for suggesting idea with thousands separator.
 * [RagCall](https://fallenlondon.wiki/wiki/User:RagCall) - for suggesting idea with removing progress bars on discrete qualities.
 * [Saklad5](https://github.com/Saklad5) - for finding the appropriate graphic for Hinterlands Scrip icon.
+* [SacchiHikaru](https://www.reddit.com/user/SacchiHikaru/) - for figuring out solution to MAGCATS icon switching.
+* [Thorsb](https://github.com/Thorsb) - for help with wrangling Fallen London Wiki query language into submission.
+* [mangetonchapeau](https://www.reddit.com/user/mangetonchapeau/) - for giving permission to re-implement their ideas.
+* [emily_aversatrix](https://www.reddit.com/user/emily_aversatrix/) - for reporting weirdest bugs and general goodwill.
