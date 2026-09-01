@@ -3,6 +3,10 @@ import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IQuality} from "../interfaces";
 
+/*
+   This list is mostly based on the "Vanity Achievements" guide from Wiki:
+   https://fallenlondon.wiki/wiki/Treasures_of_the_Neath_(Guide)
+*/
 const VANITY_QUALITY_IDS = [
     [77, 517], // Seeking Mr. Eaten's Name
     [77, 144494], // A Shaper of Starved Culture
@@ -48,7 +52,9 @@ const VANITY_QUALITY_IDS = [
     [21, 142865], // Twilit Smuggler
     [21, 141626], // Defender of the Public Safety
     [21, 134835], // A Poet-Laureate
-    [1, 141287], // Paramount Presence of the Ancient Regime
+    [21, 144810], // Infiltrator of the Tracklayer City
+
+    // Singular achievements
     [1, 135060], // A Weaseller
     [1, 144550], // A Woeseller
     [1, 125026], // A Private Tattoo of your Noman, Inscribed in Gant
@@ -58,11 +64,14 @@ const VANITY_QUALITY_IDS = [
     [1, 143589], // A Purveyor of Cruel and Unusual Cheeses
     [1, 144867], // A Citizen of the Hinterland City
     [1, 145883], // A Knight of the Order of the Golden Carapace
+    [1, 144248], // Discovered: the Pentamerous Bride
 
     [25, 144748], // A Lurer of Cities
-    [21, 144810], // Infiltrator of the Tracklayer City
     [50, 144785], // A Worker in the Common Cause
+    [100, 145053], // Labour By Candlelight
+    [100, 145951], // An Accomplished Plotter
 
+    // Renown with various factions
     [55, 133830], // Bohemians
     [55, 121992], // Criminals
     [55, 132801], // Hell
@@ -76,8 +85,17 @@ const VANITY_QUALITY_IDS = [
     [55, 129666], // The Urchins
     [55, 144064], // Respected by Corsairs
 
-    [100, 145053], // Labour By Candlelight
-    [100, 145951], // An Accomplished Plotter
+    // Achievements that are no longer available (e.g. ones from Estival)
+    [1, 133465], // A Hallowmas Reveller of Old
+    [1, 141287], // Paramount Presence of the Ancient Regime
+    [1, 144464], // A Commissioned Airship:
+    [1, 146302], // Unscarred by Law
+    [5, 133465], // Coilbreaker:
+    [6, 144517], // Ambassador_of_Last_Resort:
+    [7, 146136], // A Time for Generosity
+    [7, 147094], // Unnecessary Semantic Conflagrations
+    [10, 144415], // Starved Intelligencer:
+    [21, 145316], // An Investigative Journalist:
 ];
 
 export class VanitySectionFixer implements INetworkAware, IMutationAware {
