@@ -711,6 +711,7 @@ const VANITY_QUALITY_IDS: number[][] = [
     [1, 144867], // A Citizen of the Hinterland City
     [1, 145883], // A Knight of the Order of the Golden Carapace
     [1, 144248], // Discovered: the Pentamerous Bride
+    [1, 146928], // Let There Be Light
 
     [25, 144748], // A Lurer of Cities
     [50, 144785], // A Worker in the Common Cause
