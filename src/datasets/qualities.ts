@@ -736,7 +736,7 @@ const VANITY_QUALITY_IDS: number[][] = [
     [1, 141287], // Paramount Presence of the Ancient Regime
     [1, 144464], // A Commissioned Airship:
     [1, 146302], // Unscarred by Law
-    [5, 133465], // Coilbreaker:
+    [5, 145378], // Coilbreaker:
     [6, 144517], // Ambassador_of_Last_Resort:
     [7, 146136], // A Time for Generosity
     [7, 147094], // Unnecessary Semantic Conflagrations
