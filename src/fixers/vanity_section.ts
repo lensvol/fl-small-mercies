@@ -4,9 +4,15 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IQuality} from "../interfaces";
 
 const VANITY_QUALITY_IDS = [
+    [77, 517], // Seeking Mr. Eaten's Name
     [77, 144494], // A Shaper of Starved Culture
     [77, 144203], // Neighbourhood Noctivagant
     [77, 144910], // Volatile Consignments Delivered to the Remote Magazine
+    [77, 145952], // Nautical Ventures Nautically Ventured
+    [77, 145629], // Gardens of the Unterzee
+    [77, 146179], // Laws Hunted
+    [77, 146353], // Tremors Upon The Web
+    [77, 142008], // Knight of Hallowmas
 
     [777, 142587], // A Historian of the Neath
     [777, 142894], // A Hunter of Zee Beasts
@@ -22,6 +28,9 @@ const VANITY_QUALITY_IDS = [
     [777, 142505], // Painter of Fine Art
     [777, 140888], // Palaeontologist
     [777, 141368], // Barrister of the Evenlode
+    [777, 145263], // An Interloper in the Library
+    [777, 147301], // Pennies Placed Within Your Pig
+    [777, 146872], // Reputation in the Red Repertory
 
     // [???, 143753], // Palaeozoologist (does not yet have QLDs)
 
@@ -47,6 +56,12 @@ const VANITY_QUALITY_IDS = [
     [1, 142640], // Acquainted: The Lion Sacrificial
     [1, 143192], // A Mystery of the Fifth City
     [1, 143589], // A Purveyor of Cruel and Unusual Cheeses
+    [1, 144867], // A Citizen of the Hinterland City
+    [1, 145883], // A Knight of the Order of the Golden Carapace
+
+    [25, 144748], // A Lurer of Cities
+    [21, 144810], // Infiltrator of the Tracklayer City
+    [50, 144785], // A Worker in the Common Cause
 
     [55, 133830], // Bohemians
     [55, 121992], // Criminals
@@ -60,6 +75,9 @@ const VANITY_QUALITY_IDS = [
     [55, 125787], // The Tomb-Colonies
     [55, 129666], // The Urchins
     [55, 144064], // Respected by Corsairs
+
+    [100, 145053], // Labour By Candlelight
+    [100, 145951], // An Accomplished Plotter
 ];
 
 export class VanitySectionFixer implements INetworkAware, IMutationAware {
