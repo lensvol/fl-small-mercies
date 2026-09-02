@@ -140,7 +140,7 @@ class FLSettingsFrontend {
     createMultipleChoice(title: string, settingId: string, choices: MultipleChoices) {
         const div = document.createElement("div");
         // FIXME: Use proper CSS classes here!
-        div.style.cssText = "padding-left: 20px";
+        div.style.cssText = "padding-left: 12px";
 
         const titleHeader = document.createElement("h2");
         titleHeader.textContent = title + ":";
@@ -158,7 +158,7 @@ class FLSettingsFrontend {
             const label = document.createElement("label");
             label.classList.add("radio");
             label.setAttribute("for", choiceId);
-            label.style.cssText = "margin-left: 20px;";
+            label.style.cssText = "margin-left: 28px;";
 
             const choice = document.createElement("input");
             choice.setAttribute("value", value);
@@ -210,11 +210,10 @@ class FLSettingsFrontend {
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(descriptor.description));
 
+                    toggle.style.cssText = "padding-left: 12px";
                     toggle.appendChild(label);
                     listContainer.appendChild(toggle);
-                }
-
-                if (isMultipleChoice(descriptor)) {
+                } else if (isMultipleChoice(descriptor)) {
                     const choicePanel = this.createMultipleChoice(
                         descriptor.description,
                         settingId,
