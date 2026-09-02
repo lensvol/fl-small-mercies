@@ -19,7 +19,7 @@ import {
     MSG_TYPE_RED_MAGCATS,
 } from "../constants";
 
-export class AdvancedArtFixer implements IMercyFixerba {
+export class AdvancedArtFixer implements IMercyFixer {
     applySettings(settings: SettingsObject): void {
         const iconSet = settings.magcats_icons as string;
 
