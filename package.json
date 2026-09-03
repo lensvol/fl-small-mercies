@@ -13,7 +13,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/chrome": "^0.2.7",
+    "@ttsc/unplugin": "^0.28.5",
+    "@types/chrome": "^0.2.8",
+    "@types/node": "^26.4.1",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "eslint": "^8.27.0",
@@ -21,7 +23,8 @@
     "esquery": "^1.4.0",
     "prettier": "^2.8.8",
     "ts-loader": "^9.4.4",
-    "typescript": "^4.9.5",
+    "ttsc": "^0.28.5",
+    "typescript": "^6.0.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   }

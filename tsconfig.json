@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Language and Environment */
     "target": "es6",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-
+    "lib": ["es2019", "dom"],
     /* Modules */
     "module": "ES6",
     "rootDir": "./src",                                  /* Specify the root folder within your source files. */
@@ -17,6 +17,7 @@
 
     /* Completeness */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
+    "types": ["chrome"],
     "typeRoots": [ "node_modules/@types" ]
   },
   "include": ["./src/**/*"],
