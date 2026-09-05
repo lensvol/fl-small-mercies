@@ -96,17 +96,21 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
 
         const newDisplay = this.createFavourDisplay(title, icon + "small", value, () => {
             const renownTitle = `Renown: ${title}`;
+            const renownDummy = {
+                level: 0,
+                description: "You do not have any renown with this faction (yet).",
+            };
             const content: ITooltipContent = {
                 title: `${renownTitle} - ??? / ???`,
                 secondaryText: "Renown is not applicable for this faction.",
             };
 
             if (RENOWN_ITEMS.has(title)) {
-                const renownInfo = this.currentRenown.get(title)!!;
+                const renownInfo = this.currentRenown.get(title) || renownDummy;
                 content.title = `${renownTitle} - ${renownInfo.level} / 55`;
                 content.text = renownInfo.description as string;
                 content.secondaryText = `You can increase this by using <br><b>${
-                    RENOWN_ITEMS.get(title) || "some"
+                    RENOWN_ITEMS.get(title) || "something"
                 }</b> in your inventory.`;
             }
 
