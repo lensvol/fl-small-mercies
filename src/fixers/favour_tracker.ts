@@ -75,6 +75,12 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
                     });
                 }
             }
+
+            const fingerkingsRenown = g.getQuality("Contacts", "Connected: Fingerkings");
+            this.currentRenown.set("Fingerkings", {
+                level: fingerkingsRenown?.level || 0,
+                description: fingerkingsRenown?.description || "You do not have any connection to this faction (yet).",
+            });
         });
 
         state.onQualityChanged((state, _previous, current) => {
@@ -112,6 +118,11 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
                 content.secondaryText = `You can increase this by using <br><b>${
                     RENOWN_ITEMS.get(title) || "something"
                 }</b> in your inventory.`;
+            } else if (title === "Fingerkings") {
+                const renownInfo = this.currentRenown.get(title) || renownDummy;
+                content.title = `Connected: Fingerkings - ${renownInfo.level} / 7`;
+                content.text = renownInfo.description as string;
+                content.secondaryText = "You can increase this by visiting <br><b>Dome of Scales</b> in Parabola.";
             }
 
             return content;
