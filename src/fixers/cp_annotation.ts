@@ -57,7 +57,7 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
         }
 
         for (const message of response.messages || []) {
-            if (message.type === "PyramidQualityChangeMessage") {
+            if (message.type === "PyramidQualityChangeMessage" && message.changeType !== "Unaltered") {
                 let extractedPoints = 0;
                 const matches = message.tooltip?.match(CHANGE_POINTS_REGEX);
                 if (matches) {
