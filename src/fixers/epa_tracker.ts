@@ -7,7 +7,7 @@ import {IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
 import {numberWithCommas} from "../utils";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)\)./;
+const QUALITY_MESSAGE_REGEX = /You've (lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
 const STORED_STATE_KEY = "fl_sm_epa_tracker";
 
 class EPATracker {
@@ -267,7 +267,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
                     const amountChanged =
                         (ITEM_PRICES_BY_ID.get(message.possession.id) || 0) *
-                        Number(extractedTexts[2]) *
+                        Number(extractedTexts[2].replace(/[,.]/g, "")) *
                         (wasIncreased ? 1 : -1);
 
                     this.epaTracker.increaseWealth(amountChanged);

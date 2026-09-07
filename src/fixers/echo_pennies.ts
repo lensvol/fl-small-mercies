@@ -3,7 +3,7 @@ import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IBeginStoryletRequest, IBranch, IQualityRequirement, IStoryletResponse} from "../interfaces";
 
-const PENNY_MESSAGE_REGEX = /You've (lost|gained) ([0-9,]+) x Penny \(new total ([0-9,]+)\)./;
+const PENNY_MESSAGE_REGEX = /You've (lost|gained) ([0-9,]+) x Penny \(new total ([0-9,]+)\)(.+)/;
 const PENNY_REQUIREMENT_REGEX = /You\s(\w+).*\s([0-9,]+)\s.*\s([0-9,]+).*/;
 
 export class EchoPenniesFixer implements INetworkAware {
@@ -83,11 +83,13 @@ export class EchoPenniesFixer implements INetworkAware {
                 return;
             }
 
-            const [_, direction, delta_str, new_total_str] = matches;
+            const [_, direction, delta_str, new_total_str, rest] = matches;
             const delta = parseInt(delta_str.replace(/,/g, ""), 10);
             const new_total = parseInt(new_total_str.replace(/,/g, ""), 10);
 
-            pennyChangeMessage.message = `You've ${direction} ${delta / 100} x Echoes (new total: ${new_total / 100}).`;
+            pennyChangeMessage.message = `You've ${direction} ${delta / 100} x Echoes (new total ${
+                new_total / 100
+            })${rest}`;
         });
     }
 }

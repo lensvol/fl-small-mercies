@@ -58,7 +58,6 @@ export default [
     CustomSnippetsFixer,
     VanitySectionFixer,
     DiscordanceChecksFixer,
-    EchoPenniesFixer,
     BranchResultsFixer,
     AdvancedArtFixer,
     TreasureMapFixer,
@@ -67,5 +66,7 @@ export default [
     SidebarShieldsFixer,
     WorthDisplayFixer,
     ResultsWorthFixer,
+    /* This fixer should _always_ go after ResultsWorthFixer due to unintended interactions */
+    EchoPenniesFixer,
     ChangePointsAnnotationFixer,
 ];

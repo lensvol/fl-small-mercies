@@ -4,7 +4,7 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) (\d+) x (.+) \(new total ([\d,]+)( -[ \w\s]+)?\)./;
+const QUALITY_MESSAGE_REGEX = /You've (lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
 
 export class ResultsWorthFixer implements INetworkAware {
     private showTotalNetWorth: boolean = false;
@@ -48,7 +48,7 @@ export class ResultsWorthFixer implements INetworkAware {
 
                 const matches = message.message.match(QUALITY_MESSAGE_REGEX);
                 if (matches) {
-                    const delta = Number(matches[2]);
+                    const delta = Number(matches[2].replace(/[,.]/g, ""));
                     const sign = message.changeType === "Increased" ? "+" : "-";
                     const worth = delta * price;
 
