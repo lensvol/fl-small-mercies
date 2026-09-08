@@ -290,7 +290,7 @@ export interface IChallenge {
     category: string;
     description: string;
     nature: string;
-    secondChangeId: number;
+    secondChanceId: number;
     secondChanceDescription: string;
     secondChanceLevel: number;
     canAffordSecondChance: boolean;
