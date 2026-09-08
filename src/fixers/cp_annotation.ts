@@ -57,7 +57,11 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
         }
 
         for (const message of response.messages || []) {
-            if (message.type === "PyramidQualityChangeMessage" && message.changeType !== "Unaltered") {
+            /*
+            So for pyramid qualities "Unchanged" actually means something different that I imagined:
+            it _does_ mean that CP gain/loss occurred, but the actual level has _not_ been changed.
+             */
+            if (message.type === "PyramidQualityChangeMessage") {
                 let extractedPoints = 0;
                 const matches = message.tooltip?.match(CHANGE_POINTS_REGEX);
                 if (matches) {
@@ -67,20 +71,33 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
 
                 const quality = Quality.fromJson(message.possession);
                 const cap = BASE_QUALITIES_IDS.includes(quality.qualityId) ? 70 : 50;
-                const calculatedPoints = calculateChangePoints(quality.level, cap);
+                let realLevel = quality.level;
+                if (realLevel === message.progressBar.rightScore && message.progressBar.endPercentage !== 100) {
+                    /*
+                    This is a complicated edge case where quality might be updated _twice_ during the same set of
+                    results. So far two notable cases are "Make a breakthrough in legal theory" during Law-Hunting
+                    and "Breaking and Entering" with Agents.
+
+                    Problem here is that quality linked through the "possession" field will be identical in _both_
+                    messages, even though a new level could have been achieved! The only way to smell a rat here is
+                    to check progress bar position.
+                     */
+                    realLevel = message.progressBar.leftScore;
+                }
+
+                const calculatedPoints = calculateChangePoints(realLevel, cap);
                 let oldPoints = this.qualityChangePoints.get(quality.qualityId) || 0;
                 if (!oldPoints) {
                     oldPoints =
                         calculateChangePoints(message.progressBar.leftScore, cap) +
                         Math.round(
-                            (quality.level > cap ? cap : quality.level + 1) *
-                                (message.progressBar.startPercentage / 100)
+                            (quality.level > cap ? cap : realLevel + 1) * (message.progressBar.startPercentage / 100)
                         );
                 }
 
                 const delta = calculatedPoints + extractedPoints - oldPoints;
 
-                if (oldPoints !== calculatedPoints + extractedPoints) {
+                if (delta !== 0) {
                     this.qualityChangePoints.set(message.possession.id, calculatedPoints + extractedPoints);
 
                     if (
