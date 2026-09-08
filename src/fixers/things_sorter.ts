@@ -101,7 +101,27 @@ export class ThingSortFixer implements IMutationAware {
             return true;
         }
 
+        if (node.classList.contains("quality-group")) {
+            // Search function on "Myself" tab removes and add individual groups, unlike general case
+            // where whole 'div' is being added with all of them at once.
+            return true;
+        }
+
         return node.getElementsByClassName("quality-group").length > 0;
+    }
+
+    sortQualityGroup(group: HTMLElement) {
+        if (group.dataset.groupName == "Accomplishments" && this.sortCityMysteries) {
+            findAndSortIcons(group, MYSTERIES_ORDER);
+        }
+
+        if (group.dataset.groupName == "Stories" && this.sortSeals) {
+            findAndSortIcons(group, SEAL_ORDER);
+        }
+
+        if (group.dataset.groupName == "Dreams" && this.sortDreams) {
+            findAndSortIcons(group, DREAM_ORDER);
+        }
     }
 
     onNodeAdded(node: HTMLElement): void {
@@ -110,19 +130,10 @@ export class ThingSortFixer implements IMutationAware {
         // if found, we are on the "Myself" tab
         if (qualityGroups.length > 0) {
             for (const element of qualityGroups) {
-                const group = element as HTMLElement;
-                if (group.dataset.groupName == "Accomplishments" && this.sortCityMysteries) {
-                    findAndSortIcons(group, MYSTERIES_ORDER);
-                }
-
-                if (group.dataset.groupName == "Stories" && this.sortSeals) {
-                    findAndSortIcons(group, SEAL_ORDER);
-                }
-
-                if (group.dataset.groupName == "Dreams" && this.sortDreams) {
-                    findAndSortIcons(group, DREAM_ORDER);
-                }
+                this.sortQualityGroup(element as HTMLElement);
             }
+        } else if (node.classList.contains("quality-group")) {
+            this.sortQualityGroup(node as HTMLElement);
         } else {
             const equipmentGroups = node.getElementsByClassName("inventory-group");
             if (equipmentGroups.length > 0 && this.sortNeathbow) {
