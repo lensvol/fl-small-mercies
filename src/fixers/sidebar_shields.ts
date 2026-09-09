@@ -501,17 +501,21 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        return getSingletonByClassName(node, "items--list") != null;
+        return (
+            getSingletonByClassName(node, "items--list") != null ||
+            getSingletonByClassName(node, "outfit-selector__title") != null
+        );
     }
 
     onNodeAdded(node: HTMLElement): void {
         const columnSecondary = getSingletonByClassName(node, "col-secondary");
-        if (!columnSecondary) {
+        const outfitSelector = getSingletonByClassName(node, "outfit-selector__title");
+
+        if (!columnSecondary && !outfitSelector) {
             return;
         }
 
-        const firstQuality = getSingletonByClassName(columnSecondary, "sidebar-quality");
-        if (firstQuality && firstQuality.parentElement) {
+        if (outfitSelector) {
             // TODO: Make it more elegant
             for (const shield of this.abilityToShield.values()) {
                 if (!this.highlightModifiedLevels) {
@@ -522,8 +526,14 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
                 }
             }
 
-            firstQuality.parentElement.parentNode?.insertBefore(this.shieldWall.getElement(), firstQuality.parentNode);
-            firstQuality.parentElement.style.display = "none";
+            outfitSelector.parentElement?.insertAdjacentElement("afterend", this.shieldWall.getElement());
+        }
+
+        if (columnSecondary) {
+            const firstQuality = getSingletonByClassName(columnSecondary, "sidebar-quality");
+            if (firstQuality && firstQuality.parentElement) {
+                firstQuality.parentElement.style.display = "none";
+            }
         }
     }
 
