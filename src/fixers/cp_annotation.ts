@@ -87,7 +87,7 @@ export class ChangePointsAnnotationFixer implements INetworkAware, IStateAware {
 
                 const calculatedPoints = calculateChangePoints(realLevel, cap);
                 let oldPoints = this.qualityChangePoints.get(quality.qualityId) || 0;
-                if (!oldPoints) {
+                if (!oldPoints || this.approximatedQualities.has(quality.qualityId)) {
                     oldPoints =
                         calculateChangePoints(message.progressBar.leftScore, cap) +
                         Math.round(
