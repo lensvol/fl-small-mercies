@@ -1,6 +1,6 @@
-import {GameStateController} from "../game_state";
+import {GameStateController, Quality} from "../game_state";
 import {SettingsObject} from "../settings";
-import {IMutationAware, IStateAware} from "./base";
+import {IMutationAware, INetworkAware, IStateAware} from "./base";
 import {getSingletonByClassName} from "../utils";
 
 export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
@@ -9,9 +9,19 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
     private qualityDisplays: Map<string, HTMLElement> = new Map();
 
     onNodeAdded(node: HTMLElement): void {
-        const sidebarQualities = node.getElementsByClassName("sidebar-quality");
+        let sidebarQualities = node.getElementsByClassName("sidebar-quality");
         if (sidebarQualities.length <= 0) {
-            return;
+            if (node.classList.contains("sidebar-quality")) {
+                const qualityName = getSingletonByClassName(node as HTMLElement, "item__name");
+                if (!qualityName || !qualityName.textContent) {
+                    return;
+                }
+
+                this.qualityDisplays.set(qualityName.textContent, node as HTMLElement);
+                this.updateScrollBarVisibility(qualityName.textContent);
+            } else {
+                return;
+            }
         }
 
         for (const quality of sidebarQualities) {
@@ -53,7 +63,7 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        return node.getElementsByClassName("sidebar-quality").length > 0;
+        return node.getElementsByClassName("sidebar-quality").length > 0 || node.classList.contains("sidebar-quality");
     }
 
     updateScrollBarVisibility(qualityName: string) {
@@ -72,10 +82,17 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
         return this.removeMaxedOutScrollbars && this.maxedOutQualities.has(qualityName);
     }
 
+    isMaxedOut(quality: Quality): boolean {
+        return (
+            (quality.cap !== 0 && quality.level >= quality.cap) ||
+            (quality.progressAsPercentage !== -1 && quality.progressAsPercentage >= 100)
+        );
+    }
+
     linkState(state: GameStateController): void {
         state.onCharacterDataLoaded((g) => {
             for (const quality of g.enumerateQualities()) {
-                if (quality.cap > 0 && quality.level >= quality.cap) {
+                if (this.isMaxedOut(quality)) {
                     this.maxedOutQualities.add(quality.name);
                 }
 
@@ -84,10 +101,10 @@ export class MaxedOutScrollbarsFixer implements IMutationAware, IStateAware {
         });
 
         state.onQualityChanged((_state, _previous, quality) => {
-            if (quality.level < quality.cap) {
-                this.maxedOutQualities.delete(quality.name);
-            } else {
+            if (this.isMaxedOut(quality)) {
                 this.maxedOutQualities.add(quality.name);
+            } else {
+                this.maxedOutQualities.delete(quality.name);
             }
 
             this.updateScrollBarVisibility(quality.name);

@@ -67,7 +67,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             const node = mutation.addedNodes[n] as HTMLElement;
 
             try {
-                if (node.nodeName.toLowerCase() !== "div") {
+                if (node.nodeName.toLowerCase() !== "div" && node.nodeName.toLowerCase() !== "li") {
                     continue;
                 }
             } catch (e) {
@@ -90,7 +90,7 @@ const centralMutationObserver = new MutationObserver((mutations, _observer) => {
             const node = mutation.removedNodes[n] as HTMLElement;
 
             try {
-                if (node.nodeName.toLowerCase() !== "div") {
+                if (node.nodeName.toLowerCase() !== "div" && node.nodeName.toLowerCase() !== "li") {
                     continue;
                 }
             } catch (e) {
