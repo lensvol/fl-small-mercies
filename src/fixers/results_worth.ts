@@ -4,9 +4,13 @@ import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
+const QUALITY_CHANGE_MESSAGE_REGEX = /You've (?:lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
+const QUALITY_ACQUISITION_MESSAGE_REGEX = /You now have ([\d,.]+) x (.+)/;
 
 export class ResultsWorthFixer implements INetworkAware {
+    /*
+    TODO: This code needs to be merged with the EPA tracker, too much duplication between them.
+     */
     private showTotalNetWorth: boolean = false;
     private showPerMessageBreakdown: boolean = false;
     private colorizeAnnotations: boolean = true;
@@ -25,7 +29,6 @@ export class ResultsWorthFixer implements INetworkAware {
                 return;
             }
 
-            // TODO: Take direct currency expenses into account
             for (const message of response.messages || []) {
                 if (message.type !== "StandardQualityChangeMessage") {
                     continue;
@@ -38,7 +41,8 @@ export class ResultsWorthFixer implements INetworkAware {
                 }
 
                 const price = ITEM_PRICES_BY_ID.get(item.id) || 0;
-                const worth = item.effectiveLevel * price;
+                // "Lost" is a bit of a special case here, since it actually signifies that there are no items left.
+                const worth = (message.changeType !== "Lost" ? item.effectiveLevel : 1) * price;
 
                 if (worth === 0) {
                     // Apparently we do not know worth of that item, might as well silently skip it
@@ -46,11 +50,18 @@ export class ResultsWorthFixer implements INetworkAware {
                     continue;
                 }
 
-                const matches = message.message.match(QUALITY_MESSAGE_REGEX);
+                let parseRegex;
+                if (message.changeType === "Gained") {
+                    parseRegex = QUALITY_ACQUISITION_MESSAGE_REGEX;
+                } else {
+                    parseRegex = QUALITY_CHANGE_MESSAGE_REGEX;
+                }
+
+                const matches = message.message.match(parseRegex);
                 if (matches) {
-                    const delta = Number(matches[2].replace(/[,.]/g, ""));
-                    const sign = message.changeType === "Increased" ? "+" : "-";
+                    const delta = Number(matches[1].replace(/[,.]/g, ""));
                     const worth = delta * price;
+                    const sign = ["Increased", "Gained"].includes(message.changeType) ? "+" : "-";
 
                     if (this.showPerMessageBreakdown) {
                         const cssClasses = ["worth-branch-annotation"];

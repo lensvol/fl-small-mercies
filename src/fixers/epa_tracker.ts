@@ -7,7 +7,9 @@ import {IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
 import {numberWithCommas} from "../utils";
 
-const QUALITY_MESSAGE_REGEX = /You've (lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
+const QUALITY_CHANGE_MESSAGE_REGEX = /You've (?:lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
+const QUALITY_ACQUISITION_MESSAGE_REGEX = /You now have ([\d,.]+) x (.+)/;
+
 const STORED_STATE_KEY = "fl_sm_epa_tracker";
 
 class EPATracker {
@@ -257,8 +259,12 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                         continue;
                     }
 
-                    const wasIncreased = message.changeType === "Increased";
-                    const extractedTexts = message.message.match(QUALITY_MESSAGE_REGEX);
+                    const wasIncreased = ["Increased", "Gained"].includes(message.changeType);
+                    let parse_regex = QUALITY_CHANGE_MESSAGE_REGEX;
+                    if (message.changeType === "Gained") {
+                        parse_regex = QUALITY_ACQUISITION_MESSAGE_REGEX;
+                    }
+                    const extractedTexts = message.message.match(parse_regex);
 
                     if (!extractedTexts) {
                         // We should never hit this branch?
@@ -267,7 +273,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
                     const amountChanged =
                         (ITEM_PRICES_BY_ID.get(message.possession.id) || 0) *
-                        Number(extractedTexts[2].replace(/[,.]/g, "")) *
+                        Number(extractedTexts[1].replace(/[,.]/g, "")) *
                         (wasIncreased ? 1 : -1);
 
                     this.epaTracker.increaseWealth(amountChanged);

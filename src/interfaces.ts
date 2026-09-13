@@ -125,7 +125,7 @@ export interface IStandardQualityChangeMessage extends IMessage {
     type: "StandardQualityChangeMessage";
     possession: IPossession;
     priority: number;
-    changeType: "Unaltered" | "Increased" | "Decreased";
+    changeType: "Unaltered" | "Increased" | "Decreased" | "Gained" | "Lost";
     message: string;
     image: string;
     tooltip: string;
