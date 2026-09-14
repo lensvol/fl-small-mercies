@@ -5,6 +5,8 @@
 
 
 const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
+    // A Recipe for Zzoup
+    [106688, 17.50],
     // Aeolian Scream
     [773, 2.50],
     // An Identity Uncovered!
@@ -13,38 +15,72 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [142708, 0.50],
     // Attar
     [139723, 4.17],
+    // Beatrice's Taper-nut
+    [142237, 5.00],
     // Bone Fragments
     [140889, 0.01],
     // Brilliant Soul
     [668, 0.50],
     // Certifiable Scrap
     [918, 0.49],
+    // Chrysalis Candle
+    [20412, 1.00],
     // Correspondence Plaque
     [932, 0.50],
+    // Corresponding Sounder
+    [142793, 312.50],
     // Cryptic Clue
     [389, 0.02],
     // Crystallised Curio
     [142359, 2.50],
+    // Discordant Soul
+    [141772, 62.50],
+    // Discriminating Aconite
+    [142911, 2.50],
+    // Distillation of Retribution
+    [141764, 312.50],
+    // Glass Gazette
+    [141285, 2.90],
+    // Hellworm Milk
+    [143051, 62.50],
     // Hiding Place of a Peculiar Item
     [142447, 102.50],
     // Hillmover
     [140900, 12.50],
     // Hinterland Scrip
     [125025, 0.50],
+    // Holy Sanguinarine Ointment
+    [142909, 0.50],
+    // Infernal Machine
+    [141229, 66.00],
     // Jasmine Leaves
     [141374, 0.10],
+    // Khaganian Lightbulb
+    [142728, 0.10],
     // Knob of Scintillack
     [122495, 2.50],
     // Knotted Humerus
     [140772, 3.00],
     // Legal Document
     [739, 12.50],
+    // Lost Research Assistant
+    [143107, 12.50],
+    // Memory of Discordance
+    [141385, 12.50],
+    // Memory of a Much Lesser Self
+    [141779, 2.50],
     // Moon-Pearl
     [379, 0.01],
+    // Mortification of a Great Power
+    [141882, 62.50],
     // Mourning Candle
     [951, 2.50],
+    // Parabolan Orange-apple
+    [140962, 12.50],
     // Pennies
     [22390, 0.01],
+    // Perfumed Gunpowder
+    [140779, 2.50],
     // Piece of Rostygold
     [375, 0.01],
     // Pieces of Plunder Weighing Down Your Hold
@@ -53,6 +89,14 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [388, 0.02],
     // Rat-Shilling
     [143057, 0.10],
+    // Remains of a Pinewood Shark
+    [141324, 12.50],
+    // Rubbery Skull
+    [811, 6.00],
+    // Screaming Map: Left-Hand Half
+    [955, 15.00],
+    // Screaming Map: Right-Hand Half
+    [981, 25.00],
     // Searing Enigma
     [821, 62.50],
     // Shard of Glim
@@ -61,6 +105,14 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [142094, 16.50],
     // Silk Scrap
     [381, 0.01],
+    // Sky-Story
+    [129586, 141.85],
+    // Snuffer's Gratitude
+    [121792, 12.50],
+    // Solacefruit
+    [122491, 0.50],
+    // Starved Expression (via Stuiver)
+    [144822, 10 * 0.05],
     // Stashed Treasure
     [144025, 0.01],
     // Stuiver
@@ -195,6 +247,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [723, 0.20],
     // Bundle of Ragged Clothing
     [313, 0.01],
+    // Caligin Scale (via Mourning Candle)
+    [147237, 2.50],
     // Captivating Ballad
     [142386, 62.50],
     // Carnelian Sapphire Pendant
@@ -253,6 +307,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [342, 6.40],
     // Deep-zee Catch
     [122484, 0.50],
+    // Dendritic Spark (via Starved Expression)
+    [147236, 0.50],
     // Deshrieked Mandrake
     [343, 6.40],
     // Devilbone Die
@@ -385,6 +441,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [676, 0.40],
     // Fragment of the Tragedy Procedures
     [123213, 62.50],
+    // Fragmentary Transgression (via Compromising Document)
+    [147239, 0.50],
     // Fraught Research Assistant
     [118788, 12.50],
     // Frayed Thread (via Silk Scrap)
@@ -409,7 +467,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [346, 14.40],
     // Hand-picked Peppercaps (via Hinterland Scrip)
     [141541, 0.50],
-    // Haunted-looking Dog
+    // Haunted-Looking Dog
     [818, 2.00],
     // Helical Thighbone (via Hinterland Scrip)
     [141480, 2 * 0.50],
@@ -511,6 +569,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [465, 0.50],
     // Morning Suit
     [719, 14.40],
+    // Mote of Intent (via Correspondence Plaque)
+    [147235, 5 * 0.50],
     // Mountain-sherd
     [122492, 62.50],
     // Moves in the Great Game
@@ -551,6 +611,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [754, 62.50],
     // Nodule of Trembling Amber
     [949, 12.50],
+    // Nodule of Warm Amber (via Stuiver)
+    [328, 0.05],
     // O'Boyle's Practical Primer in the Various Languages of Nippon, Tartary, Cathay and the Princedoms of the Raj
     [756, 27.50],
     // Obdurate Stallion
@@ -565,6 +627,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [142662, 62.50],
     // Ornate Typewriter
     [755, 30.00],
+    // Ossified Hunger (via Solacefruit)
+    [147234, 0.50],
     // Ostentatious Diamond
     [12186, 0.50],
     // Ounce of Lily-Balm (via Brilliant Soul)
@@ -773,6 +837,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [659, 0.50],
     // Scrap of Ivory Organza
     [925, 312.50],
+    // Scrap of Tattered Void (via Silk Scrap)
+    [147233, 10 * 0.01],
     // Scuttering Squad
     [1005, 10.00],
     // Secluded Address
@@ -817,8 +883,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [21894, 200.00],
     // Sober Dress
     [435, 0.08],
-    // Solacefruit
-    [122491, 0.50],
     // Soothe & Cooper Long-Box (via An Identity Uncovered!)
     [114982, 25 * 2.50],
     // Soul
@@ -833,8 +897,6 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [140648, 14.00],
     // Starstone Demark
     [936, 312.50],
-    // Starved Expression (via Stuiver)
-    [144822, 10 * 0.05],
     // Stolen Correspondence
     [422, 0.05],
     // Stolen Kiss
@@ -901,6 +963,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [145129, 75.00],
     // Unlawful Device
     [141946, 12.50],
+    // Unlived Second (via Whispered Hint)
+    [147238, 0.01],
     // Unloved Short Story
     [18379, 1.00],
     // Unprovenanced Artefact
@@ -969,6 +1033,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["A Mislaid Diamond", 144306],
     ["A Monstrous Orb", 102578],
     ["A Partially Unwrapped Cat?", 635],
+    ["A Recipe for Zzoup", 106688],
     ["A River In A Box", 16677],
     ["A Sealed Copy of the Crimson Book", 107903],
     ["A Seat at the Board", 144796],
@@ -1002,6 +1067,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Bat with Attitude", 485],
     ["Battered Grey Overcoat", 315],
     ["Bazaar Permit", 741],
+    ["Beatrice's Taper-nut", 142237],
     ["Beguiling Mask", 310],
     ["Bejewelled Lens", 763],
     ["Bengal Tigress", 728],
@@ -1027,6 +1093,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Bundle of Fourth City Rags", 314],
     ["Bundle of Glad Rags", 723],
     ["Bundle of Ragged Clothing", 313],
+    ["Caligin Scale", 147237],
     ["Captivating Ballad", 142386],
     ["Carnelian Sapphire Pendant", 145127],
     ["Cartographer's Hoard", 141189],
@@ -1038,6 +1105,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Certifiable Scrap", 918],
     ["Cheerful Goldfish", 464],
     ["Chimerical Archive", 142448],
+    ["Chrysalis Candle", 20412],
     ["Classic Short Story", 18381],
     ["Clockwork Drownie", 141643],
     ["Collection of Curiosities", 743],
@@ -1050,6 +1118,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Copper Cipher Ring", 758],
     ["Correspondence Plaque", 932],
     ["Corresponding Ocelot", 877],
+    ["Corresponding Sounder", 142793],
     ["Corsetted Dress", 717],
     ["Coruscating Soul", 669],
     ["Crackling Device", 142840],
@@ -1060,6 +1129,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Dark-Dewed Cherry", 618],
     ["Dazed Raven Advisor", 342],
     ["Deep-zee Catch", 122484],
+    ["Dendritic Spark", 147236],
     ["Deshrieked Mandrake", 343],
     ["Devilbone Die", 653],
     ["Devilish Fedora", 21847],
@@ -1070,7 +1140,10 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Diary of the Dead", 762],
     ["Dignified Tailcoat", 320],
     ["Direful Reflection", 105858],
+    ["Discordant Soul", 141772],
+    ["Discriminating Aconite", 142911],
     ["Dismal Victuals", 144241],
+    ["Distillation of Retribution", 141764],
     ["Distinguished Gentleman's Outfit", 322],
     ["Dove Mask Shard", 678],
     ["Dreadful Surmise", 814],
@@ -1126,6 +1199,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Foxfire Candle Stub", 374],
     ["Fragment of White Gold", 676],
     ["Fragment of the Tragedy Procedures", 123213],
+    ["Fragmentary Transgression", 147239],
     ["Fraught Research Assistant", 118788],
     ["Frayed Thread", 144315],
     ["Fungal Dangers and Poisons: A Guide for New Growers", 141569],
@@ -1134,20 +1208,24 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Gentleman's Hat", 305],
     ["Gift of Scorn", 560],
     ["Gift of Transcendent Devotion", 561],
+    ["Glass Gazette", 141285],
     ["Glim-Encrusted Carapace", 145008],
     ["Glimpse of Anathema", 145282],
     ["Grubby Urchin", 346],
     ["Hand-picked Peppercaps", 141541],
-    ["Haunted-looking Dog", 818],
+    ["Haunted-Looking Dog", 818],
     ["Helical Thighbone", 141480],
+    ["Hellworm Milk", 143051],
     ["Hiding Place of a Peculiar Item", 142447],
     ["Highwayman's Cloak", 141627],
     ["Hillmover", 140900],
     ["Hinterland Scrip", 125025],
+    ["Holy Sanguinarine Ointment", 142909],
     ["Horsehead Amulet", 468],
     ["Impossible Theorem", 106142],
     ["Incisive Observation", 140898],
     ["Infernal Contract", 426],
+    ["Infernal Machine", 141229],
     ["Infernal Sharpshooter's Rifle", 21896],
     ["Infernally Well-cut Suit", 141681],
     ["Inkling of Identity", 656],
@@ -1162,6 +1240,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Jasmine Leaves", 141374],
     ["Journal of Infamy", 525],
     ["Judgements' Egg", 122486],
+    ["Khaganian Lightbulb", 142728],
     ["Knob of Scintillack", 122495],
     ["Knotted Humerus", 140772],
     ["Legal Document", 739],
@@ -1171,6 +1250,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Lithification Liquid", 141548],
     ["Live Specimen", 122488],
     ["London Street Sign", 392],
+    ["Lost Research Assistant", 143107],
     ["Lucky Weasel", 441],
     ["Lump of Lamplighter Beeswax", 384],
     ["M. Demeaux's Advice for Captains: Commemorative Edition", 116011],
@@ -1183,10 +1263,12 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Map Scrap", 920],
     ["Mask of the Rose", 555],
     ["Masterful Short Story", 18312],
+    ["Memory of Discordance", 141385],
     ["Memory of Distant Shores", 825],
     ["Memory of Light", 589],
     ["Memory of Moonlight", 144977],
     ["Memory of Sunlight", 144218],
+    ["Memory of a Much Lesser Self", 141779],
     ["Memory of a Much Stranger Self", 144983],
     ["Memory of a Shadow in Varchas", 142659],
     ["Meticulously Altered Stocking", 106571],
@@ -1197,6 +1279,8 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Modish Bonnet", 465],
     ["Moon-Pearl", 379],
     ["Morning Suit", 719],
+    ["Mortification of a Great Power", 141882],
+    ["Mote of Intent", 147235],
     ["Mountain-sherd", 122492],
     ["Mourning Candle", 951],
     ["Moves in the Great Game", 122490],
@@ -1218,6 +1302,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Nodule of Fecund Amber", 16308],
     ["Nodule of Pulsating Amber", 754],
     ["Nodule of Trembling Amber", 949],
+    ["Nodule of Warm Amber", 328],
     ["O'Boyle's Practical Primer in the Various Languages of Nippon, Tartary, Cathay and the Princedoms of the Raj", 756],
     ["Obdurate Stallion", 875],
     ["Ocular Toadbeast", 876],
@@ -1225,6 +1310,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Oneiric Pearl", 142666],
     ["Oneiromantic Revelation", 142662],
     ["Ornate Typewriter", 755],
+    ["Ossified Hunger", 147234],
     ["Ostentatious Diamond", 12186],
     ["Ounce of Lily-Balm", 144243],
     ["Outfit of Black Felt Garments", 317],
@@ -1261,12 +1347,14 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Parabola-Linen Frock", 21893],
     ["Parabola-Linen Scrap", 924],
     ["Parabola-Linen Suit", 21891],
+    ["Parabolan Orange-apple", 140962],
     ["Parabolan Parable", 142463],
     ["Partial Map", 956],
     ["Patent Osteological Sand and Wax", 141543],
     ["Patent Scrutinizer", 339],
     ["Patent Scrutinizer Deluxe!", 340],
     ["Pennies", 22390],
+    ["Perfumed Gunpowder", 140779],
     ["Personal Recommendation", 740],
     ["Philosophical Raven Advisor", 14730],
     ["Phosphorescent Scarab", 652],
@@ -1306,6 +1394,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Relic of the Fourth City", 423],
     ["Relic of the Second City", 425],
     ["Relic of the Third City", 424],
+    ["Remains of a Pinewood Shark", 141324],
     ["Reported Location of a One-Time Prince of Hell", 929],
     ["Reprehensible Lizard", 442],
     ["Respectable Grey Gown", 319],
@@ -1321,6 +1410,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Rubbery Associate", 354],
     ["Rubbery Conspirator", 448],
     ["Rubbery Euphonium", 817],
+    ["Rubbery Skull", 811],
     ["Rumour of the Upper River", 141194],
     ["Rumourmonger's Network", 930],
     ["Rusted Stirrup", 141913],
@@ -1334,6 +1424,9 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Sausage About Which No One Complains", 140891],
     ["Scrap of Incendiary Gossip", 659],
     ["Scrap of Ivory Organza", 925],
+    ["Scrap of Tattered Void", 147233],
+    ["Screaming Map: Left-Hand Half", 955],
+    ["Screaming Map: Right-Hand Half", 981],
     ["Scuttering Squad", 1005],
     ["Searing Enigma", 821],
     ["Secluded Address", 658],
@@ -1354,11 +1447,13 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Silent Soul", 23695],
     ["Silk Scrap", 381],
     ["Silvered Cat's Claw", 141917],
+    ["Sky-Story", 129586],
     ["Skyglass Knife", 327],
     ["Slavering Dream-Hound", 878],
     ["Smock of Four Thousand Three Hundred and Eight Pockets", 21895],
     ["Sneak-Thief's Mask", 309],
     ["Snuffer's Face", 21894],
+    ["Snuffer's Gratitude", 121792],
     ["Sober Dress", 435],
     ["Solacefruit", 122491],
     ["Soothe & Cooper Long-Box", 114982],
@@ -1408,6 +1503,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Unidentified Thigh Bone", 140756],
     ["Unjustifiable Necktie", 145129],
     ["Unlawful Device", 141946],
+    ["Unlived Second", 147238],
     ["Unloved Short Story", 18379],
     ["Unprovenanced Artefact", 122487],
     ["Unscrupulous Raven Advisor", 14733],
