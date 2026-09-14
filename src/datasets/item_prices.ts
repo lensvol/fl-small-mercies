@@ -115,6 +115,8 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     [144822, 10 * 0.05],
     // Stashed Treasure
     [144025, 0.01],
+    // Stonebark
+    [146964, 0.01],
     // Stuiver
     [144995, 0.05],
     // Tempestuous Tale (via Stuiver)
@@ -1467,6 +1469,7 @@ const ITEM_ID_BY_NAME: Map<string, number> = new Map([
     ["Stashed Treasure", 144025],
     ["Stolen Correspondence", 422],
     ["Stolen Kiss", 944],
+    ["Stonebark", 146964],
     ["Storm-Threnody", 849],
     ["Strange-Shore Parabola Frock", 23897],
     ["Strange-Shore Parabola Suit", 23898],

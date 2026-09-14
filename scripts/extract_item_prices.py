@@ -88,6 +88,7 @@ def main():
         "Chrysalis Candle": [20412, 1.00],
         "Snuffer's Gratitude": [121792, 12.50],
         "Starved Expression": [144822, 10 * 0.05],
+        "Stonebark": [146964, 0.01],
         # Following items are sellable in Rat-Market for Rat-Shillings (0.1 Echo)
         "Mortification of a Great Power": [141882, 62.50],
         "Corresponding Sounder": [142793, 312.50],
