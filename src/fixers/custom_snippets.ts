@@ -1,11 +1,11 @@
-import {IMutationAware, INetworkAware} from "./base";
+import {IMobileAware, IMutationAware, INetworkAware} from "./base";
 import {SettingsObject} from "../settings";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IInfobarResponse, ISnippet} from "../interfaces";
 import {COMMUNITY_SNIPPETS} from "../datasets/snippets";
 import {getSingletonByClassName} from "../utils";
 
-export class CustomSnippetsFixer implements INetworkAware, IMutationAware {
+export class CustomSnippetsFixer implements INetworkAware, IMutationAware, IMobileAware {
     enableCustomSnippets = true;
     customSnippets: ISnippet[];
     replaceDefaultSnippets = true;
@@ -50,6 +50,10 @@ export class CustomSnippetsFixer implements INetworkAware, IMutationAware {
                 image: "well",
             };
         });
+    }
+
+    worksOnMobile(): boolean {
+        return false;
     }
 
     applySettings(settings: SettingsObject): void {

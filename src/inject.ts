@@ -1,7 +1,7 @@
 import {FLSettingsFrontend} from "./settings";
 import {EXTENSION_PREFIX, EXTENSION_NAME, SETTINGS_SCHEMA} from "./constants";
 import AVAILABLE_FIXERS from "./fixers/index";
-import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base";
+import {IMercyFixer, isMobileAware, isMutationAware, isNetworkAware, isStateAware} from "./fixers/base";
 import {GameStateController} from "./game_state";
 import {FLApiInterceptor} from "./api_interceptor";
 import {debug} from "./logging";
@@ -24,6 +24,11 @@ apiInterceptor.install();
 const fixers: IMercyFixer[] = AVAILABLE_FIXERS.flatMap((fixerCls) => {
     try {
         const fixer = new fixerCls();
+
+        if (isMobile() && isMobileAware(fixer) && !fixer.worksOnMobile()) {
+            console.info(`${fixerCls.name} is incompatible with the mobile mode, skipping.`);
+            return [];
+        }
 
         if (isNetworkAware(fixer)) {
             fixer.linkNetworkTools(apiInterceptor);
