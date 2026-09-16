@@ -17,7 +17,7 @@
 
     /* Completeness */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "types": ["chrome"],
+    "types": ["chrome", "firefox-webext-browser"],
     "typeRoots": [ "node_modules/@types" ]
   },
   "include": ["./src/**/*"],

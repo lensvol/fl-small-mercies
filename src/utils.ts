@@ -141,4 +141,12 @@ function attachTooltipToElement(node: HTMLElement, contentCallback: () => IToolt
     });
 }
 
-export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, attachTooltipToElement};
+function isFirefox(): boolean {
+    return navigator.userAgent.toLowerCase().includes("firefox");
+}
+
+function isMobile(): boolean {
+    return navigator.userAgent.toLowerCase().includes("mobile");
+}
+
+export {getSingletonByClassName, numberWithCommas, sumArithmeticSequence, attachTooltipToElement, isFirefox, isMobile};

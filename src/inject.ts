@@ -5,6 +5,15 @@ import {IMercyFixer, isMutationAware, isNetworkAware, isStateAware} from "./fixe
 import {GameStateController} from "./game_state";
 import {FLApiInterceptor} from "./api_interceptor";
 import {debug} from "./logging";
+import {isFirefox, isMobile} from "./utils";
+
+if (isFirefox()) {
+    debug("Running on Firefox...");
+}
+
+if (isMobile()) {
+    debug("Running on Android (?)");
+}
 
 const apiInterceptor = FLApiInterceptor.getInstance();
 const gameStateController = GameStateController.getInstance();
