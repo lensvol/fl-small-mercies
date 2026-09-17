@@ -23,6 +23,7 @@ export interface IQuality {
     nature: string;
     image: string;
     sidebarSettingId?: number;
+    useEventId?: number;
 }
 
 export interface IPossession extends IQuality {}
@@ -117,7 +118,7 @@ export interface IQualityCapMessage extends IMessage {
     type: "QualityCapMessage";
     possession: IPossession;
     priority: number;
-    isSidebar: boolean;
+    isSidebar?: boolean;
     changeType: "Unaltered" | "Increased" | "Decreased";
 }
 
@@ -179,6 +180,10 @@ export interface ISettingChangeMessage extends IMessage {
     setting: ISetting;
 }
 
+export interface ILivingStoryStartedMessage extends IMessage {
+    type: "LivingStoryStartedMessage";
+}
+
 export interface ISetting {
     id: number;
     mapRootArea: Record<string, string>;
@@ -216,7 +221,8 @@ export type IMessageResult =
     | IQualityExplicitlySetMessage
     | IAreaChangeMessage
     | ISettingChangeMessage
-    | IInfoMessage;
+    | IInfoMessage
+    | ILivingStoryStartedMessage;
 
 export interface IChooseBranchResponse extends IApiResponse {
     actions: number;
