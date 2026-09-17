@@ -165,6 +165,9 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     private trackerToggle: HTMLAnchorElement;
     private trackerReset: HTMLAnchorElement;
     private useCommaForThousands: boolean = false;
+    private showTotalNetWorth: boolean = false;
+    private showPerMessageBreakdown: boolean = false;
+    private colorizeAnnotations: boolean = true;
 
     constructor() {
         const mimicParts = createEpaTrackerMimic();
@@ -236,6 +239,9 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     applySettings(settings: SettingsObject): void {
         this.showEpaTracker = settings.show_epa_tracker as boolean;
         this.useCommaForThousands = settings.add_thousands_separator as boolean;
+        this.showTotalNetWorth = settings.branch_net_worth as boolean;
+        this.showPerMessageBreakdown = settings.branch_results_worth as boolean;
+        this.colorizeAnnotations = settings.colorize_worth_annotations as boolean;
     }
 
     linkState(state: GameStateController): void {
@@ -250,39 +256,269 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
         interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
-            if (!this.showEpaTracker || !this.areWeTracking || !response.isSuccess) return;
+            if (
+                (!this.areWeTracking && !this.showTotalNetWorth && !this.showPerMessageBreakdown) ||
+                !response.isSuccess
+            )
+                return;
+
+            response = {
+                canChangeOutfit: true,
+                actions: 2,
+                phase: "End",
+                endStorylet: {
+                    rootEventId: 110469,
+                    event: {
+                        name: "A generous payment for such an ugly toy",
+                        description:
+                            "\"From... let's call it our petty cash fund. Although the fund's legal owners might call it something very different. Ha ha.\"",
+                        isInEventUseTree: true,
+                        deckType: "Always",
+                        image: "skulleyeless",
+                        id: 110473,
+                    },
+                    isLinkingEvent: false,
+                    isDirectLinkingEvent: false,
+                    canGoAgain: true,
+                },
+                messages: [
+                    {
+                        possession: {
+                            enhancements: [],
+                            qualityPossessedId: 50335576,
+                            name: "Penny",
+                            nameAndLevel: "2,767,662 x Penny",
+                            description:
+                                "One hundred pence makes an Echo. One hundred Echoes will purchase you a marvel or two at the Bazaar.",
+                            nature: "Thing",
+                            category: "Currency",
+                            effectiveLevel: 2767662,
+                            level: 2767662,
+                            himbleLevel: 0,
+                            availableAt: "Sell almost anything at the Bazaar.",
+                            equippable: false,
+                            progressAsPercentage: -1,
+                            allowedOn: "Character",
+                            image: "banknotes",
+                            id: 22390,
+                        },
+                        changeType: "Increased",
+                        priority: 2,
+                        type: "StandardQualityChangeMessage",
+                        message: "You've gained 6,250 x Penny (new total 2,767,662). ",
+                        image: "banknotes",
+                        tooltip:
+                            "One hundred pence makes an Echo. One hundred Echoes will purchase you a marvel or two at the Bazaar.",
+                    },
+                    {
+                        possession: {
+                            enhancements: [],
+                            qualityPossessedId: 78078524,
+                            name: "Eyeless Skull",
+                            nameAndLevel: "0 x Eyeless Skull",
+                            description:
+                                '<span class="descriptive">Coveted</span> Thick plates of bone have developed over the orbits, as if to hide or protect them. They are smooth and cold to the touch.',
+                            nature: "Thing",
+                            category: "Luminosity",
+                            useEventId: 110469,
+                            effectiveLevel: 0,
+                            level: 0,
+                            himbleLevel: 6,
+                            availableAt:
+                                "You can sometimes find these in the Forgotten Quarter, especially by undertaking Expeditions.",
+                            equippable: false,
+                            progressAsPercentage: -1,
+                            allowedOn: "Character",
+                            image: "skulleyeless",
+                            id: 23504,
+                        },
+                        changeType: "Lost",
+                        priority: 2,
+                        type: "StandardQualityChangeMessage",
+                        message: "You've lost 1 x Eyeless Skull (new total 0). ",
+                        image: "skulleyeless",
+                        tooltip:
+                            '<span class="descriptive">Coveted</span> Thick plates of bone have developed over the orbits, as if to hide or protect them. They are smooth and cold to the touch.',
+                    },
+                    {
+                        possession: {
+                            enhancements: [],
+                            cap: 50,
+                            qualityPossessedId: 78183777,
+                            name: "Advancing the Liberation of Night:",
+                            nameAndLevel: "Advancing the Liberation of Night: Less slowly",
+                            levelDescription: "Less slowly",
+                            description: "Knowingly or not, you have contributed to the Great Work.",
+                            nature: "Status",
+                            category: "Circumstance",
+                            effectiveLevel: 23,
+                            level: 23,
+                            himbleLevel: 0,
+                            equippable: false,
+                            progressAsPercentage: -1,
+                            allowedOn: "Character",
+                            image: "liberationofnight",
+                            id: 106226,
+                        },
+                        progressBar: {
+                            type: "Pyramid",
+                            leftScore: 23,
+                            rightScore: 24,
+                            startPercentage: 50.0,
+                            endPercentage: 54.0,
+                        },
+                        changeType: "Unaltered",
+                        priority: 2,
+                        type: "PyramidQualityChangeMessage",
+                        message: "<em>You have advanced the Liberation of Night</em>",
+                        image: "liberationofnight",
+                        tooltip: "13 change points, 11 more needed to reach level 24.",
+                    },
+                    {
+                        possession: {
+                            enhancements: [],
+                            cap: 7,
+                            qualityPossessedId: 114548296,
+                            name: "Favours: Revolutionaries",
+                            nameAndLevel: "Favours: Revolutionaries 0/7",
+                            description: "You've done somebody a good turn. Now, they're in your debt.",
+                            nature: "Status",
+                            category: "Contacts",
+                            effectiveLevel: 0,
+                            level: 0,
+                            himbleLevel: 0,
+                            equippable: false,
+                            progressAsPercentage: -1,
+                            allowedOn: "Character",
+                            image: "flames",
+                            id: 133831,
+                        },
+                        changeType: "Lost",
+                        priority: 2,
+                        type: "StandardQualityChangeMessage",
+                        message: "You've lost 1 x Favours: Revolutionaries (new total 0). ",
+                        image: "flames",
+                        tooltip: "You've done somebody a good turn. Now, they're in your debt.",
+                    },
+                    {
+                        possession: {
+                            enhancements: [],
+                            qualityPossessedId: 50343453,
+                            name: "Cryptic Clue",
+                            nameAndLevel: "146,511 x Cryptic Clue",
+                            description:
+                                '<span class="descriptive">Commonplace</span> Information too dangerous to be written down, except in code.',
+                            nature: "Thing",
+                            category: "Mysteries",
+                            useEventId: 12992,
+                            effectiveLevel: 146511,
+                            level: 146511,
+                            himbleLevel: 1,
+                            availableAt: "Create this by using other Mysteries items in your inventory.",
+                            equippable: false,
+                            progressAsPercentage: -1,
+                            allowedOn: "Character",
+                            image: "crypticsecret",
+                            id: 389,
+                        },
+                        changeType: "Increased",
+                        priority: 2,
+                        type: "StandardQualityChangeMessage",
+                        message: "You've gained 50 x Cryptic Clue (new total 146,511). ",
+                        image: "crypticsecret",
+                        tooltip:
+                            '<span class="descriptive">Commonplace</span> Information too dangerous to be written down, except in code.',
+                    },
+                ],
+                setting: {
+                    mapRootArea: {
+                        areaKey: "6037b99e5daf6b53b3257f8920b575fd",
+                    },
+                    name: "The Fifth City",
+                    canChangeOutfit: true,
+                    canOpenMap: true,
+                    canTravel: true,
+                    itemsUsableHere: true,
+                    isInfiniteDraw: false,
+                    id: 2,
+                },
+                hasUpdatedCharacter: false,
+                elapsed: 1,
+                isSuccess: true,
+            };
+
+            let totalWorthDelta = 0;
 
             for (const message of response.messages || []) {
-                if (message.type === "StandardQualityChangeMessage" && message.changeType !== "Unaltered") {
-                    if (message.possession.category === "Progress") {
+                if (message.type === "StandardQualityChangeMessage") {
+                    const item = message.possession;
+
+                    if (!ITEM_PRICES_BY_ID.has(item.id)) {
                         // Only things that can be meaningfully measured in Pennies should be considered
                         continue;
                     }
 
-                    const wasIncreased = ["Increased", "Gained"].includes(message.changeType);
-                    let parse_regex = QUALITY_CHANGE_MESSAGE_REGEX;
+                    const price = ITEM_PRICES_BY_ID.get(item.id) || 0;
+
+                    let parse_regex;
                     if (message.changeType === "Gained") {
                         parse_regex = QUALITY_ACQUISITION_MESSAGE_REGEX;
+                    } else {
+                        parse_regex = QUALITY_CHANGE_MESSAGE_REGEX;
                     }
-                    const extractedTexts = message.message.match(parse_regex);
+                    const matches = message.message.match(parse_regex);
 
-                    if (!extractedTexts) {
-                        // We should never hit this branch?
+                    if (!matches) {
+                        // We should never hit this branch? TODO: Log this branch message for future debugging
                         continue;
                     }
 
-                    const amountChanged =
-                        (ITEM_PRICES_BY_ID.get(message.possession.id) || 0) *
-                        Number(extractedTexts[1].replace(/[,.]/g, "")) *
-                        (wasIncreased ? 1 : -1);
+                    const delta = Number(matches[1].replace(/[,.]/g, ""));
+                    const wasIncreased = ["Increased", "Gained"].includes(message.changeType);
+                    const sign = wasIncreased ? "+" : "-";
+                    const worth = delta * price * (wasIncreased ? 1 : -1);
 
-                    this.epaTracker.increaseWealth(amountChanged);
+                    if (this.showPerMessageBreakdown) {
+                        const cssClasses = ["worth-branch-annotation"];
+                        if (this.colorizeAnnotations) {
+                            cssClasses.push(wasIncreased ? "worth-annotation-increase" : "worth-annotation-decrease");
+                        }
+                        const classes = cssClasses.join(" ");
+                        message.message += `<em class="${classes}">(${sign}${Math.abs(worth).toFixed(2)} Echoes)</em>`;
+                    }
+
+                    totalWorthDelta += worth;
                 }
             }
 
-            this.epaTracker.increaseActions(response.elapsed);
-            this.saveTrackerState();
-            this.updateTrackerUI();
+            if (this.areWeTracking) {
+                this.epaTracker.increaseActions(response.elapsed);
+                this.epaTracker.increaseWealth(totalWorthDelta);
+                this.saveTrackerState();
+                this.updateTrackerUI();
+            }
+
+            if (this.showTotalNetWorth && totalWorthDelta !== 0) {
+                const cssClasses = ["worth-branch-annotation"];
+                if (this.colorizeAnnotations) {
+                    cssClasses.push(totalWorthDelta > 0 ? "worth-annotation-increase" : "worth-annotation-decrease");
+                }
+                const presentation = cssClasses.join(" ");
+                const plus = totalWorthDelta > 0 ? "+" : "";
+                const formattedWorth = totalWorthDelta.toFixed(2);
+
+                response.messages.push({
+                    priority: 2,
+                    image: "banknotes",
+                    message: `<em>Net worth change: <span class="${presentation}">${plus}${formattedWorth} Echoes</span></em>`,
+                    type: "InfoMessage",
+                    tooltip: "For a lack of a penny.",
+                });
+            }
+
+            for (const message of response.messages) {
+                debug(`<b>${message.type}</b>: ${message.message}`);
+            }
         });
     }
 

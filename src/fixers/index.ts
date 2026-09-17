@@ -30,7 +30,6 @@ import {EpaTrackerFixer} from "./epa_tracker";
 import {ContactsSnippetFixer} from "./remove_contacts_snippet";
 import {SidebarShieldsFixer} from "./sidebar_shields";
 import {WorthDisplayFixer} from "./worth_display";
-import {ResultsWorthFixer} from "./results_worth";
 import {ChangePointsAnnotationFixer} from "./cp_annotation";
 
 export default [
@@ -65,8 +64,7 @@ export default [
     ContactsSnippetFixer,
     SidebarShieldsFixer,
     WorthDisplayFixer,
-    ResultsWorthFixer,
-    /* This fixer should _always_ go after ResultsWorthFixer due to unintended interactions */
+    /* This fixer should _always_ go after EpaTrackerFixer due to unintended interactions! */
     EchoPenniesFixer,
     ChangePointsAnnotationFixer,
 ];
