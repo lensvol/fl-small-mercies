@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base";
 import {SettingsObject} from "../settings";
-import {getSingletonByClassName} from "../utils";
+import {getSingletonByClassName, isMobile} from "../utils";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
@@ -25,10 +25,16 @@ export class AsceticModeFixer implements IMutationAware {
 
     onNodeAdded(node: HTMLElement): void {
         if (this.removeHeaderAndCandles) {
-            ["banner--lg-up", "banner--md-down"].forEach((className) => {
-                let banner = getSingletonByClassName(node, className);
-                banner?.classList.remove(className);
-            });
+            if (isMobile()) {
+                const banner = getSingletonByClassName(node, "banner--md-down");
+                banner?.classList.remove("banner--md-down");
+            } else {
+                const banner = getSingletonByClassName(node, "banner--lg-up");
+                if (banner) {
+                    const parentDiv = banner?.parentElement?.parentElement;
+                    parentDiv?.classList.add("u-visually-hidden");
+                }
+            }
 
             const candleContainer = getSingletonByClassName(node, "candle-container");
             if (candleContainer) {
