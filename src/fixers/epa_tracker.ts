@@ -156,18 +156,20 @@ function createEpaTrackerMimic(): [
 export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAware {
     private showEpaTracker = false;
     private areWeTracking = false;
+    private useCommaForThousands: boolean = false;
+    private showTotalNetWorth: boolean = false;
+    private showPerMessageBreakdown: boolean = false;
+    private colorizeAnnotations: boolean = true;
+
     private epaTracker = new EPATracker();
     private characterId = 0;
+    private itemCounts = new Map<number, number>();
 
     private trackerUiMimic: HTMLLIElement;
     private epaIndicator: HTMLSpanElement;
     private epaInfoLine: HTMLSpanElement;
     private trackerToggle: HTMLAnchorElement;
     private trackerReset: HTMLAnchorElement;
-    private useCommaForThousands: boolean = false;
-    private showTotalNetWorth: boolean = false;
-    private showPerMessageBreakdown: boolean = false;
-    private colorizeAnnotations: boolean = true;
 
     constructor() {
         const mimicParts = createEpaTrackerMimic();
@@ -252,6 +254,23 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                 this.loadSavedState();
             }
         });
+
+        state.onCharacterDataLoaded((state) => {
+            for (const quality of state.enumerateQualities()) {
+                if (!ITEM_PRICES_BY_ID.has(quality.qualityId)) {
+                    // We are only interested in fungible items
+                    continue;
+                }
+
+                this.itemCounts.set(quality.qualityId, quality.effectiveLevel);
+            }
+        });
+
+        state.onQualityChanged((_state, _previous, current) => {
+            if (ITEM_PRICES_BY_ID.has(current.qualityId)) {
+                this.itemCounts.set(current.qualityId, current.effectiveLevel);
+            }
+        });
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
@@ -265,7 +284,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             let totalWorthDelta = 0;
 
             for (const message of response.messages || []) {
-                if (message.type === "StandardQualityChangeMessage") {
+                if (message.type === "StandardQualityChangeMessage" || message.type === "QualityExplicitlySetMessage") {
                     const item = message.possession;
 
                     if (!ITEM_PRICES_BY_ID.has(item.id)) {
@@ -273,25 +292,43 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
                         continue;
                     }
 
+                    const wasIncreased = ["Increased", "Gained"].includes(message.changeType);
                     const price = ITEM_PRICES_BY_ID.get(item.id) || 0;
 
-                    let parse_regex;
-                    if (message.changeType === "Gained") {
-                        parse_regex = QUALITY_ACQUISITION_MESSAGE_REGEX;
+                    let worth = 0;
+                    let sign = "";
+
+                    if (message.type === "QualityExplicitlySetMessage") {
+                        if (message.changeType === "Lost") {
+                            // This is a special case, since we cannot extract previous quantity from the message
+                            // itself and thus need to track it ourselves.
+                            const previousCount = this.itemCounts.get(item.id) || 0;
+                            worth = previousCount * price * -1;
+                            sign = "-";
+                        } else {
+                            // And in this case we literally have all information that's needed!
+                            worth = item.effectiveLevel * price;
+                            sign = "+";
+                        }
                     } else {
-                        parse_regex = QUALITY_CHANGE_MESSAGE_REGEX;
-                    }
-                    const matches = message.message.match(parse_regex);
+                        let parse_regex;
+                        if (message.changeType === "Gained") {
+                            parse_regex = QUALITY_ACQUISITION_MESSAGE_REGEX;
+                        } else {
+                            parse_regex = QUALITY_CHANGE_MESSAGE_REGEX;
+                        }
+                        const matches = message.message.match(parse_regex);
 
-                    if (!matches) {
-                        // We should never hit this branch? TODO: Log this branch message for future debugging
-                        continue;
-                    }
+                        if (!matches) {
+                            // We should never hit this branch? TODO: Log this branch message for future debugging
+                            continue;
+                        }
 
-                    const delta = Number(matches[1].replace(/[,.]/g, ""));
-                    const wasIncreased = ["Increased", "Gained"].includes(message.changeType);
-                    const sign = wasIncreased ? "+" : "-";
-                    const worth = delta * price * (wasIncreased ? 1 : -1);
+                        const delta = Number(matches[1].replace(/[,.]/g, ""));
+
+                        sign = wasIncreased ? "+" : "-";
+                        worth = delta * price * (wasIncreased ? 1 : -1);
+                    }
 
                     if (this.showPerMessageBreakdown) {
                         const cssClasses = ["worth-branch-annotation"];
@@ -332,7 +369,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             }
 
             for (const message of response.messages) {
-                debug(`<b>${message.type}</b>: ${message.message}`);
+                debug(`${message.type}: ${message.message}`);
             }
         });
     }

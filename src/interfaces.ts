@@ -158,7 +158,7 @@ export interface IPyramidQualityChangeMessage extends IMessage {
 
 export interface IQualityExplicitlySetMessage extends IMessage {
     type: "QualityExplicitlySetMessage";
-    changeType: "Gained" | "Lost";
+    changeType: "Gained" | "Lost" | "Increased" | "Decreased";
     possession: IQuality;
     priority: number;
 }
@@ -184,6 +184,23 @@ export interface ILivingStoryStartedMessage extends IMessage {
     type: "LivingStoryStartedMessage";
 }
 
+export interface ISettingJsonInfo {
+    rootPrefix: string;
+    width: number;
+    height: number;
+    initPercentX: number;
+    initPercentY: number;
+    hideZoomControl: boolean;
+    hideCurrentGateIcon: boolean;
+    gateIconStyle: string;
+    landmarkStyle: string;
+    minZoom: number;
+    maxZoom: number;
+    minDestZoom: number;
+    hasMapOverlay: boolean;
+    labelBackgroundColour: string;
+}
+
 export interface ISetting {
     id: number;
     mapRootArea: Record<string, string>;
@@ -193,6 +210,7 @@ export interface ISetting {
     canTravel: boolean;
     itemsUsableHere: boolean;
     isInfiniteDraw: boolean;
+    jsonInfo?: ISettingJsonInfo;
 }
 
 export interface IStoryletStub {
