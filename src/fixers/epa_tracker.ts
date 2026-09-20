@@ -5,7 +5,7 @@ import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
-import {numberWithCommas} from "../utils";
+import {isMobile, numberWithCommas} from "../utils";
 
 const QUALITY_CHANGE_MESSAGE_REGEX = /You've (?:lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
 const QUALITY_ACQUISITION_MESSAGE_REGEX = /You now have ([\d,.]+) x (.+)/;
@@ -307,7 +307,8 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     checkEligibility(node: HTMLElement): boolean {
-        return node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']") != null;
+        const sidebarClass = isMobile() ? "sidemenu-container" : "col-secondary sidebar";
+        return node.querySelector(`div[class='${sidebarClass}'] ul[class*='items--list']`) != null;
     }
 
     onNodeAdded(node: HTMLElement): void {
@@ -315,7 +316,8 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             return;
         }
 
-        const currencyList = node.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const sidebarClass = isMobile() ? "sidemenu-container" : "col-secondary sidebar";
+        const currencyList = node.querySelector(`div[class='${sidebarClass}'] ul[class*='items--list']`);
         if (!currencyList) return;
 
         currencyList.appendChild(this.trackerUiMimic);
