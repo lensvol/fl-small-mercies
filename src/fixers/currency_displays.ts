@@ -2,7 +2,7 @@ import {SettingsObject} from "../settings";
 import {IMutationAware, IStateAware} from "./base";
 import {GameState, GameStateController} from "../game_state";
 import {IsInArea, IsInSetting, OrPredicate, StateMatcher} from "../matchers";
-import {getSingletonByClassName} from "../utils";
+import {getSingletonByClassName, isMobile} from "../utils";
 import {error} from "../logging";
 
 const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband", "Legal"];
@@ -52,7 +52,8 @@ class CurrencyDisplay {
     refresh() {
         let currentDisplay = null;
 
-        const currencyList = document.querySelector("div[class='col-secondary sidebar'] ul[class*='items--list']");
+        const sidebarClass = isMobile() ? "sidemenu-container" : "col-secondary sidebar";
+        const currencyList = document.querySelector(`div[class='${sidebarClass}'] ul[class*='items--list']`);
         if (!currencyList) {
             return;
         }
@@ -300,7 +301,7 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
         }
 
         const isInBazaar = getSingletonByClassName(node, "nav__list") !== null;
-        const isSidebarVisible = getSingletonByClassName(node, "sidebar") !== null;
+        const isSidebarVisible = getSingletonByClassName(node, isMobile() ? "sidebar" : "sidemenu-container") !== null;
 
         return isInBazaar || isSidebarVisible;
     }
@@ -326,8 +327,9 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             }
         }
 
-        const leftSidebar = getSingletonByClassName(node, "col-secondary");
+        const leftSidebar = getSingletonByClassName(node, isMobile() ? "sidemenu-container" : "col-secondary");
         const currencyList = leftSidebar?.getElementsByClassName("items--list");
+
         if (!currencyList) return;
 
         for (const display of this.currencyToDisplay.values()) {
