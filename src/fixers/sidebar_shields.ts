@@ -1,6 +1,6 @@
 import {IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
-import {attachTooltipToElement, getSingletonByClassName} from "../utils";
+import {attachTooltipToElement, getSingletonByClassName, isMobile} from "../utils";
 import {Enhancement, GameStateController, Quality} from "../game_state";
 import {debug} from "../logging";
 import {SKELETON_QUALITIES, UNKNOWN_QUALITY} from "../datasets/qualities";
@@ -508,31 +508,71 @@ export class SidebarShieldsFixer implements IMutationAware, IStateAware {
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const columnSecondary = getSingletonByClassName(node, "col-secondary");
-        const outfitSelector = getSingletonByClassName(node, "outfit-selector__title");
+        if (isMobile()) {
+            const outfitSelectors = node.getElementsByClassName("outfit-selector__title");
+            for (const outfitSelector of outfitSelectors) {
+                if (!outfitSelector.parentElement) {
+                    continue;
+                }
 
-        if (!columnSecondary && !outfitSelector) {
-            return;
-        }
+                let sidebarContainer;
+                let current = outfitSelector;
+                do {
+                    if (current.classList.contains("sidemenu-container")) {
+                        sidebarContainer = current;
+                        break;
+                    }
+                    current = current.parentElement!!;
+                } while (current.parentElement);
 
-        if (outfitSelector) {
-            // TODO: Make it more elegant
-            for (const shield of this.abilityToShield.values()) {
-                if (!this.highlightModifiedLevels) {
-                    shield.disableHighlight();
-                } else if (shield.getLevel() !== shield.getQuality().level) {
-                    // TODO: Probably can be moved inside the shield itself.
-                    shield.enableHighlight();
+                if (!sidebarContainer) {
+                    continue;
+                }
+
+                // TODO: Make it more elegant
+                for (const shield of this.abilityToShield.values()) {
+                    if (!this.highlightModifiedLevels) {
+                        shield.disableHighlight();
+                    } else if (shield.getLevel() !== shield.getQuality().level) {
+                        // TODO: Probably can be moved inside the shield itself.
+                        shield.enableHighlight();
+                    }
+                }
+
+                outfitSelector.parentElement?.insertAdjacentElement("afterend", this.shieldWall.getElement());
+
+                const firstQuality = getSingletonByClassName(sidebarContainer as HTMLElement, "sidebar-quality");
+                if (firstQuality && firstQuality.parentElement) {
+                    firstQuality.parentElement.style.display = "none";
                 }
             }
+        } else {
+            const columnSecondary = getSingletonByClassName(node, "col-secondary");
+            const outfitSelector = getSingletonByClassName(node, "outfit-selector__title");
 
-            outfitSelector.parentElement?.insertAdjacentElement("afterend", this.shieldWall.getElement());
-        }
+            if (!columnSecondary && !outfitSelector) {
+                return;
+            }
 
-        if (columnSecondary) {
-            const firstQuality = getSingletonByClassName(columnSecondary, "sidebar-quality");
-            if (firstQuality && firstQuality.parentElement) {
-                firstQuality.parentElement.style.display = "none";
+            if (outfitSelector) {
+                // TODO: Make it more elegant
+                for (const shield of this.abilityToShield.values()) {
+                    if (!this.highlightModifiedLevels) {
+                        shield.disableHighlight();
+                    } else if (shield.getLevel() !== shield.getQuality().level) {
+                        // TODO: Probably can be moved inside the shield itself.
+                        shield.enableHighlight();
+                    }
+                }
+
+                outfitSelector.parentElement?.insertAdjacentElement("afterend", this.shieldWall.getElement());
+            }
+
+            if (columnSecondary) {
+                const firstQuality = getSingletonByClassName(node, "sidebar-quality");
+                if (firstQuality && firstQuality.parentElement) {
+                    firstQuality.parentElement.style.display = "none";
+                }
             }
         }
     }
