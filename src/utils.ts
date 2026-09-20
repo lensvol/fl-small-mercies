@@ -123,10 +123,18 @@ function attachTooltipToElement(node: HTMLElement, contentCallback: () => IToolt
         const content: ITooltipContent = contentCallback();
 
         const rect = node.getBoundingClientRect();
+
         let posX = rect.left + window.screenX + rect.width / 2;
         let posY = rect.top + window.scrollY + rect.height / 2;
         if (posX + maxWidth > window.innerWidth) {
-            posX = rect.left + window.screenX - maxWidth;
+            if (isMobile()) {
+                posX = rect.left - (window.innerWidth - maxWidth);
+                if (posX + maxWidth > window.innerWidth) {
+                    posX = window.innerWidth - maxWidth;
+                }
+            } else {
+                posX = rect.left + window.screenX - maxWidth;
+            }
         }
 
         const tooltip = createTippyMimic(posX, posY, content.title, content.text, content.secondaryText, maxWidth);
