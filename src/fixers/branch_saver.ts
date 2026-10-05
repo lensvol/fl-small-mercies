@@ -31,7 +31,7 @@ export class BranchProtectorFixer implements INetworkAware {
     // FIXME: De-duplicate using single handler and discriminate by type.
     linkNetworkTools(interceptor: FLApiInterceptor): void {
         const branchLocker = (_request: any, response: IChooseBranchResponse) => {
-            if (!this.disableShipSaleOption || !this.disableShipSaleOption || !response.storylet) {
+            if (!this.disableShipSaleOption || !response.storylet) {
                 return;
             }
 
