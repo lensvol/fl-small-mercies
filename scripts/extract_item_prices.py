@@ -59,7 +59,7 @@ def main():
         "An Identity Uncovered!": [657, 2.50],
         "Knob of Scintillack": [122495, 2.50],
         "Touching Love Story": [945, 2.50],
-        "Primordial Shriek": [388, 2.50],
+        "Primordial Shriek": [388, 0.02],
         "Mourning Candle": [951, 2.50],
         "Knotted Humerus": [140772, 3.00],
         "Legal Document": [739, 12.50],

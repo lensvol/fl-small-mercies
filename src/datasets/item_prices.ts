@@ -558,7 +558,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Memory of a Shadow in Varchas (via Hinterland Scrip)
     [142659, 25 * 0.50],
     // Meticulously Altered Stocking (via Primordial Shriek)
-    [106571, 2000 * 2.50],
+    [106571, 2000 * 0.02],
     // Midnight Matriarch
     [21898, 200.00],
     // Mirthless Compendium of Statistical Observations
