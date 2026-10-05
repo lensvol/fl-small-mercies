@@ -930,7 +930,7 @@ const ITEM_PRICES_BY_ID: Map<number, number> = new Map([
     // Tantalising Possibility
     [145109, 0.10],
     // Tasselled Sword-Cane
-    [334, 14.40],
+    [334, 6.40],
     // Tasselled Walking-Stick
     [333, 2.50],
     // Tentacle Mitts (via Hinterland Scrip)
