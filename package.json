@@ -15,6 +15,7 @@
   "devDependencies": {
     "@ttsc/unplugin": "^0.28.5",
     "@types/chrome": "^0.2.8",
+    "@types/firefox-webext-browser": "^143.0.0",
     "@types/node": "^26.4.1",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",

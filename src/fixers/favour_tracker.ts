@@ -1,4 +1,4 @@
-import {IMutationAware, IStateAware} from "./base";
+import {IMobileAware, IMutationAware, IStateAware} from "./base";
 import {SettingsObject} from "../settings";
 import {GameState, GameStateController} from "../game_state";
 import {attachTooltipToElement, getSingletonByClassName} from "../utils";
@@ -36,7 +36,7 @@ const RENOWN_ITEMS = new Map([
     ["Tomb-Colonies", "Diary of the Dead"],
 ]);
 
-export class FavourTrackerFixer implements IMutationAware, IStateAware {
+export class FavourTrackerFixer implements IMutationAware, IStateAware, IMobileAware {
     private displayFavourTracker = false;
     private showZeroFavours = false;
     private favourValues: Map<string, number> = new Map();
@@ -46,6 +46,10 @@ export class FavourTrackerFixer implements IMutationAware, IStateAware {
         for (const favour of FAVOUR_IMAGES.keys()) {
             this.favourValues.set(favour, 0);
         }
+    }
+
+    worksOnMobile(): boolean {
+        return false;
     }
 
     applySettings(settings: SettingsObject): void {

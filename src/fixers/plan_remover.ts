@@ -1,5 +1,6 @@
 import {IMutationAware} from "./base";
 import {SettingsObject} from "../settings";
+import {getSingletonByClassName, isMobile} from "../utils";
 
 const PLAN_ARIA_LABELS = [
     "Mark this choice as a plan",
@@ -24,26 +25,26 @@ export class PlanButtonsFixer implements IMutationAware {
         }
 
         const planButtonlets = node.getElementsByClassName("branch__plan-buttonlet");
-        const navButtons = node.getElementsByClassName("nav__item");
+        const navButtons = node.getElementsByClassName(isMobile() ? "sidemenu__nav-item" : "nav__item");
 
         if (planButtonlets.length > 0) {
             return true;
         }
 
-        for (const buttonElement of navButtons) {
-            const button = buttonElement as HTMLElement;
-            if (button.dataset.name === "plans") {
-                return true;
-            }
-        }
-
-        return false;
+        return navButtons.length > 0;
     }
 
     onNodeAdded(node: HTMLElement): void {
         node.querySelectorAll(PLAN_BUTTONLET_SELECTOR).forEach((b) => b.remove());
 
-        node.querySelectorAll(PLANS_BUTTON_SELECTOR).forEach((b) => b.remove());
+        if (isMobile()) {
+            const mobilePlanBtn = getSingletonByClassName(node, "fa-star");
+            if (mobilePlanBtn) {
+                mobilePlanBtn.parentElement?.remove();
+            }
+        } else {
+            node.querySelectorAll(PLANS_BUTTON_SELECTOR).forEach((b) => b.remove());
+        }
     }
 
     onNodeRemoved(_node: HTMLElement): void {

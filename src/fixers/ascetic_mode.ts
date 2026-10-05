@@ -1,6 +1,6 @@
 import {IMutationAware} from "./base";
 import {SettingsObject} from "../settings";
-import {getSingletonByClassName} from "../utils";
+import {getSingletonByClassName, isMobile} from "../utils";
 
 export class AsceticModeFixer implements IMutationAware {
     private removeHeaderAndCandles = false;
@@ -16,16 +16,24 @@ export class AsceticModeFixer implements IMutationAware {
             return false;
         }
 
-        return getSingletonByClassName(node, "sidebar") !== null;
+        if (getSingletonByClassName(node, "sidemenu-container") != null) {
+            return true;
+        }
+
+        return getSingletonByClassName(node, "sidebar") != null;
     }
 
     onNodeAdded(node: HTMLElement): void {
         if (this.removeHeaderAndCandles) {
-            const banner = getSingletonByClassName(node, "banner--lg-up");
-
-            if (banner) {
-                const parentDiv = banner?.parentElement?.parentElement;
-                parentDiv?.classList.add("u-visually-hidden");
+            if (isMobile()) {
+                const banner = getSingletonByClassName(node, "banner--md-down");
+                banner?.classList.remove("banner--md-down");
+            } else {
+                const banner = getSingletonByClassName(node, "banner--lg-up");
+                if (banner) {
+                    const parentDiv = banner?.parentElement?.parentElement;
+                    parentDiv?.classList.add("u-visually-hidden");
+                }
             }
 
             const candleContainer = getSingletonByClassName(node, "candle-container");
@@ -46,10 +54,12 @@ export class AsceticModeFixer implements IMutationAware {
         }
 
         if (this.removeFateCounter) {
-            const fateButton = getSingletonByClassName(node, "sidebar__fate-button");
-            const fateItem = fateButton?.parentElement;
-            fateItem?.classList.remove("item");
-            fateItem?.classList.add("u-visually-hidden");
+            const fateButtons = node.getElementsByClassName("sidebar__fate-button");
+            for (const fateButton of fateButtons) {
+                const fateItem = fateButton?.parentElement;
+                fateItem?.classList.remove("item");
+                fateItem?.classList.add("u-visually-hidden");
+            }
         }
     }
 

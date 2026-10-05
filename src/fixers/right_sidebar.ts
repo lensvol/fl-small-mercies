@@ -1,11 +1,11 @@
-import {IMutationAware} from "./base";
+import {IMobileAware, IMutationAware} from "./base";
 import {SettingsObject} from "../settings";
 import {getSingletonByClassName} from "../utils";
 
 const MASK_ROSE_BANNER_SELECTOR = "div[class='travel'] a[target='_blank'][rel='noopener noreferrer'] img";
 const SNIPPET_CONTAINER_SELECTOR = "div[class='snippet']";
 
-export class RightSidebarFixer implements IMutationAware {
+export class RightSidebarFixer implements IMutationAware, IMobileAware {
     private removeMaskBanner = false;
     private removeSnippets = false;
 
@@ -14,6 +14,9 @@ export class RightSidebarFixer implements IMutationAware {
         this.removeSnippets = settings.remove_sidebar_snippets as boolean;
     }
 
+    worksOnMobile(): boolean {
+        return false;
+    }
     onNodeAdded(node: HTMLElement): void {
         if (this.removeMaskBanner) {
             const banner = node.querySelector(MASK_ROSE_BANNER_SELECTOR);

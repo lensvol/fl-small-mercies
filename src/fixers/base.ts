@@ -1,9 +1,14 @@
 import {SettingsObject} from "../settings";
 import {GameStateController} from "../game_state";
 import {FLApiInterceptor} from "../api_interceptor";
+import fixers from "./index";
 
 interface IMercyFixer {
     applySettings(settings: SettingsObject): void;
+}
+
+interface IMobileAware extends IMercyFixer {
+    worksOnMobile(): boolean;
 }
 
 interface IMutationAware extends IMercyFixer {
@@ -24,5 +29,15 @@ export interface INetworkAware extends IMercyFixer {
 const isMutationAware = (fixer: IMercyFixer): fixer is IMutationAware => "onNodeAdded" in fixer;
 const isStateAware = (fixer: IMercyFixer): fixer is IStateAware => "linkState" in fixer;
 const isNetworkAware = (fixer: IMercyFixer): fixer is INetworkAware => "linkNetworkTools" in fixer;
+const isMobileAware = (fixer: IMercyFixer): fixer is IMobileAware => "worksOnMobile" in fixer;
 
-export {IMercyFixer, IMutationAware, IStateAware, isMutationAware, isStateAware, isNetworkAware};
+export {
+    IMercyFixer,
+    IMobileAware,
+    IMutationAware,
+    IStateAware,
+    isMutationAware,
+    isStateAware,
+    isNetworkAware,
+    isMobileAware,
+};
