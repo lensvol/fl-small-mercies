@@ -3,7 +3,7 @@ import {SettingsObject} from "../settings";
 import {FLCharacter, GameStateController} from "../game_state";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
-import {IChooseBranchResponse} from "../interfaces";
+import {IChooseBranchRequest, IChooseBranchResponse} from "../interfaces";
 import {debug} from "../logging";
 import {isMobile, numberWithCommas} from "../utils";
 
@@ -274,7 +274,7 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     }
 
     linkNetworkTools(interceptor: FLApiInterceptor): void {
-        interceptor.onResponseReceived("/api/storylet/choosebranch", (_, response: IChooseBranchResponse) => {
+        const branchProcessor = (_: IChooseBranchRequest, response: IChooseBranchResponse) => {
             if (
                 (!this.areWeTracking && !this.showTotalNetWorth && !this.showPerMessageBreakdown) ||
                 !response.isSuccess
@@ -371,7 +371,10 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             for (const message of response.messages) {
                 debug(`${message.type}: ${message.message}`);
             }
-        });
+        };
+
+        interceptor.onResponseReceived("/api/storylet/choosebranch", branchProcessor);
+        interceptor.onResponseReceived("/api/agents/branch", branchProcessor);
     }
 
     private resetTracker() {
