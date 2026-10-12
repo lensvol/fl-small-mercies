@@ -6,6 +6,7 @@ import {getSingletonByClassName, isMobile} from "../utils";
 import {error} from "../logging";
 
 const CURRENCY_CATEGORIES = ["Currency", "Goods", "Progress", "Contraband", "Legal"];
+const MR_CHIMES_SHOP_ID = "137";
 
 function numberWithCommas(x: string): string {
     const result = x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").trim();
@@ -300,31 +301,43 @@ export class MoreCurrencyDisplaysFixer implements IMutationAware, IStateAware {
             return false;
         }
 
-        const isInBazaar = getSingletonByClassName(node, "nav__list") !== null;
+        const isInBazaar = getSingletonByClassName(node, isMobile() ? "lede" : "nav__list") !== null;
         const isSidebarVisible = getSingletonByClassName(node, isMobile() ? "sidebar" : "sidemenu-container") !== null;
 
         return isInBazaar || isSidebarVisible;
     }
 
     onNodeAdded(node: HTMLElement): void {
-        const shopButtons = node.getElementsByClassName("nav__button");
-        for (const candidate of shopButtons) {
-            try {
-                if (candidate.nodeName.toLowerCase() !== "button") {
+        if (!isMobile()) {
+            const shopButtons = node.getElementsByClassName("nav__button");
+            for (const candidate of shopButtons) {
+                try {
+                    if (candidate.nodeName.toLowerCase() !== "button") {
+                        continue;
+                    }
+                } catch (e) {
+                    error(`Failed to access 'nodeName' when modifying currencies: {e}`);
                     continue;
                 }
-            } catch (e) {
-                error(`Failed to access 'nodeName' when modifying currencies: {e}`);
-                continue;
+
+                if (candidate.textContent === "Mr Chimes' Lost & Found") {
+                    this.shopButtonObserver.disconnect();
+                    this.shopButtonObserver.observe(candidate, {attributes: true, attributeFilter: ["class"]});
+
+                    this.isInLostAndFound = candidate.classList.contains("menu-item--active");
+                    this.checkSpecialVisibility();
+                }
             }
-
-            if (candidate.textContent === "Mr Chimes' Lost & Found") {
-                this.shopButtonObserver.disconnect();
-                this.shopButtonObserver.observe(candidate, {attributes: true, attributeFilter: ["class"]});
-
-                this.isInLostAndFound = candidate.classList.contains("menu-item--active");
+        } else {
+            /* On mobile Bazaar has shop selector element instead of a side menu with all of them,
+             * thus the need to change our approach to determining if we are in Lost & Found. */
+            const shopSelector = getSingletonByClassName(node, "js-selector") as HTMLSelectElement;
+            shopSelector?.addEventListener("change", (e) => {
+                this.isInLostAndFound = (e.target as HTMLSelectElement)?.value === MR_CHIMES_SHOP_ID;
                 this.checkSpecialVisibility();
-            }
+            });
+            this.isInLostAndFound = shopSelector?.value === MR_CHIMES_SHOP_ID;
+            this.checkSpecialVisibility();
         }
 
         const leftSidebar = getSingletonByClassName(node, isMobile() ? "sidemenu-container" : "col-secondary");
