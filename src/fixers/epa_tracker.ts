@@ -4,7 +4,7 @@ import {FLCharacter, GameStateController} from "../game_state";
 import {ITEM_PRICES_BY_ID} from "../datasets/item_prices";
 import {FLApiInterceptor} from "../api_interceptor";
 import {IChooseBranchRequest, IChooseBranchResponse} from "../interfaces";
-import {debug} from "../logging";
+import {debug, error} from "../logging";
 import {isMobile, numberWithCommas} from "../utils";
 
 const QUALITY_CHANGE_MESSAGE_REGEX = /You've (?:lost|gained) ([\d,.]+) x (.+) \(new total ([\d.,]+)( -[ \w\s]+)?\)./;
@@ -32,6 +32,14 @@ class EPATracker {
 
     public getEPA(): number {
         if (this.sessionActions <= 0) {
+            return 0.0;
+        }
+
+        if (isNaN(this.sessionWealth) || isNaN(this.sessionActions)) {
+            error(
+                "Somehow we got NaN during EPA calculations! " +
+                    `Wealth: ${this.sessionWealth}, actions: ${this.sessionActions} `
+            );
             return 0.0;
         }
 
@@ -198,8 +206,8 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
     private saveTrackerState() {
         const serializedState = [
             this.areWeTracking,
-            this.epaTracker.getWealth().toFixed(2),
-            this.epaTracker.getActionCount(),
+            (this.epaTracker.getWealth() || 0).toFixed(2),
+            this.epaTracker.getActionCount() || 0,
         ].join("|");
 
         if (this.characterId) {
@@ -229,8 +237,8 @@ export class EpaTrackerFixer implements IStateAware, INetworkAware, IMutationAwa
             // We just silently ignore things that seem corrupted
             if (parts.length == 3) {
                 this.areWeTracking = parts[0] == "true";
-                this.epaTracker.increaseWealth(Number(parts[1]));
-                this.epaTracker.increaseActions(Number(parts[2]));
+                this.epaTracker.increaseWealth(Number(parts[1]) || 0);
+                this.epaTracker.increaseActions(Number(parts[2]) || 0);
                 this.updateTrackerUI();
             } else {
                 debug(`Saved EPA state looks corrupted: ${saved_epa_info}`);
