@@ -24,7 +24,14 @@ class EPATracker {
 
     public increaseActions(count: number) {
         if (count < 0) {
+            // This is absolute "should not be possible" branch.
             throw new Error("Negative action count reported to EPA tracker!");
+        }
+
+        if (isNaN(count)) {
+            // This is, sadly, "quite possible" branch. Programming is hard, people.
+            error("For some reason NaN was reported as action count!");
+            return;
         }
 
         this.sessionActions += count;
