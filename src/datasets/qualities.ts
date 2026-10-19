@@ -719,6 +719,7 @@ const VANITY_QUALITY_IDS: number[][] = [
     [100, 145951], // An Accomplished Plotter
 
     // Renown with various factions
+    [55, 132802], // Constables
     [55, 133830], // Bohemians
     [55, 121992], // Criminals
     [55, 132801], // Hell
